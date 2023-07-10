@@ -54,6 +54,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- 版本应与SpringBoot版本保持一致 -->
                 <version>2.2.13.RELEASE</version>
                 <configuration>
                     <!--启动类-->
