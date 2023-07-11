@@ -11,7 +11,12 @@
 
     <properties>
         <!--2.6.0版本以后springboot禁止出现循环依赖的情况，需要的话需要开启-->
+        <!--spring-boot 相关依赖的版本-->
         <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
+        <!--spring-cloud相关依赖的版本-->
+        <spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
+        <!--将springboot项目打包成可执行jar包的版本-->
+        <spring-boot-package.version>2.2.13.RELEASE</spring-boot-package.version>
     </properties>
 
     <dependencyManagement>
@@ -30,6 +35,13 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -41,9 +53,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>2.2.13.RELEASE</version>
+            <version>${spring-boot-package.version}</version>
         </dependency>
     </dependencies>
 
@@ -55,7 +76,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!-- 版本应与SpringBoot版本保持一致 -->
-                <version>2.2.13.RELEASE</version>
+                <version>${spring-boot-package.version}</version>
                 <configuration>
                     <!--启动类-->
                     <mainClass>com.huajie.FireDigitalPlatformBootStarter</mainClass>
