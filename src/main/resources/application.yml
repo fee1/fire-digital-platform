@@ -3,3 +3,8 @@ server:
 spring:
   application:
     name: fire-digital-platform
+  datasource:
+    url: jdbc:mysql://see_readme:3306/fire_digital_platform
+    username: see_readme
+    password: see_readme
+    driver-class-name: com.mysql.jdbc.Driver
