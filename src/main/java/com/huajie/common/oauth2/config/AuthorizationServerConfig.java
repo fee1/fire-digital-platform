@@ -1,6 +1,6 @@
-package com.huajie.oauth.config;
+package com.huajie.common.oauth2.config;
 
-import com.huajie.oauth.UserService;
+import com.huajie.common.oauth2.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

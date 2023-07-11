@@ -1,4 +1,4 @@
-package com.huajie.oauth;
+package com.huajie.common.oauth2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;

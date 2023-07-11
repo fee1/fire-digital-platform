@@ -1,4 +1,4 @@
-package com.huajie.oauth.config;
+package com.huajie.common.oauth2.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
