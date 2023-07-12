@@ -148,7 +148,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <!--    mockito报错  -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.12.10</version>
+        </dependency>
 
         <!--fastjson-->
         <dependency>
