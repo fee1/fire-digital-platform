@@ -177,19 +177,6 @@
             <version>${easypoi.version}</version>
         </dependency>
 
-        <!--腾讯云上传文件客户端，用的时候手动引入-->
-        <dependency>
-            <groupId>com.qcloud</groupId>
-            <artifactId>cos_api</artifactId>
-            <version>${qcloud.oss.version}</version>
-        </dependency>
-
-        <!--腾讯云短信sdk-->
-        <dependency>
-            <groupId>com.tencentcloudapi</groupId>
-            <artifactId>tencentcloud-sdk-java</artifactId>
-            <version>${qcloud.sms.sdk.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>me.zhyd.oauth</groupId>
