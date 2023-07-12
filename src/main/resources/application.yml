@@ -4,7 +4,7 @@ spring:
   application:
     name: fire-digital-platform
   datasource:
-    url: jdbc:mysql://see_readme:3306/fire_digital_platform
-    username: see_readme
-    password: see_readme
+    url: jdbc:mysql://82.156.14.43:3306/fire_digital_platform?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: gaoqianxiaodui123
     driver-class-name: com.mysql.jdbc.Driver

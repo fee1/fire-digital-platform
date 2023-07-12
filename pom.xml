@@ -24,6 +24,13 @@
         <mockito-core.version>4.6.1</mockito-core.version>
         <mockito-inline.version>4.6.1</mockito-inline.version>
         <alibaba-druid.version>1.2.9</alibaba-druid.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <lombok.versin>1.18.12</lombok.versin>
+        <easypoi.version>4.2.0</easypoi.version>
+        <qcloud.oss.version>5.6.23</qcloud.oss.version>
+        <qcloud.sms.sdk.version>3.1.57</qcloud.sms.sdk.version>
+        <knife4j.version>2.0.8</knife4j.version>
+        <justauth.version>1.15.6</justauth.version>
     </properties>
 
     <dependencyManagement>
@@ -142,12 +149,63 @@
             </exclusions>
         </dependency>
 
+
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+
+
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.versin}</version>
+        </dependency>
+
+        <!--easypoi导入导出-->
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-base</artifactId>
+            <version>${easypoi.version}</version>
+        </dependency>
+
+        <!--腾讯云上传文件客户端，用的时候手动引入-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>${qcloud.oss.version}</version>
+        </dependency>
+
+        <!--腾讯云短信sdk-->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>${qcloud.sms.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>me.zhyd.oauth</groupId>
+            <artifactId>JustAuth</artifactId>
+            <version>${justauth.version}</version>
+        </dependency>
+
     </dependencies>
 
 
     <!--将应用打包成可执行jar包-->
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
