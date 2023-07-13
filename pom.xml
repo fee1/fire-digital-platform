@@ -150,12 +150,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--    mockito报错  -->
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>1.12.10</version>
-        </dependency>
+        <!--    mockito报错  mockito-core包含1.10.2 自带版本-->
+<!--        <dependency>-->
+<!--            <groupId>net.bytebuddy</groupId>-->
+<!--            <artifactId>byte-buddy</artifactId>-->
+<!--            <version>1.12.10</version>-->
+<!--        </dependency>-->
 
         <!--fastjson-->
         <dependency>
@@ -184,6 +184,12 @@
             <groupId>me.zhyd.oauth</groupId>
             <artifactId>JustAuth</artifactId>
             <version>${justauth.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>fastjson</artifactId>
+                    <groupId>com.alibaba</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
