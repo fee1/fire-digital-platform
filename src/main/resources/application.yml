@@ -8,3 +8,11 @@ spring:
     username: see_readme
     password: see_readme
     driver-class-name: com.mysql.jdbc.Driver
+
+swagger:
+  enable: true
+  title: ${spring.application.name}
+  description: 接口api
+  version: 1.0
+  name: 接口api
+  apiBasePackage: com.huajie.FireDigitalPlatformBootStarter
