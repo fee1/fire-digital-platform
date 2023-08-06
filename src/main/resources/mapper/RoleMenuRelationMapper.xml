@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huajie.infrastructure.mapper.RoleMenuRelationMapper">
+  <resultMap id="BaseResultMap" type="com.huajie.domain.entity.RoleMenuRelation">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="menu_id" jdbcType="INTEGER" property="menuId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+  </resultMap>
+</mapper>

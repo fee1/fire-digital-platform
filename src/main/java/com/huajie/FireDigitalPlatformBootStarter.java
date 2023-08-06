@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2023/7/10
  */
 @SpringBootApplication
-@MapperScan("com.huajie.**.mapper")
 public class FireDigitalPlatformBootStarter {
 
     public static void main(String[] args) {
