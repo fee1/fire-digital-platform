@@ -1,10 +1,19 @@
-# 项目启动说明
+# 本地启动说明
 ```text
+可选择如下参数启动
 添加启动参数: 
 VM options: 
 
 -javaagent:D:\project\fire-digital-platform\lib\aspectjweaver-1.8.13.jar
 -javaagent:D:\project\fire-digital-platform\lib\trace-agent.jar
+```
+# 如何打包
+```text
+mvn clean install -Dmaven.test.skip=true
+```
+# linxu启动说明
+```text
+nohup java -javaagent:aspectjweaver-1.8.13.jar -javaagent:trace-agent.jar -jar fire-digital-platform.jar &
 ```
 # 领域模型说明
 ```text
