@@ -13,6 +13,7 @@ mvn clean install -Dmaven.test.skip=true
 ```
 # linxu启动说明
 ```text
+nohup.out 文件需要定期清理
 nohup java -javaagent:aspectjweaver-1.8.13.jar -javaagent:trace-agent.jar -jar fire-digital-platform.jar &
 ```
 # 领域模型说明
