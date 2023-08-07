@@ -78,4 +78,8 @@ public class UserService {
         currentUserInfo.setRoleId(user.getRoleId());
         userMapper.updateById(currentUserInfo);
     }
+
+    public User getUserById(Integer userId) {
+        return userMapper.selectById(userId);
+    }
 }

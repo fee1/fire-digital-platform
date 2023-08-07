@@ -7,6 +7,7 @@ import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.application.service.UserAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -57,25 +61,34 @@ public class UserApi {
         return ApiResult.ok(authentication.getPrincipal());
     }
 
-    @ApiOperation(value = "获取当前租户下的用户")
+    @ApiOperation(value = "用户列表")
     @GetMapping("/tenant/users")
     public ApiResult<List<UserDetailResponseVO>> getTenantUsers(){
         List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers();
         return ApiResult.ok(responseVOS);
     }
 
-    @ApiOperation(value = "为当前租户新增用户")
+    @ApiOperation(value = "新增用户")
     @PostMapping("/tenant/user/add")
     public ApiResult<Void> addUser(@RequestBody @Validated UserAddRequestVO requestVO){
         userAppService.addUser(requestVO);
         return ApiResult.ok();
     }
 
-    @ApiOperation(value = "修改选中用户信息")
+    @ApiOperation(value = "用户信息修改")
     @PostMapping("/tenant/user/update")
     public ApiResult<Void> updateUser(@RequestBody @Validated UserUpdateRequestVO requestVO){
         userAppService.updateUser(requestVO);
         return ApiResult.ok();
+    }
+
+    @ApiOperation(value = "查询用户详情")
+    @GetMapping("/tenant/user/detail")
+    public ApiResult<UserDetailResponseVO> getUserDetail(@Valid @ApiParam("用户id")
+                                                             @NotNull(message = "用户id不能为空")
+                                                             @RequestParam Integer userId){
+        UserDetailResponseVO userDetailResponseVO = userAppService.getUserDetail(userId);
+        return ApiResult.ok(userDetailResponseVO);
     }
 
 }

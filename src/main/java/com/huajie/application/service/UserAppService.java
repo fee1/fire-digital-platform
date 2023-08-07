@@ -71,4 +71,14 @@ public class UserAppService {
         BeanUtils.copyProperties(requestVO, user);
         userService.updateUser(user);
     }
+
+    public UserDetailResponseVO getUserDetail(Integer userId) {
+        User user = userService.getUserById(userId);
+        UserDetailResponseVO userDetailResponseVO = new UserDetailResponseVO();
+        BeanUtils.copyProperties(user, userDetailResponseVO);
+
+        Role role = roleService.getRoleById(user.getRoleId());
+        userDetailResponseVO.setRoleName(role.getRoleName());
+        return userDetailResponseVO;
+    }
 }
