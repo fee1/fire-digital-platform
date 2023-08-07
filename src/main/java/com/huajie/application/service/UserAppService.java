@@ -55,17 +55,13 @@ public class UserAppService {
         return responseVOList;
     }
 
-    public boolean addUser(UserAddRequestVO requestVO) {
+    public void addUser(UserAddRequestVO requestVO) {
         User user = new User();
         BeanUtils.copyProperties(requestVO, user);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
         Integer id = authorities.getTenant().getId();
         user.setTenantId(id);
-        int i = userService.addUser(user);
-        if (i <= 0){
-            return false;
-        }
-        return true;
+        userService.addUser(user);
     }
 }

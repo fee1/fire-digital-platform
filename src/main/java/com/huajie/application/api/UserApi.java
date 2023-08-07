@@ -66,10 +66,7 @@ public class UserApi {
     @ApiOperation(value = "为当前租户新增用户")
     @PostMapping("/tenant/user/add")
     public ApiResult<Void> addUser(@RequestBody @Validated UserAddRequestVO requestVO){
-        boolean b = userAppService.addUser(requestVO);
-        if (!b){
-            return ApiResult.failed();
-        }
+        userAppService.addUser(requestVO);
         return ApiResult.ok();
     }
 
