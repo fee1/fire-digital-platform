@@ -2,6 +2,7 @@ package com.huajie.application.api;
 
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
+import com.huajie.application.api.request.TenantUsersRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
@@ -55,8 +56,8 @@ public class UserApi {
 
     @ApiOperation(value = "用户列表")
     @GetMapping("/tenant/users")
-    public ApiResult<List<UserDetailResponseVO>> getTenantUsers(){
-        List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers();
+    public ApiResult<List<UserDetailResponseVO>> getTenantUsers(@RequestBody @Validated TenantUsersRequestVO requestVO){
+        List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers(requestVO);
         return ApiResult.ok(responseVOS);
     }
 

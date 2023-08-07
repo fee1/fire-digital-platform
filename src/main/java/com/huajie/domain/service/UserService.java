@@ -2,8 +2,10 @@ package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.UserMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -126,5 +128,24 @@ public class UserService {
         org.springframework.security.core.userdetails.User user =
                 (org.springframework.security.core.userdetails.User) auth.getPrincipal();
         return user;
+    }
+
+    public List<User> getTenantUsers(String userNo, String phone, String userName) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
+        Integer tenantId = authorities.getTenant().getId();
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getTenantId, tenantId);
+        if (StringUtils.isNotBlank(userNo)){
+            queryWrapper.lambda().eq(User::getUserNo, userNo);
+        }
+        if (StringUtils.isNotBlank(phone)){
+            queryWrapper.lambda().eq(User::getPhone, phone);
+        }
+        if (StringUtils.isNotBlank(userName)){
+            queryWrapper.lambda().like(User::getUserName, userName);
+        }
+        return userMapper.selectList(queryWrapper);
     }
 }

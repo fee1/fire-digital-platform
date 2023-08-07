@@ -1,6 +1,7 @@
 package com.huajie.application.service;
 
 import com.huajie.application.api.request.ChangePasswordRequestVO;
+import com.huajie.application.api.request.TenantUsersRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
@@ -36,11 +37,9 @@ public class UserAppService {
     @Autowired
     private RoleService roleService;
 
-    public List<UserDetailResponseVO> getTenantUsers() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
-        Integer id = authorities.getTenant().getId();
-        List<User> users = userService.getUsersByTenantId(id);
+    public List<UserDetailResponseVO> getTenantUsers(TenantUsersRequestVO requestVO) {
+        List<User> users = userService.getTenantUsers(requestVO.getUserNo(), requestVO.getPhone(), requestVO.getUserName());
+//        List<User> users = userService.getUsersByTenantId(id);
         Set<Integer> roleIds = users.stream().map(User::getRoleId).collect(Collectors.toSet());
         List<Role> roles = roleService.getRolesByIds(roleIds);
 
