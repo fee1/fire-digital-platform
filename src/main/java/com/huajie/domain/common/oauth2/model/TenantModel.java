@@ -11,6 +11,8 @@ import java.util.Date;
 @Data
 public class TenantModel {
 
+    private Integer id;
+
     private String tenantName;
 
     private String tenantType;

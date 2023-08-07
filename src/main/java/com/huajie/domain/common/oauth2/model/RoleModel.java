@@ -8,6 +8,9 @@ import lombok.Data;
  */
 @Data
 public class RoleModel {
+
+    private Integer id;
+
     private String roleCode;
 
     private String roleName;

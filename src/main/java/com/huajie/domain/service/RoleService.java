@@ -22,4 +22,10 @@ public class RoleService {
         QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
         return roleMapper.selectById(roleId);
     }
+
+    public List<Role> getRolesByTenantId(Integer tenantId) {
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Role::getTenantId, tenantId);
+        return roleMapper.selectList(queryWrapper);
+    }
 }
