@@ -29,4 +29,10 @@ public class UserService {
         userQueryWrapper.lambda().eq(User::getEmail, email);
         return userMapper.selectOne(userQueryWrapper);
     }
+
+    public List<User> getUsersByTenantId(Integer tenantId) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getTenantId, tenantId);
+        return userMapper.selectList(queryWrapper);
+    }
 }

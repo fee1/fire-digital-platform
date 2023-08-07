@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zhuxiaofeng
@@ -26,6 +27,12 @@ public class RoleService {
     public List<Role> getRolesByTenantId(Integer tenantId) {
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Role::getTenantId, tenantId);
+        return roleMapper.selectList(queryWrapper);
+    }
+
+    public List<Role> getRolesByIds(Set<Integer> roleIds) {
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(Role::getId, roleIds);
         return roleMapper.selectList(queryWrapper);
     }
 }
