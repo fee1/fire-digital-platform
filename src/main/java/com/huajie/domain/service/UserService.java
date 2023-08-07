@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -20,6 +21,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User getUserByPhone(String phone){
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
@@ -72,14 +76,34 @@ public class UserService {
             throw new ApiException("用户手机号不可与现存用户相同");
         }
         User currentUserInfo = userMapper.selectById(user.getId());
-        currentUserInfo.setEmail(user.getEmail());
-        currentUserInfo.setPhone(user.getPhone());
-        currentUserInfo.setUserName(user.getUserName());
-        currentUserInfo.setRoleId(user.getRoleId());
-        userMapper.updateById(currentUserInfo);
+        if (Objects.isNull(currentUserInfo)){
+            throw new ApiException("用户不存在");
+        }
+
+        User updateUserInfo = new User();
+        updateUserInfo.setEmail(user.getEmail());
+        updateUserInfo.setPhone(user.getPhone());
+        updateUserInfo.setUserName(user.getUserName());
+        updateUserInfo.setRoleId(user.getRoleId());
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getId, user.getId());
+        userMapper.update(updateUserInfo, queryWrapper);
     }
 
     public User getUserById(Integer userId) {
         return userMapper.selectById(userId);
+    }
+
+    public void changePassword(Integer userId, String password) {
+        User user = userMapper.selectById(userId);
+        if (Objects.isNull(user)){
+            throw new ApiException("用户不存在");
+        }
+        User updateInfo = new User();
+        updateInfo.setPassword(passwordEncoder.encode(password));
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getId, userId);
+        userMapper.update(updateInfo, queryWrapper);
     }
 }

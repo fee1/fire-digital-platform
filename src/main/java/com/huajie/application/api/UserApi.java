@@ -1,6 +1,7 @@
 package com.huajie.application.api;
 
 import com.huajie.application.api.common.ApiResult;
+import com.huajie.application.api.request.ChangePasswordRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
@@ -90,5 +91,13 @@ public class UserApi {
         UserDetailResponseVO userDetailResponseVO = userAppService.getUserDetail(userId);
         return ApiResult.ok(userDetailResponseVO);
     }
+
+    @ApiOperation(value = "修改密码")
+    @PostMapping("/tenant/user/change/password")
+    public ApiResult<Void> changePassword(@RequestBody @Validated ChangePasswordRequestVO requestVO){
+        userAppService.changePassword(requestVO);
+        return ApiResult.ok();
+    }
+
 
 }

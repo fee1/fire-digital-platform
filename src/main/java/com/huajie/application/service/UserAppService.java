@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.request.ChangePasswordRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
@@ -80,5 +81,9 @@ public class UserAppService {
         Role role = roleService.getRoleById(user.getRoleId());
         userDetailResponseVO.setRoleName(role.getRoleName());
         return userDetailResponseVO;
+    }
+
+    public void changePassword(ChangePasswordRequestVO requestVO) {
+        userService.changePassword(requestVO.getUserId(), requestVO.getPassword());
     }
 }
