@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +27,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ConsumerTokenServices consumerTokenServices;
 
     public User getUserByPhone(String phone){
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
@@ -105,5 +111,20 @@ public class UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, userId);
         userMapper.update(updateInfo, queryWrapper);
+    }
+
+    public void logout() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //清除认证
+        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) auth.getDetails();
+        String tokenValue = details.getTokenValue();
+        consumerTokenServices.revokeToken(tokenValue);
+    }
+
+    public org.springframework.security.core.userdetails.User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        org.springframework.security.core.userdetails.User user =
+                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+        return user;
     }
 }

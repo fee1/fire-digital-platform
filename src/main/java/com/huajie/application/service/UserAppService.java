@@ -3,6 +3,7 @@ package com.huajie.application.service;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
+import com.huajie.application.api.response.CurrentUserResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
@@ -85,5 +86,17 @@ public class UserAppService {
 
     public void changePassword(ChangePasswordRequestVO requestVO) {
         userService.changePassword(requestVO.getUserId(), requestVO.getPassword());
+    }
+
+    public void logout() {
+        userService.logout();
+    }
+
+    public CurrentUserResponseVO getCurrentUser() {
+        org.springframework.security.core.userdetails.User currentUser = userService.getCurrentUser();
+        CurrentUserResponseVO currentUserResponseVO = new CurrentUserResponseVO();
+        BeanUtils.copyProperties(currentUser, currentUserResponseVO);
+        currentUserResponseVO.setAuthorities(currentUser.getAuthorities());
+        return currentUserResponseVO;
     }
 }
