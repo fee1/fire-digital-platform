@@ -1,6 +1,7 @@
 package com.huajie.application.api;
 
 import com.huajie.application.api.common.ApiResult;
+import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.application.service.UserAppService;
 import io.swagger.annotations.Api;
@@ -11,8 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,6 +61,16 @@ public class UserApi {
     public ApiResult<List<UserDetailResponseVO>> getTenantUsers(){
         List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers();
         return ApiResult.ok(responseVOS);
+    }
+
+    @ApiOperation(value = "为当前租户新增用户")
+    @PostMapping("/tenant/user/add")
+    public ApiResult<Void> addUser(@RequestBody @Validated UserAddRequestVO requestVO){
+        boolean b = userAppService.addUser(requestVO);
+        if (!b){
+            return ApiResult.failed();
+        }
+        return ApiResult.ok();
     }
 
 }

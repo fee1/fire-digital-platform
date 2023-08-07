@@ -35,4 +35,8 @@ public class UserService {
         queryWrapper.lambda().eq(User::getTenantId, tenantId);
         return userMapper.selectList(queryWrapper);
     }
+
+    public int addUser(User user) {
+        return userMapper.insert(user);
+    }
 }

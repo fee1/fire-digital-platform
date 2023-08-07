@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
@@ -52,5 +53,19 @@ public class UserAppService {
             }
         }
         return responseVOList;
+    }
+
+    public boolean addUser(UserAddRequestVO requestVO) {
+        User user = new User();
+        BeanUtils.copyProperties(requestVO, user);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
+        Integer id = authorities.getTenant().getId();
+        user.setTenantId(id);
+        int i = userService.addUser(user);
+        if (i <= 0){
+            return false;
+        }
+        return true;
     }
 }
