@@ -22,7 +22,7 @@ public class ApiResult<T> {
     @ApiModelProperty("提示信息")
     private String message;
 
-    @ApiModelProperty("返回码")
+    @ApiModelProperty("返回码- 200: 成功; 500: 失败; 501: 参数校验失败")
     private String code;
 
     public ApiResult(String code, String message) {
