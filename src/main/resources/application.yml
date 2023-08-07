@@ -25,7 +25,8 @@ spring:
 logging:
   pattern:
     console: "%d %thread %5level %logger{50} : %line %msg%n"
-  config: classpath:log4j2.xml
+#  config: classpath:log4j2.xml
+  config: classpath:logback.xml
 
 
 swagger:
