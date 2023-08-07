@@ -2,6 +2,7 @@ package com.huajie.application.api;
 
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.UserAddRequestVO;
+import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.application.service.UserAppService;
 import io.swagger.annotations.Api;
@@ -67,6 +68,13 @@ public class UserApi {
     @PostMapping("/tenant/user/add")
     public ApiResult<Void> addUser(@RequestBody @Validated UserAddRequestVO requestVO){
         userAppService.addUser(requestVO);
+        return ApiResult.ok();
+    }
+
+    @ApiOperation(value = "修改选中用户信息")
+    @PostMapping("/tenant/user/update")
+    public ApiResult<Void> updateUser(@RequestBody @Validated UserUpdateRequestVO requestVO){
+        userAppService.updateUser(requestVO);
         return ApiResult.ok();
     }
 

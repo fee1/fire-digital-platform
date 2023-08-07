@@ -61,4 +61,21 @@ public class UserService {
         }
         userMapper.insert(user);
     }
+
+    public void updateUser(User user) {
+        User userByEmail = this.getUserByEmail(user.getEmail());
+        if (!Objects.isNull(userByEmail)){
+            throw new ApiException("用户邮箱不可与现存用户相同");
+        }
+        User userByPhone = this.getUserByPhone(user.getPhone());
+        if (!Objects.isNull(userByPhone)){
+            throw new ApiException("用户手机号不可与现存用户相同");
+        }
+        User currentUserInfo = userMapper.selectById(user.getId());
+        currentUserInfo.setEmail(user.getEmail());
+        currentUserInfo.setPhone(user.getPhone());
+        currentUserInfo.setUserName(user.getUserName());
+        currentUserInfo.setRoleId(user.getRoleId());
+        userMapper.updateById(currentUserInfo);
+    }
 }

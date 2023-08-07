@@ -1,6 +1,7 @@
 package com.huajie.application.service;
 
 import com.huajie.application.api.request.UserAddRequestVO;
+import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
@@ -63,5 +64,11 @@ public class UserAppService {
         Integer id = authorities.getTenant().getId();
         user.setTenantId(id);
         userService.addUser(user);
+    }
+
+    public void updateUser(UserUpdateRequestVO requestVO) {
+        User user = new User();
+        BeanUtils.copyProperties(requestVO, user);
+        userService.updateUser(user);
     }
 }
