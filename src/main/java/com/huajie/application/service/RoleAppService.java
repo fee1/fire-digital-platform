@@ -1,6 +1,6 @@
 package com.huajie.application.service;
 
-import com.huajie.application.api.response.RoleResponseVO;
+import com.huajie.application.api.response.RoleDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.service.RoleService;
@@ -23,23 +23,23 @@ public class RoleAppService {
     @Autowired
     private RoleService roleService;
 
-    public List<RoleResponseVO> getRoleList() {
+    public List<RoleDetailResponseVO> getRoleList() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
         Integer id = authorities.getTenant().getId();
         List<Role> roles = roleService.getRolesByTenantId(id);
-        List<RoleResponseVO> responseVOS = new ArrayList<>();
+        List<RoleDetailResponseVO> responseVOS = new ArrayList<>();
         for (Role role : roles) {
-            RoleResponseVO roleResponseVO = new RoleResponseVO();
-            BeanUtils.copyProperties(role, roleResponseVO);
-            responseVOS.add(roleResponseVO);
+            RoleDetailResponseVO roleDetailResponseVO = new RoleDetailResponseVO();
+            BeanUtils.copyProperties(role, roleDetailResponseVO);
+            responseVOS.add(roleDetailResponseVO);
         }
         return responseVOS;
     }
 
-    public RoleResponseVO getRoleDetail(Integer id) {
+    public RoleDetailResponseVO getRoleDetail(Integer id) {
         Role role = roleService.getRoleById(id);
-        RoleResponseVO responseVO = new RoleResponseVO();
+        RoleDetailResponseVO responseVO = new RoleDetailResponseVO();
         BeanUtils.copyProperties(role, responseVO);
         return responseVO;
     }
