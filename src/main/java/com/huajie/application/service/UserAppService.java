@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +64,10 @@ public class UserAppService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
         Integer id = authorities.getTenant().getId();
+        org.springframework.security.core.userdetails.User currentUser = userService.getCurrentUser();
         user.setTenantId(id);
+        user.setCreateUser(currentUser.getUsername());
+        user.setCreateTime(new Date());
         userService.addUser(user);
     }
 
