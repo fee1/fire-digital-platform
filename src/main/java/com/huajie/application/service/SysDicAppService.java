@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.request.DicAddRequestVO;
 import com.huajie.application.api.response.DicResponseVO;
 import com.huajie.domain.entity.SysDic;
 import com.huajie.domain.service.SysDicService;
@@ -29,5 +30,9 @@ public class SysDicAppService {
             dicResponseVOList.add(dicResponseVO);
         }
         return dicResponseVOList;
+    }
+
+    public void addDic(DicAddRequestVO requestVO) {
+        sysDicService.addDic(requestVO.getDicCode(), requestVO.getDicName(), requestVO.getDescription());
     }
 }

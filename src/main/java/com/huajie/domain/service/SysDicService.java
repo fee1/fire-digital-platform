@@ -1,11 +1,13 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.entity.SysDic;
 import com.huajie.infrastructure.mapper.SysDicMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -29,4 +31,19 @@ public class SysDicService {
         }
         return sysDicMapper.selectList(queryWrapper);
     }
+
+    public void addDic(String dicCode, String dicName, String description) {
+        QueryWrapper<SysDic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysDic::getDicCode, dicCode);
+        List<SysDic> sysDics = sysDicMapper.selectList(queryWrapper);
+        if (!CollectionUtils.isEmpty(sysDics)){
+            throw new ApiException("字典code不能与先存的重复");
+        }
+        SysDic sysDic = new SysDic();
+        sysDic.setDicName(dicName);
+        sysDic.setDicCode(dicCode);
+        sysDic.setDescription(description);
+        sysDicMapper.insert(sysDic);
+    }
+
 }
