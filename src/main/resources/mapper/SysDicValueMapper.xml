@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huajie.infrastructure.mapper.SysDicValueMapper">
+  <resultMap id="BaseResultMap" type="com.huajie.domain.entity.SysDicValue">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="dic_code" jdbcType="VARCHAR" property="dicCode" />
+    <result column="value_no" jdbcType="INTEGER" property="valueNo" />
+    <result column="value_code" jdbcType="VARCHAR" property="valueCode" />
+    <result column="value_name" jdbcType="VARCHAR" property="valueName" />
+  </resultMap>
+</mapper>

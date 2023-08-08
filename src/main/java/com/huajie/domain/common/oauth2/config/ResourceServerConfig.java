@@ -29,7 +29,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .requestMatchers()
                 //配置需要保护的资源路径
                 .antMatchers("/user/**",
-                                        "/role/**");
+                                        "/role/**",
+                        "/sys/dic/**");
     }
 
 }
