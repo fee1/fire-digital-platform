@@ -2,6 +2,7 @@ package com.huajie.application.api.common.exception;
 
 
 import com.huajie.application.api.common.ApiResult;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -52,6 +53,12 @@ public class GlobalExceptionHandler {
             message = fieldError.getField() + fieldError.getDefaultMessage();
         }
         return ApiResult.validFailed(message);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = OAuth2Exception.class)
+    public ApiResult<Void> handleOAuth2Exception(OAuth2Exception oAuth2Exception){
+        return ApiResult.failed(oAuth2Exception.getMessage());
     }
 
 }
