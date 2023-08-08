@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -71,6 +72,7 @@ public class UserService {
         if (!Objects.isNull(userByPhone)){
             throw new ApiException("用户手机号不可与现存用户相同");
         }
+        user.setCreateTime(new Date());
         userMapper.insert(user);
     }
 
@@ -93,6 +95,8 @@ public class UserService {
         updateUserInfo.setPhone(user.getPhone());
         updateUserInfo.setUserName(user.getUserName());
         updateUserInfo.setRoleId(user.getRoleId());
+        updateUserInfo.setUpdateUser(user.getUpdateUser());
+        updateUserInfo.setUpdateTime(new Date());
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, user.getId());
