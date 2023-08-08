@@ -2,10 +2,12 @@ package com.huajie.application.api;
 
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
+import com.huajie.application.api.request.LoginRequestVO;
 import com.huajie.application.api.request.TenantUsersRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
+import com.huajie.application.api.response.LoginResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.application.service.UserAppService;
 import io.swagger.annotations.Api;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.security.Principal;
 import java.util.List;
 
 /**
@@ -39,13 +42,6 @@ public class UserApi {
 
     @Autowired
     private UserAppService userAppService;
-
-    @ApiOperation(value = "登出")
-    @PostMapping(value = "logout")
-    public ApiResult<Void> logout(){
-        userAppService.logout();
-        return ApiResult.ok();
-    }
 
     @ApiOperation(value = "获取用户信息")
     @GetMapping("/getCurrentUserInfo")

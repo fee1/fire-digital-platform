@@ -7,15 +7,23 @@ import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.UserMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.stereotype.Service;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -30,9 +38,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ConsumerTokenServices consumerTokenServices;
 
     public User getUserByPhone(String phone){
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
@@ -116,14 +121,6 @@ public class UserService {
         userMapper.update(updateInfo, queryWrapper);
     }
 
-    public void logout() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        //清除认证
-        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) auth.getDetails();
-        String tokenValue = details.getTokenValue();
-        consumerTokenServices.revokeToken(tokenValue);
-    }
-
     public org.springframework.security.core.userdetails.User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         org.springframework.security.core.userdetails.User user =
@@ -149,4 +146,6 @@ public class UserService {
         }
         return userMapper.selectList(queryWrapper);
     }
+
+
 }
