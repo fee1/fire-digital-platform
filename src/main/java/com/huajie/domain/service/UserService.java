@@ -114,6 +114,7 @@ public class UserService {
         }
         User updateInfo = new User();
         updateInfo.setPassword(passwordEncoder.encode(password));
+        updateInfo.setUpdateTime(new Date());
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, userId);
         userMapper.update(updateInfo, queryWrapper);
