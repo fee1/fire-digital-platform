@@ -72,7 +72,6 @@ public class UserService {
         if (!Objects.isNull(userByPhone)){
             throw new ApiException("用户手机号不可与现存用户相同");
         }
-        user.setCreateTime(new Date());
         userMapper.insert(user);
     }
 
@@ -95,8 +94,6 @@ public class UserService {
         updateUserInfo.setPhone(user.getPhone());
         updateUserInfo.setUserName(user.getUserName());
         updateUserInfo.setRoleId(user.getRoleId());
-        updateUserInfo.setUpdateUser(user.getUpdateUser());
-        updateUserInfo.setUpdateTime(new Date());
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, user.getId());
@@ -114,7 +111,6 @@ public class UserService {
         }
         User updateInfo = new User();
         updateInfo.setPassword(passwordEncoder.encode(password));
-        updateInfo.setUpdateTime(new Date());
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, userId);
         userMapper.update(updateInfo, queryWrapper);

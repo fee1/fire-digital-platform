@@ -64,17 +64,13 @@ public class UserAppService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
         Integer id = authorities.getTenant().getId();
-        CurrentUserResponseVO currentUser = this.getCurrentUser();
         user.setTenantId(id);
-        user.setCreateUser(currentUser.getUsername());
         userService.addUser(user);
     }
 
     public void updateUser(UserUpdateRequestVO requestVO) {
         User user = new User();
         BeanUtils.copyProperties(requestVO, user);
-        CurrentUserResponseVO currentUser = this.getCurrentUser();
-        user.setUpdateUser(currentUser.getUsername());
         userService.updateUser(user);
     }
 
