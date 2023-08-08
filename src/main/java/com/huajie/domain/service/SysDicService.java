@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.entity.SysDic;
 import com.huajie.domain.entity.SysDicValue;
+import com.huajie.domain.model.DicValueAddDTO;
 import com.huajie.infrastructure.mapper.SysDicMapper;
 import com.huajie.infrastructure.mapper.SysDicValueMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -55,5 +57,11 @@ public class SysDicService {
         QueryWrapper<SysDicValue> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(SysDicValue::getDicCode, dicCode);
         return sysDicValueMapper.selectList(queryWrapper);
+    }
+
+    public void addDicValue(DicValueAddDTO dicValueAddDTO) {
+        SysDicValue sysDicValue = new SysDicValue();
+        BeanUtils.copyProperties(dicValueAddDTO, sysDicValue);
+        sysDicValueMapper.insert(sysDicValue);
     }
 }

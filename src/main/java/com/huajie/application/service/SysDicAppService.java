@@ -1,10 +1,12 @@
 package com.huajie.application.service;
 
 import com.huajie.application.api.request.DicAddRequestVO;
+import com.huajie.application.api.request.DicValueAddRequestVO;
 import com.huajie.application.api.response.DicResponseVO;
 import com.huajie.application.api.response.DicValueResponseVO;
 import com.huajie.domain.entity.SysDic;
 import com.huajie.domain.entity.SysDicValue;
+import com.huajie.domain.model.DicValueAddDTO;
 import com.huajie.domain.service.SysDicService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +49,11 @@ public class SysDicAppService {
             dicValueResponseVOList.add(dicValueResponseVO);
         }
         return dicValueResponseVOList;
+    }
+
+    public void addDicValue(DicValueAddRequestVO requestVO) {
+        DicValueAddDTO dicValueAddDTO = new DicValueAddDTO();
+        BeanUtils.copyProperties(requestVO, dicValueAddDTO);
+        sysDicService.addDicValue(dicValueAddDTO);
     }
 }

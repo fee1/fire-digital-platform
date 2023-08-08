@@ -3,6 +3,7 @@ package com.huajie.application.api;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.DicAddRequestVO;
 import com.huajie.application.api.request.DicRequestVO;
+import com.huajie.application.api.request.DicValueAddRequestVO;
 import com.huajie.application.api.response.DicResponseVO;
 import com.huajie.application.api.response.DicValueResponseVO;
 import com.huajie.application.service.SysDicAppService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -51,11 +53,18 @@ public class SysDicApi {
 
     @ApiOperation("字典值列表")
     @GetMapping("value/list")
-    public ApiResult<List<DicValueResponseVO>> getDicValueList(@ApiParam("字典code") @RequestParam
+    public ApiResult<List<DicValueResponseVO>> getDicValueList(@Valid @ApiParam("字典code") @RequestParam
                                                                    @NotBlank(message = "字典code不能为空")
                                                                    @NotNull(message = "字典code不能为空") String dicCode){
         List<DicValueResponseVO> dicValueList = sysDicAppService.getDicValueList(dicCode);
         return ApiResult.ok(dicValueList);
+    }
+
+    @ApiOperation("新增字典值列表")
+    @PostMapping("value/add")
+    public ApiResult<Void> addDicValue(@Validated @RequestBody DicValueAddRequestVO requestVO){
+        sysDicAppService.addDicValue(requestVO);
+        return ApiResult.ok();
     }
 
 }
