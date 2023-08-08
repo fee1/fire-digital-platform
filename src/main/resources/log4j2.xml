@@ -11,6 +11,7 @@
             <PatternLayout pattern="[TRACEID:%X{traceId}] [%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] [%t] %c{1}:%L - %m%n" charset="UTF-8"/>
         </console>
         <!-- 这个会打印出所有的debug及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+<!--        <RollingRandomAccessFile/> 需注意-->
         <RollingFile  name="RollingFileDebug" fileName="logs/debug.log" immediateFlush="false"
 			filePattern="logs/$${date:yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.gz">
 			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
