@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  * @author zhuxiaofeng
  * @date 2023/8/8
  */
-@Api("字典表相关")
+@Api(tags = "字典相关")
 @RestController
 @RequestMapping(value = "sys/dic")
 public class SysDicApi {

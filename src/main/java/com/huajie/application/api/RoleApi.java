@@ -23,7 +23,7 @@ import java.util.List;
  * @author zhuxiaofeng
  * @date 2023/8/7
  */
-@Api("角色相关")
+@Api(tags = "角色相关")
 @RestController
 @RequestMapping("role")
 public class RoleApi {

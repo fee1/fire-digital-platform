@@ -32,7 +32,7 @@ import java.util.List;
  * @author zhuxiaofeng
  * @date 2023/7/11
  */
-@Api("用户相关")
+@Api(tags = "用户相关")
 @RestController
 @RequestMapping("/user")
 @Slf4j
