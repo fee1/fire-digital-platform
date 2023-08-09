@@ -1,5 +1,6 @@
 package com.huajie.application.api;
 
+import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
 import com.huajie.application.api.request.LoginRequestVO;
@@ -52,9 +53,19 @@ public class UserApi {
 
     @ApiOperation(value = "用户列表")
     @GetMapping("/tenant/users")
-    public ApiResult<List<UserDetailResponseVO>> getTenantUsers(@RequestBody @Validated TenantUsersRequestVO requestVO){
-        List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers(requestVO);
-        return ApiResult.ok(responseVOS);
+    public ApiResult<ApiPage<UserDetailResponseVO>> getTenantUsers(@ApiParam("当前页码")@RequestParam(required = false, defaultValue = "0") Integer pageNum,
+                                                                   @ApiParam("每页数量")@RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                                   @ApiParam("用户账号")@RequestParam(required = false) String userNo,
+                                                                   @ApiParam("手机号")@RequestParam(required = false) String phone,
+                                                                   @ApiParam("用户名")@RequestParam(required = false) String userName){
+        TenantUsersRequestVO tenantUsersRequestVO = new TenantUsersRequestVO();
+        tenantUsersRequestVO.setPageNum(pageNum);
+        tenantUsersRequestVO.setPageSize(pageSize);
+        tenantUsersRequestVO.setPhone(phone);
+        tenantUsersRequestVO.setUserName(userName);
+        tenantUsersRequestVO.setUserNo(userNo);
+        List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers(tenantUsersRequestVO);
+        return ApiResult.ok(ApiPage.restPage(responseVOS));
     }
 
     @ApiOperation(value = "新增用户")

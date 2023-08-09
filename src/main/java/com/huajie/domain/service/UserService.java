@@ -2,6 +2,8 @@ package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.UserMapper;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -128,9 +131,15 @@ public class UserService {
         return user;
     }
 
-    public List<User> getTenantUsers(String userNo, String phone, String userName) {
+    public Page<User> getTenantUsers(Integer pageNum, Integer pageSize, String userNo, String phone, String userName) {
+        PageHelper.startPage(pageNum, pageSize);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
+        CustomizeGrantedAuthority authorities = null;
+        for (GrantedAuthority authority : auth.getAuthorities()) {
+            authorities = (CustomizeGrantedAuthority) authority;
+            break;
+        }
+
         Integer tenantId = authorities.getTenant().getId();
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -144,7 +153,7 @@ public class UserService {
         if (StringUtils.isNotBlank(userName)){
             queryWrapper.lambda().like(User::getUserName, userName);
         }
-        return userMapper.selectList(queryWrapper);
+        return (Page<User>)userMapper.selectList(queryWrapper);
     }
 
 

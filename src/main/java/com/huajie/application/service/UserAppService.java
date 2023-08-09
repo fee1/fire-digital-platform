@@ -1,5 +1,8 @@
 package com.huajie.application.service;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
 import com.huajie.application.api.request.LoginRequestVO;
 import com.huajie.application.api.request.TenantUsersRequestVO;
@@ -41,15 +44,16 @@ public class UserAppService {
     @Autowired
     private RoleService roleService;
 
-    public List<UserDetailResponseVO> getTenantUsers(TenantUsersRequestVO requestVO) {
-        List<User> users = userService.getTenantUsers(requestVO.getUserNo(), requestVO.getPhone(), requestVO.getUserName());
+    public Page<UserDetailResponseVO> getTenantUsers(TenantUsersRequestVO requestVO) {
+        Page<User> users = userService.getTenantUsers(requestVO.getPageNum(), requestVO.getPageSize(),requestVO.getUserNo(), requestVO.getPhone(), requestVO.getUserName());
 //        List<User> users = userService.getUsersByTenantId(id);
         Set<Integer> roleIds = users.stream().map(User::getRoleId).collect(Collectors.toSet());
         List<Role> roles = roleService.getRolesByIds(roleIds);
 
 
         Map<Integer, List<Role>> id2Roles = roles.stream().collect(Collectors.groupingBy(Role::getId));
-        List<UserDetailResponseVO> responseVOList = new ArrayList<>();
+        Page<UserDetailResponseVO> responseVOList = new Page<>();
+        BeanUtils.copyProperties(users, responseVOList);
         for (User user : users) {
             UserDetailResponseVO userDetailResponseVO = new UserDetailResponseVO();
             BeanUtils.copyProperties(user, userDetailResponseVO);
@@ -57,6 +61,7 @@ public class UserAppService {
             if (!CollectionUtils.isEmpty(currentUserTole)) {
                 userDetailResponseVO.setRoleName(currentUserTole.get(0).getRoleName());
             }
+            responseVOList.add(userDetailResponseVO);
         }
         return responseVOList;
     }

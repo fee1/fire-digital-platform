@@ -10,6 +10,17 @@ import lombok.Data;
 @Data
 public class TenantUsersRequestVO {
 
+    /**
+     * 当前页码
+     */
+    @ApiModelProperty("当前页码")
+    private Integer pageNum;
+    /**
+     * 每页数量
+     */
+    @ApiModelProperty("每页数量")
+    private Integer pageSize;
+
     @ApiModelProperty("用户账号")
     private String userNo;
 
