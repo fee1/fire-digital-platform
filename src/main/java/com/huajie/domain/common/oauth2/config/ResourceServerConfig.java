@@ -31,7 +31,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/user/**",
                                         "/role/**",
                         "/sys/dic/**",
-                        "/menu/**");
+                        "/menu/**",
+                        "/function/**");
     }
 
 }

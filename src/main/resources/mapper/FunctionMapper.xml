@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huajie.infrastructure.mapper.FunctionMapper">
+  <resultMap id="BaseResultMap" type="com.huajie.domain.entity.Function">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="function_code" jdbcType="VARCHAR" property="functionCode" />
+    <result column="function_name" jdbcType="VARCHAR" property="functionName" />
+    <result column="api" jdbcType="VARCHAR" property="api" />
+    <result column="limit_login" jdbcType="TINYINT" property="limitLogin" />
+    <result column="limit_auth" jdbcType="TINYINT" property="limitAuth" />
+    <result column="limit_fee" jdbcType="TINYINT" property="limitFee" />
+    <result column="request_desc" jdbcType="VARCHAR" property="requestDesc" />
+    <result column="response_desc" jdbcType="VARCHAR" property="responseDesc" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+  </resultMap>
+</mapper>
