@@ -131,7 +131,7 @@ public class UserService {
         return user;
     }
 
-    public Page<User> getTenantUsers(Integer pageNum, Integer pageSize, String userNo, String phone, String userName) {
+    public Page<User> getPageTenantUsers(Integer pageNum, Integer pageSize, String userNo, String phone, String userName) {
         PageHelper.startPage(pageNum, pageSize);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomizeGrantedAuthority authorities = null;

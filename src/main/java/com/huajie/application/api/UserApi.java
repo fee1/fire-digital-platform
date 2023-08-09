@@ -3,12 +3,10 @@ package com.huajie.application.api;
 import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
-import com.huajie.application.api.request.LoginRequestVO;
 import com.huajie.application.api.request.TenantUsersRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
-import com.huajie.application.api.response.LoginResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.application.service.UserAppService;
 import io.swagger.annotations.Api;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.security.Principal;
 import java.util.List;
 
 /**
@@ -53,7 +50,7 @@ public class UserApi {
 
     @ApiOperation(value = "用户列表")
     @GetMapping("/tenant/users")
-    public ApiResult<ApiPage<UserDetailResponseVO>> getTenantUsers(@ApiParam("当前页码")@RequestParam(required = false, defaultValue = "0") Integer pageNum,
+    public ApiResult<ApiPage<UserDetailResponseVO>> getPageTenantUsers(@ApiParam("当前页码")@RequestParam(required = false, defaultValue = "0") Integer pageNum,
                                                                    @ApiParam("每页数量")@RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                                    @ApiParam("用户账号")@RequestParam(required = false) String userNo,
                                                                    @ApiParam("手机号")@RequestParam(required = false) String phone,
@@ -64,7 +61,7 @@ public class UserApi {
         tenantUsersRequestVO.setPhone(phone);
         tenantUsersRequestVO.setUserName(userName);
         tenantUsersRequestVO.setUserNo(userNo);
-        List<UserDetailResponseVO> responseVOS = userAppService.getTenantUsers(tenantUsersRequestVO);
+        List<UserDetailResponseVO> responseVOS = userAppService.getPageTenantUsers(tenantUsersRequestVO);
         return ApiResult.ok(ApiPage.restPage(responseVOS));
     }
 

@@ -1,15 +1,11 @@
 package com.huajie.application.service;
 
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.request.ChangePasswordRequestVO;
-import com.huajie.application.api.request.LoginRequestVO;
 import com.huajie.application.api.request.TenantUsersRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
-import com.huajie.application.api.response.LoginResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
@@ -20,12 +16,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +37,8 @@ public class UserAppService {
     @Autowired
     private RoleService roleService;
 
-    public Page<UserDetailResponseVO> getTenantUsers(TenantUsersRequestVO requestVO) {
-        Page<User> users = userService.getTenantUsers(requestVO.getPageNum(), requestVO.getPageSize(),requestVO.getUserNo(), requestVO.getPhone(), requestVO.getUserName());
+    public Page<UserDetailResponseVO> getPageTenantUsers(TenantUsersRequestVO requestVO) {
+        Page<User> users = userService.getPageTenantUsers(requestVO.getPageNum(), requestVO.getPageSize(),requestVO.getUserNo(), requestVO.getPhone(), requestVO.getUserName());
 //        List<User> users = userService.getUsersByTenantId(id);
         Set<Integer> roleIds = users.stream().map(User::getRoleId).collect(Collectors.toSet());
         List<Role> roles = roleService.getRolesByIds(roleIds);
