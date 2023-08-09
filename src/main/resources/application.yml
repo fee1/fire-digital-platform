@@ -35,4 +35,4 @@ swagger:
   description: 接口api
   version: 1.0
   name: 接口api
-  apiBasePackage: com.huajie
+  apiBasePackage: com.huajie.application.api

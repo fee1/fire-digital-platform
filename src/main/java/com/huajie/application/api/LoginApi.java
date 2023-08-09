@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author zhuxiaofeng
  * @date 2023/8/8
  */
-@Api("登录相关")
+@Api(tags = "登录相关")
 @RestController
 @RequestMapping("oauth")
 public class LoginApi {
