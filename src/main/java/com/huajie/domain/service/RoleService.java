@@ -1,6 +1,8 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.huajie.domain.entity.Role;
 import com.huajie.infrastructure.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,11 @@ public class RoleService {
         return roleMapper.selectById(roleId);
     }
 
-    public List<Role> getRolesByTenantId(Integer tenantId) {
+    public Page<Role> getPageRolesByTenantId(Integer tenantId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Role::getTenantId, tenantId);
-        return roleMapper.selectList(queryWrapper);
+        return (Page<Role>) roleMapper.selectList(queryWrapper);
     }
 
     public List<Role> getRolesByIds(Set<Integer> roleIds) {

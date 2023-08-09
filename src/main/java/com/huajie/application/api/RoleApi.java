@@ -1,5 +1,7 @@
 package com.huajie.application.api;
 
+import com.github.pagehelper.Page;
+import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.RoleDetailRequestVO;
 import com.huajie.application.api.response.RoleDetailResponseVO;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,9 +33,10 @@ public class RoleApi {
 
     @ApiOperation("角色列表")
     @GetMapping("list")
-    public ApiResult<List<RoleDetailResponseVO>> getRoleList(){
-        List<RoleDetailResponseVO> responseVOList = roleAppService.getRoleList();
-        return ApiResult.ok(responseVOList);
+    public ApiResult<ApiPage<RoleDetailResponseVO>> getPageRoleList(@RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                                    @RequestParam(required = false, defaultValue = "10") Integer pageSize){
+        Page<RoleDetailResponseVO> responseVOList = roleAppService.getPageRoleList(pageNum, pageSize);
+        return ApiResult.ok(ApiPage.restPage(responseVOList));
     }
 
     @ApiOperation("新增角色")

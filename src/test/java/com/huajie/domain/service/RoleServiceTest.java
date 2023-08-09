@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author zhuxiaofeng
  * @date 2023/8/7
@@ -20,7 +18,7 @@ public class RoleServiceTest extends BaseTest {
 
     @Test
     public void getRolesByTenantId() {
-        List<Role> rolesByTenantId = roleService.getRolesByTenantId(2);
+        List<Role> rolesByTenantId = roleService.getPageRolesByTenantId(2, 1, 100);
         System.out.println(rolesByTenantId);
     }
 }

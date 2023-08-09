@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.github.pagehelper.Page;
 import com.huajie.application.api.response.RoleDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
@@ -23,12 +24,13 @@ public class RoleAppService {
     @Autowired
     private RoleService roleService;
 
-    public List<RoleDetailResponseVO> getRoleList() {
+    public Page<RoleDetailResponseVO> getPageRoleList(Integer pageNum, Integer pageSize) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
         Integer id = authorities.getTenant().getId();
-        List<Role> roles = roleService.getRolesByTenantId(id);
-        List<RoleDetailResponseVO> responseVOS = new ArrayList<>();
+        Page<Role> roles = roleService.getPageRolesByTenantId(id, pageNum, pageSize);
+        Page<RoleDetailResponseVO> responseVOS = new Page<>();
+        BeanUtils.copyProperties(roles, responseVOS);
         for (Role role : roles) {
             RoleDetailResponseVO roleDetailResponseVO = new RoleDetailResponseVO();
             BeanUtils.copyProperties(role, roleDetailResponseVO);
