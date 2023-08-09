@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * @author zhuxiaofeng
@@ -56,11 +55,13 @@ public class SysDicApi {
 
     @ApiOperation("字典值列表")
     @GetMapping("value/list")
-    public ApiResult<List<DicValueResponseVO>> getDicValueList(@Valid @ApiParam("字典code") @RequestParam
+    public ApiResult<ApiPage<DicValueResponseVO>> getPageDicValueList(@RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                                   @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                                   @Valid @ApiParam("字典code") @RequestParam
                                                                    @NotBlank(message = "字典code不能为空")
                                                                    @NotNull(message = "字典code不能为空") String dicCode){
-        List<DicValueResponseVO> dicValueList = sysDicAppService.getDicValueList(dicCode);
-        return ApiResult.ok(dicValueList);
+        Page<DicValueResponseVO> dicValueList = sysDicAppService.getPageDicValueList(dicCode, pageNum, pageSize);
+        return ApiResult.ok(ApiPage.restPage(dicValueList));
     }
 
     @ApiOperation("新增字典值列表")

@@ -56,10 +56,11 @@ public class SysDicService {
         sysDicMapper.insert(sysDic);
     }
 
-    public List<SysDicValue> getDicValueList(String dicCode) {
+    public Page<SysDicValue> getDicValueList(String dicCode, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         QueryWrapper<SysDicValue> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(SysDicValue::getDicCode, dicCode);
-        return sysDicValueMapper.selectList(queryWrapper);
+        return (Page<SysDicValue>) sysDicValueMapper.selectList(queryWrapper);
     }
 
     public void addDicValue(DicValueAddDTO dicValueAddDTO) {

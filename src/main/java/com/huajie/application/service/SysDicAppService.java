@@ -42,9 +42,10 @@ public class SysDicAppService {
         sysDicService.addDic(requestVO.getDicCode(), requestVO.getDicName(), requestVO.getDescription());
     }
 
-    public List<DicValueResponseVO> getDicValueList(String dicCode) {
-        List<SysDicValue> sysDicValueList = sysDicService.getDicValueList(dicCode);
-        List<DicValueResponseVO> dicValueResponseVOList = new ArrayList<>();
+    public Page<DicValueResponseVO> getPageDicValueList(String dicCode, Integer pageNum, Integer pageSize) {
+        Page<SysDicValue> sysDicValueList = sysDicService.getDicValueList(dicCode, pageNum, pageSize);
+        Page<DicValueResponseVO> dicValueResponseVOList = new Page<>();
+        BeanUtils.copyProperties(sysDicValueList, dicValueResponseVOList);
         for (SysDicValue sysDicValue : sysDicValueList) {
             DicValueResponseVO dicValueResponseVO = new DicValueResponseVO();
             BeanUtils.copyProperties(sysDicValue, dicValueResponseVO);
