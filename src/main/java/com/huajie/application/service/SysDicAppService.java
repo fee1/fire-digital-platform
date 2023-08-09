@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.github.pagehelper.Page;
 import com.huajie.application.api.request.DicAddRequestVO;
 import com.huajie.application.api.request.DicValueAddRequestVO;
 import com.huajie.application.api.response.DicResponseVO;
@@ -25,9 +26,10 @@ public class SysDicAppService {
     @Autowired
     private SysDicService sysDicService;
 
-    public List<DicResponseVO> getDicList(String dicCode, String description) {
-        List<SysDic> sysDics = sysDicService.getDicList(dicCode, description);
-        List<DicResponseVO> dicResponseVOList = new ArrayList<>();
+    public Page<DicResponseVO> getPageDicList(String dicCode, String description, Integer pageNum, Integer pageSize) {
+        Page<SysDic> sysDics = sysDicService.getDicList(dicCode, description, pageNum, pageSize);
+        Page<DicResponseVO> dicResponseVOList = new Page<>();
+        BeanUtils.copyProperties(sysDics, dicResponseVOList);
         for (SysDic sysDic : sysDics) {
             DicResponseVO dicResponseVO = new DicResponseVO();
             BeanUtils.copyProperties(sysDic, dicResponseVO);

@@ -1,6 +1,8 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.entity.SysDic;
 import com.huajie.domain.entity.SysDicValue;
@@ -28,7 +30,8 @@ public class SysDicService {
     @Autowired
     private SysDicValueMapper sysDicValueMapper;
 
-    public List<SysDic> getDicList(String dicCode, String description) {
+    public Page<SysDic> getDicList(String dicCode, String description, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         QueryWrapper<SysDic> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(dicCode)) {
             queryWrapper.lambda().eq(SysDic::getDicCode, dicCode);
@@ -36,7 +39,7 @@ public class SysDicService {
         if (StringUtils.isNotBlank(description)){
             queryWrapper.lambda().like(SysDic::getDescription, description);
         }
-        return sysDicMapper.selectList(queryWrapper);
+        return (Page<SysDic>) sysDicMapper.selectList(queryWrapper);
     }
 
     public void addDic(String dicCode, String dicName, String description) {
