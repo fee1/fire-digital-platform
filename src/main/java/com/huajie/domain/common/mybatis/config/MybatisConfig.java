@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.github.pagehelper.PageInterceptor;
 import com.google.common.collect.Lists;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.io.VFS;
@@ -66,7 +67,7 @@ public class MybatisConfig {
     private Interceptor[] generateInterceptor(){
         List<Interceptor> interceptors = Lists.newArrayList();
         interceptors.add(getOptimisticLockerInterceptor());
-        interceptors.add(paginationInterceptor());
+        interceptors.add(pageInterceptor());
         return interceptors.toArray(new Interceptor[0]);
 
     }
@@ -88,8 +89,8 @@ public class MybatisConfig {
      */
     @Primary
     @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
+    public PageInterceptor pageInterceptor() {
+        return new PageInterceptor();
     }
 
     @Primary
