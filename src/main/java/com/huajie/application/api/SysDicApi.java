@@ -40,8 +40,8 @@ public class SysDicApi {
     @GetMapping("list")
     public ApiResult<ApiPage<DicResponseVO>> getPageDicList(@RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                                             @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                            @ApiParam("字典code") @RequestParam String dicCode,
-                                                        @ApiParam("描述") @RequestParam String description){
+                                                            @ApiParam("字典code") @RequestParam(required = false) String dicCode,
+                                                        @ApiParam("描述") @RequestParam(required = false) String description){
         Page<DicResponseVO> dicResponseVOS = sysDicAppService.getPageDicList(dicCode, description, pageNum, pageSize);
         return ApiResult.ok(ApiPage.restPage(dicResponseVOS));
     }

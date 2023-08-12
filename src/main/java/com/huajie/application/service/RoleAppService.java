@@ -1,6 +1,7 @@
 package com.huajie.application.service;
 
 import com.github.pagehelper.Page;
+import com.huajie.application.api.request.RoleAddRequestVO;
 import com.huajie.application.api.response.RoleDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Role;
@@ -8,6 +9,7 @@ import com.huajie.domain.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,12 @@ public class RoleAppService {
 
     public Page<RoleDetailResponseVO> getPageRoleList(Integer pageNum, Integer pageSize) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
+        CustomizeGrantedAuthority authorities = null;
+        for (GrantedAuthority authority : auth.getAuthorities()) {
+            authorities = (CustomizeGrantedAuthority) authority;
+            break;
+        }
+
         Integer id = authorities.getTenant().getId();
         Page<Role> roles = roleService.getPageRolesByTenantId(id, pageNum, pageSize);
         Page<RoleDetailResponseVO> responseVOS = new Page<>();
@@ -44,5 +51,9 @@ public class RoleAppService {
         RoleDetailResponseVO responseVO = new RoleDetailResponseVO();
         BeanUtils.copyProperties(role, responseVO);
         return responseVO;
+    }
+
+    public void add(RoleAddRequestVO requestVO) {
+        roleService.add(requestVO.getRoleName(), requestVO.getRoleCode(), requestVO.getDescription(), requestVO.getMenuIds());
     }
 }

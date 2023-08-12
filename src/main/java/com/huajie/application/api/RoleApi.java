@@ -3,6 +3,7 @@ package com.huajie.application.api;
 import com.github.pagehelper.Page;
 import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
+import com.huajie.application.api.request.RoleAddRequestVO;
 import com.huajie.application.api.request.RoleDetailRequestVO;
 import com.huajie.application.api.response.RoleDetailResponseVO;
 import com.huajie.application.service.RoleAppService;
@@ -41,8 +42,8 @@ public class RoleApi {
 
     @ApiOperation("新增角色")
     @PostMapping("add")
-    public ApiResult<Void> addRole(){
-//        roleAppService.add();
+    public ApiResult<Void> addRole(@RequestBody@Validated RoleAddRequestVO requestVO){
+        roleAppService.add(requestVO);
         return ApiResult.ok();
     }
 

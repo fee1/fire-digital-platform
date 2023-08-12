@@ -22,13 +22,13 @@ public class FunctionResponseVO {
     private String api;
 
     @ApiModelProperty("是否限制登录态")
-    private Byte limitLogin;
+    private Boolean limitLogin;
 
     @ApiModelProperty("是否限制权限")
-    private Byte limitAuth;
+    private Boolean limitAuth;
 
     @ApiModelProperty("是否限制收费")
-    private Byte limitFee;
+    private Boolean limitFee;
 
     @ApiModelProperty("请求描述")
     private String requestDesc;

@@ -23,4 +23,11 @@ public class RoleMenuRelationService {
         queryWrapper.lambda().eq(RoleMenuRelation::getRoleId, roleId);
         return roleMenuRelationMapper.selectList(queryWrapper);
     }
+
+    public void add(Integer roleId, Integer menuId) {
+        RoleMenuRelation roleMenuRelation = new RoleMenuRelation();
+        roleMenuRelation.setMenuId(menuId);
+        roleMenuRelation.setRoleId(roleId);
+        roleMenuRelationMapper.insert(roleMenuRelation);
+    }
 }
