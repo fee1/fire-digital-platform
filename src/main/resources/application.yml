@@ -5,7 +5,7 @@ spring:
     name: fire-digital-platform
   datasource:
     druid:
-      url: jdbc:mysql://localhost:3306/fire_digital_platform
+      url: jdbc:mysql://localhost:3306/fire_digital_platform?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
       username: root
       password: gaoqianxiaodui123
       driver-class-name: com.mysql.jdbc.Driver
