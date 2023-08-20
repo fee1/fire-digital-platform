@@ -1,5 +1,6 @@
 package com.huajie.domain.common.oauth2;
 
+import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.oauth2.model.RoleModel;
 import com.huajie.domain.common.oauth2.model.TenantModel;
@@ -89,6 +90,9 @@ public class UserOauth2ServiceImpl implements UserDetailsService {
         List<RoleFunctionRelation> roleFunctionRelations = roleFunctionRelationService.getFunctionRelationByRoleId(user.getRoleId());
         Tenant tenant = tenantService.getTenantByTenantId(user.getTenantId());
 
+        if (role == null){
+            throw new ApiException("该用户没有角色，请给予角色后再尝试登录");
+        }
         CustomizeGrantedAuthority customizeGrantedAuthority = new CustomizeGrantedAuthority();
         RoleModel roleModel = new RoleModel();
         BeanUtils.copyProperties(role, roleModel);
