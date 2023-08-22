@@ -1,6 +1,7 @@
 package com.huajie.domain.common.druid.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.huajie.domain.common.utils.Base64Util;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,7 +25,7 @@ public class DruidDataSourceConfig {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setUrl(properties.getDbUrl());
         druidDataSource.setUsername(properties.getUsername());
-        druidDataSource.setPassword(properties.getPassword());
+        druidDataSource.setPassword(Base64Util.decrypt(properties.getPassword()));
         druidDataSource.setDriverClassName(properties.getDriverClassName());
         druidDataSource.setInitialSize(properties.getInitialSize());
         druidDataSource.setMinIdle(properties.getMinIdle());
