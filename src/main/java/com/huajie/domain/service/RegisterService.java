@@ -25,4 +25,9 @@ public class RegisterService {
         userService.addUsers(userList);
     }
 
+    public void regiestGoverment(Tenant tenant, List<User> userList) {
+        tenantService.add(tenant);
+        userService.addUsers(userList);
+    }
+
 }

@@ -16,4 +16,14 @@ public class RoleCodeConstants {
      */
     public static final String ENT_OPERATOR_CODE = "ent_operator";
 
+    /**
+     * 政府消防安全责任人code
+     */
+    public static final String GOV_ADMIN_CODE = "gov_admin";
+
+    /**
+     * 政府消防安全管理人code
+     */
+    public static final String GOV_OPERATOR_CODE = "gov_operator";
+
 }

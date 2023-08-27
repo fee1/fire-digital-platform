@@ -31,7 +31,7 @@ public class Tenant implements Serializable {
 
     private String entIndustryClassification;
 
-    private String entFireType;
+    private String EntFireType;
 
     private String governmentType;
 

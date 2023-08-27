@@ -2,6 +2,7 @@ package com.huajie.application.api;
 
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.EnterpriseRegiestRequestVO;
+import com.huajie.application.api.request.GovermentRegiestRequestVO;
 import com.huajie.application.service.RegisterAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,13 @@ public class RegisterApi {
     @PostMapping(value = "enterprise")
     public ApiResult<Void> regiestEnterprise(@RequestBody EnterpriseRegiestRequestVO regiestRequestVO){
         registerAppService.regiestEnterprise(regiestRequestVO);
+        return ApiResult.ok();
+    }
+
+    @ApiOperation("政府注册")
+    @PostMapping(value = "goverment")
+    public ApiResult<Void> regiestGoverment(@RequestBody GovermentRegiestRequestVO regiestRequestVO){
+        registerAppService.regiestGoverment(regiestRequestVO);
         return ApiResult.ok();
     }
 
