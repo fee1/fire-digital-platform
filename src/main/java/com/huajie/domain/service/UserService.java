@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.Date;
@@ -156,5 +157,11 @@ public class UserService {
         return (Page<User>)userMapper.selectList(queryWrapper);
     }
 
-
+    //todo 优化成批量插入
+    @Transactional(rollbackFor = Exception.class)
+    public void addUsers(List<User> userList) {
+        for (User user : userList) {
+            this.addUser(user);
+        }
+    }
 }

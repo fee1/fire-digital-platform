@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class UserAddRequestVO {
 
-    //todo 确认用户账号和编号
     @ApiModelProperty("用户编号")
     @NotNull(message = "用户编号不能为空")
     @NotBlank(message = "用户编号不能为空")
@@ -41,6 +40,6 @@ public class UserAddRequestVO {
 
     @ApiModelProperty("分配的角色id")
     @NotNull(message = "分配的角色id不能位空")
-    private String roleId;
+    private Integer roleId;
 
 }

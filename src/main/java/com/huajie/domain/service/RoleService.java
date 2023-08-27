@@ -66,4 +66,10 @@ public class RoleService {
             roleMenuRelationService.add(role.getId(), menuId);
         }
     }
+
+    public Role getRoleByCode(String entAdminCode) {
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Role::getRoleCode, entAdminCode);
+        return this.roleMapper.selectOne(queryWrapper);
+    }
 }

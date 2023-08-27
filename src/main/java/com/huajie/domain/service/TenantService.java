@@ -18,4 +18,8 @@ public class TenantService {
     public Tenant getTenantByTenantId(Integer tenantId) {
         return tenantMapper.selectById(tenantId);
     }
+
+    public void add(Tenant tenant) {
+        this.tenantMapper.insert(tenant);
+    }
 }

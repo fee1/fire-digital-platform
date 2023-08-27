@@ -7,10 +7,22 @@
     <result column="tenant_type" jdbcType="VARCHAR" property="tenantType" />
     <result column="status" jdbcType="SMALLINT" property="status" />
     <result column="effective_end_date" jdbcType="TIMESTAMP" property="effectiveEndDate" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="region" jdbcType="VARCHAR" property="region" />
+    <result column="street" jdbcType="VARCHAR" property="street" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="enterprise_type" jdbcType="VARCHAR" property="enterpriseType" />
+    <result column="ent_industry_classification" jdbcType="VARCHAR" property="entIndustryClassification" />
+    <result column="ent_fire_type" jdbcType="VARCHAR" property="entFireType" />
+    <result column="government_type" jdbcType="VARCHAR" property="governmentType" />
+    <result column="gov_industry_sector" jdbcType="VARCHAR" property="govIndustrySector" />
+    <result column="approve_status" jdbcType="SMALLINT" property="approveStatus" />
+    <result column="approve_user" jdbcType="INTEGER" property="approveUser" />
+    <result column="approve_date" jdbcType="TIMESTAMP" property="approveDate" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
   </resultMap>
-
 </mapper>
