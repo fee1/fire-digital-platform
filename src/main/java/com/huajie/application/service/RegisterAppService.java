@@ -1,6 +1,5 @@
 package com.huajie.application.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.EnterpriseRegiestRequestVO;
 import com.huajie.application.api.request.GovermentRegiestRequestVO;
@@ -76,11 +75,13 @@ public class RegisterAppService {
         for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getEntAdminList()) {
             User user = new User();
             BeanUtils.copyProperties(userAddRequestVO, user);
+            user.setRoleId(entAdminCodeRole.getId());
             userList.add(user);
         }
         for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getEntOperatorList()) {
             User user = new User();
             BeanUtils.copyProperties(userAddRequestVO, user);
+            user.setRoleId(entOperatorCodeRole.getId());
             userList.add(user);
         }
         registerService.regiestEnterprise(tenant, userList);
@@ -124,20 +125,22 @@ public class RegisterAppService {
         tenant.setGovernmentType(regiestRequestVO.getGovernmentType());
         tenant.setGovIndustrySector(regiestRequestVO.getGovIndustrySector());
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
-        tenant.setEntIndustryClassification(JSONObject.toJSONString(regiestRequestVO.getEntIndustryClassification()));
+//        tenant.setEntIndustryClassification(JSONObject.toJSONString(regiestRequestVO.getEntIndustryClassification()));
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
 
         List<User> userList = new ArrayList<>();
         for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getGovAdminList()) {
             User user = new User();
             BeanUtils.copyProperties(userAddRequestVO, user);
+            user.setRoleId(govAdminCodeRole.getId());
             userList.add(user);
         }
         for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getGovOperatorList()) {
             User user = new User();
             BeanUtils.copyProperties(userAddRequestVO, user);
+            user.setRoleId(govOperatorCodeRole.getId());
             userList.add(user);
         }
-        this.registerService.regiestGoverment(tenant, userList);
+        this.registerService.regiestGoverment(tenant, userList, regiestRequestVO.getEntIndustryClassification());
     }
 }

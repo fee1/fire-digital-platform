@@ -1,5 +1,7 @@
 package com.huajie.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -7,6 +9,8 @@ import java.util.Date;
 
 @Data
 public class Tenant implements Serializable {
+
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private String tenantName;
@@ -31,7 +35,7 @@ public class Tenant implements Serializable {
 
     private String entIndustryClassification;
 
-    private String EntFireType;
+    private String entFireType;
 
     private String governmentType;
 

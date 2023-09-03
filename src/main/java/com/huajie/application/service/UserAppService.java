@@ -8,6 +8,8 @@ import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
+import com.huajie.domain.common.oauth2.model.TenantModel;
+import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.service.RoleService;
@@ -62,9 +64,8 @@ public class UserAppService {
     public void addUser(UserAddRequestVO requestVO) {
         User user = new User();
         BeanUtils.copyProperties(requestVO, user);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomizeGrantedAuthority authorities = (CustomizeGrantedAuthority) auth.getAuthorities();
-        Integer id = authorities.getTenant().getId();
+        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Integer id = currentTenant.getId();
         user.setTenantId(id);
         userService.addUser(user);
     }
@@ -90,7 +91,7 @@ public class UserAppService {
     }
 
     public CurrentUserResponseVO getCurrentUser() {
-        org.springframework.security.core.userdetails.User currentUser = userService.getCurrentUser();
+        org.springframework.security.core.userdetails.User currentUser = UserContext.getCurrentLoginUser();
         CurrentUserResponseVO currentUserResponseVO = new CurrentUserResponseVO();
         BeanUtils.copyProperties(currentUser, currentUserResponseVO);
         currentUserResponseVO.setAuthorities(currentUser.getAuthorities());

@@ -81,6 +81,7 @@ public class UserService {
         if (!Objects.isNull(userByPhone)){
             throw new ApiException("用户手机号不可与现存用户相同");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userMapper.insert(user);
     }
 
@@ -123,13 +124,6 @@ public class UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, userId);
         userMapper.update(updateInfo, queryWrapper);
-    }
-
-    public org.springframework.security.core.userdetails.User getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        org.springframework.security.core.userdetails.User user =
-                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        return user;
     }
 
     public Page<User> getPageTenantUsers(Integer pageNum, Integer pageSize, String userNo, String phone, String userName) {
