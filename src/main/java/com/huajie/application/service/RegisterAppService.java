@@ -31,31 +31,7 @@ public class RegisterAppService {
     @Autowired
     private RegisterService registerService;
 
-    @Autowired
-    private RoleService roleService;
-
     public void regiestEnterprise(EnterpriseRegiestRequestVO regiestRequestVO) {
-        List<UserAddRequestVO> entAdminList = regiestRequestVO.getEntAdminList();
-        Role entAdminCodeRole = roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
-        for (UserAddRequestVO userAddRequestVO : entAdminList) {
-            if (entAdminCodeRole == null){
-                throw new ServerException("查询不到 企业消防安全责任人 角色信息");
-            }
-            if (!userAddRequestVO.getRoleId().equals(entAdminCodeRole.getId())){
-                throw new ApiException("企业消防安全责任人 的roleId必须为: " + entAdminCodeRole.getId());
-            }
-        }
-        List<UserAddRequestVO> entOperatorList = regiestRequestVO.getEntOperatorList();
-        Role entOperatorCodeRole = roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
-        for (UserAddRequestVO userAddRequestVO : entOperatorList) {
-
-            if (entOperatorCodeRole == null){
-                throw new ServerException("查询不到 企业消防安全管理人 角色信息");
-            }
-            if (!userAddRequestVO.getRoleId().equals(entOperatorCodeRole.getId())){
-                throw new ApiException("企业消防安全管理人 的roleId必须为: " + entOperatorCodeRole.getId());
-            }
-        }
         Tenant tenant = new Tenant();
         tenant.setTenantName(regiestRequestVO.getEnterpriseName());
         tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
@@ -71,46 +47,10 @@ public class RegisterAppService {
         tenant.setEntIndustryClassification(regiestRequestVO.getEntIndustryClassification());
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
 
-        List<User> userList = new ArrayList<>();
-        for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getEntAdminList()) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(entAdminCodeRole.getId());
-            userList.add(user);
-        }
-        for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getEntOperatorList()) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(entOperatorCodeRole.getId());
-            userList.add(user);
-        }
-        registerService.regiestEnterprise(tenant, userList);
+        registerService.regiestEnterprise(tenant, regiestRequestVO.getEntAdminList(), regiestRequestVO.getEntOperatorList());
     }
 
     public void regiestGoverment(GovermentRegiestRequestVO regiestRequestVO) {
-        List<UserAddRequestVO> govAdminList = regiestRequestVO.getGovAdminList();
-        Role govAdminCodeRole = roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
-        for (UserAddRequestVO userAddRequestVO : govAdminList) {
-            if (govAdminCodeRole == null){
-                throw new ServerException("查询不到 政府消防安全责任人 角色信息");
-            }
-            if (!userAddRequestVO.getRoleId().equals(govAdminCodeRole.getId())){
-                throw new ApiException("政府消防安全责任人 的roleId必须为: " + govAdminCodeRole.getId());
-            }
-        }
-
-        List<UserAddRequestVO> govOperatorList = regiestRequestVO.getGovOperatorList();
-        Role govOperatorCodeRole = roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
-        for (UserAddRequestVO userAddRequestVO : govOperatorList) {
-
-            if (govOperatorCodeRole == null){
-                throw new ServerException("查询不到 政府消防安全管理人 角色信息");
-            }
-            if (!userAddRequestVO.getRoleId().equals(govOperatorCodeRole.getId())){
-                throw new ApiException("政府消防安全管理人 的roleId必须为: " + govOperatorCodeRole.getId());
-            }
-        }
-
         Tenant tenant = new Tenant();
         tenant.setTenantName(regiestRequestVO.getGovernmentName());
         tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
@@ -127,20 +67,7 @@ public class RegisterAppService {
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
 //        tenant.setEntIndustryClassification(JSONObject.toJSONString(regiestRequestVO.getEntIndustryClassification()));
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
-
-        List<User> userList = new ArrayList<>();
-        for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getGovAdminList()) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(govAdminCodeRole.getId());
-            userList.add(user);
-        }
-        for (UserAddRequestVO userAddRequestVO : regiestRequestVO.getGovOperatorList()) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(govOperatorCodeRole.getId());
-            userList.add(user);
-        }
-        this.registerService.regiestGoverment(tenant, userList, regiestRequestVO.getEntIndustryClassification());
+        this.registerService.regiestGoverment(tenant, regiestRequestVO.getGovAdminList(),
+                regiestRequestVO.getGovOperatorList(), regiestRequestVO.getEntIndustryClassification());
     }
 }
