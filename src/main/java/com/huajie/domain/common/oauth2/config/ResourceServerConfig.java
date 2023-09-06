@@ -32,7 +32,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                                         "/role/**",
                         "/sys/dic/**",
                         "/menu/**",
-                        "/function/**");
+                        "/function/**",
+                        "/place/**",
+                        "/device/**"
+                        );
+
     }
 
 }

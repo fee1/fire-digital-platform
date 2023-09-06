@@ -1,9 +1,6 @@
 package com.huajie.domain.common.oauth2.model;
 
-import com.huajie.domain.entity.Role;
-import com.huajie.domain.entity.RoleFunctionRelation;
-import com.huajie.domain.entity.RoleMenuRelation;
-import com.huajie.domain.entity.Tenant;
+import com.huajie.domain.entity.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -16,6 +13,18 @@ import java.util.List;
 @Data
 public class CustomizeGrantedAuthority implements GrantedAuthority {
 
+    /**
+     * 用户信息
+     */
+    private Integer userId;
+
+    private String userName;
+
+    private String userNo;
+
+    private String phone;
+
+    private String email;
     /**
      * 角色信息
      */

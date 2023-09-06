@@ -111,6 +111,12 @@ public class UserOauth2ServiceImpl implements UserDetailsService {
         TenantModel tenantModel = new TenantModel();
         BeanUtils.copyProperties(tenant, tenantModel);
         customizeGrantedAuthority.setTenant(tenantModel);
+
+        customizeGrantedAuthority.setUserId(user.getId());
+        customizeGrantedAuthority.setUserNo(user.getUserNo());
+        customizeGrantedAuthority.setUserName(user.getUserName());
+        customizeGrantedAuthority.setPhone(user.getPhone());
+        customizeGrantedAuthority.setEmail(user.getEmail());
         return customizeGrantedAuthority;
     }
 
