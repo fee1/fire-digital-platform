@@ -1,12 +1,14 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.infrastructure.mapper.TenantMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +26,8 @@ public class TenantService {
     }
 
     public void add(Tenant tenant) {
+        tenant.setCreateUser(SystemConstants.SYSTEM);
+        tenant.setCreateTime(new Date());
         this.tenantMapper.insert(tenant);
     }
 

@@ -4,6 +4,7 @@ import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
+import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.domain.entity.GovIndustryMap;
@@ -88,21 +89,25 @@ public class RegisterService {
             throw new ServerException("企业消防安全管理人 权限不存在");
         }
 
+        //租户信息保存
+        tenantService.add(tenant);
         List<User> userList = new ArrayList<>();
         for (UserAddRequestVO userAddRequestVO : entAdminList) {
             User user = new User();
             BeanUtils.copyProperties(userAddRequestVO, user);
             user.setRoleId(entAdminCodeRole.getId());
+            user.setTenantId(tenant.getId());
+            user.setCreateUser(SystemConstants.SYSTEM);
             userList.add(user);
         }
         for (UserAddRequestVO userAddRequestVO : entOperatorList) {
             User user = new User();
             BeanUtils.copyProperties(userAddRequestVO, user);
             user.setRoleId(entOperatorCodeRole.getId());
+            user.setTenantId(tenant.getId());
+            user.setCreateUser(SystemConstants.SYSTEM);
             userList.add(user);
         }
-        //租户信息保存
-        tenantService.add(tenant);
         //用户信息保存
         userService.addUsers(userList);
 
@@ -150,6 +155,7 @@ public class RegisterService {
         tenantPayRecord.setTenantId(tenant.getId());
         tenantPayRecord.setOutTradeNo(outTradeNo);
         tenantPayRecord.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+        tenantPayRecord.setCreateUser(SystemConstants.SYSTEM);
         tenantPayRecordMapper.insert(tenantPayRecord);
 
         EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
