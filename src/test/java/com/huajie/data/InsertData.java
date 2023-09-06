@@ -44,6 +44,11 @@ public class InsertData extends BaseTest {
     }
 
     @Test
+    public void decode(){
+        System.out.println(passwordEncoder.encode("123456"));
+    }
+
+    @Test
     public void insertRole(){
         Role role = new Role();
         role.setRoleCode("asdfaf");

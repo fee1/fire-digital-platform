@@ -4,6 +4,7 @@ import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.EnterpriseRegiestRequestVO;
 import com.huajie.application.api.request.GovermentRegiestRequestVO;
 import com.huajie.application.api.request.UserAddRequestVO;
+import com.huajie.application.api.response.EnterpriseRegiestResponseVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.TenantStatusConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
@@ -11,12 +12,15 @@ import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
+import com.huajie.domain.model.EnterpriseRegiestDTO;
 import com.huajie.domain.service.RegisterService;
 import com.huajie.domain.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +35,8 @@ public class RegisterAppService {
     @Autowired
     private RegisterService registerService;
 
-    public void regiestEnterprise(EnterpriseRegiestRequestVO regiestRequestVO) {
+
+    public EnterpriseRegiestResponseVO regiestEnterprise(EnterpriseRegiestRequestVO regiestRequestVO) {
         Tenant tenant = new Tenant();
         tenant.setTenantName(regiestRequestVO.getEnterpriseName());
         tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
@@ -47,7 +52,13 @@ public class RegisterAppService {
         tenant.setEntIndustryClassification(regiestRequestVO.getEntIndustryClassification());
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
 
-        registerService.regiestEnterprise(tenant, regiestRequestVO.getEntAdminList(), regiestRequestVO.getEntOperatorList());
+        EnterpriseRegiestDTO regiestDTO = registerService.regiestEnterprise(tenant, regiestRequestVO.getEntAdminList(), regiestRequestVO.getEntOperatorList());
+
+
+        EnterpriseRegiestResponseVO enterpriseRegiestResponseVO = new EnterpriseRegiestResponseVO();
+        BeanUtils.copyProperties(regiestDTO, enterpriseRegiestResponseVO);
+        enterpriseRegiestResponseVO.setAmount(regiestDTO.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        return enterpriseRegiestResponseVO;
     }
 
     public void regiestGoverment(GovermentRegiestRequestVO regiestRequestVO) {

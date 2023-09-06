@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huajie.infrastructure.mapper.TenantPayRecordMapper">
+  <resultMap id="BaseResultMap" type="com.huajie.domain.entity.TenantPayRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="tenant_id" jdbcType="INTEGER" property="tenantId" />
+    <result column="pay_amount" jdbcType="VARCHAR" property="payAmount" />
+    <result column="pay_channel" jdbcType="VARCHAR" property="payChannel" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+  </resultMap>
+</mapper>

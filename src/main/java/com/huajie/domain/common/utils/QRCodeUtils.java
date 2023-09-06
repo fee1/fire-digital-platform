@@ -5,6 +5,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -43,12 +44,12 @@ public class QRCodeUtils {
     /**
      * 生成二维码
      * @param content 二维码内容
-     * @param logoPath logo路径，可为空
+     * @param saveImagePath logo路径，可为空
      * @param needCompress 是否压缩
      * @return
      * @throws Exception
      */
-    public static BufferedImage encode(String content, String logoPath,String imgResourceType,boolean needCompress) throws Exception {
+    public static BufferedImage encode(String content, String saveImagePath,String imgResourceType,boolean needCompress) throws Exception {
         Hashtable hints = new Hashtable();
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
@@ -64,26 +65,26 @@ public class QRCodeUtils {
                 image.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000: 0xFFFFFFFF);
             }
         }
-        if (logoPath == "") {
+        if (StringUtils.isBlank(saveImagePath)) {
             return image;
         }
         // 插入图片
-        insertImage(image, logoPath,imgResourceType, needCompress);
+        insertImage(image, saveImagePath,imgResourceType, needCompress);
         return image;
     }
 
     /**
      * 插入描述图片
      * @param source
-     * @param imgPath
+     * @param saveImgPath
      * @param imgResourceType 图片来源 LOCAL本地 WEB网络
      * @param needCompress 是否压缩
      * @throws Exception
      */
-    private static void insertImage(BufferedImage source, String imgPath,String imgResourceType,boolean needCompress) throws Exception {
+    private static void insertImage(BufferedImage source, String saveImgPath,String imgResourceType,boolean needCompress) throws Exception {
         Image src = null;
         if(IMG_RESOURCE_TYPE_WEB.equals(imgResourceType)) {
-            URL url = new URL(imgPath);
+            URL url = new URL(saveImgPath);
             //打开链接
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             //设置请求方式为"GET"
@@ -93,12 +94,12 @@ public class QRCodeUtils {
             //通过输入流获取图片数据
             src = ImageIO.read(conn.getInputStream());
         }else{
-            File file = new File(imgPath);
+            File file = new File(saveImgPath);
             if (!file.exists()) {
                 //文件不存在
                 return;
             }
-            src = ImageIO.read(new File(imgPath));
+            src = ImageIO.read(new File(saveImgPath));
         }
         if(src==null){
             return;

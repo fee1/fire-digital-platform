@@ -1,24 +1,38 @@
 package com.huajie.domain.service;
 
-import com.huajie.application.api.common.exception.ApiException;
+import com.alipay.api.domain.AlipayTradeAppPayModel;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
-import com.huajie.domain.common.constants.TenantStatusConstants;
-import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.exception.ServerException;
+import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.Tenant;
+import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.entity.User;
+import com.huajie.domain.model.EnterpriseRegiestDTO;
+import com.huajie.infrastructure.external.oss.AliyunFileClient;
+import com.huajie.infrastructure.external.pay.CustomAlipayClient;
 import com.huajie.infrastructure.mapper.GovIndustryMapMapper;
+import com.huajie.infrastructure.mapper.TenantPayRecordMapper;
+import com.zxf.method.trace.util.TraceFatch;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.constraints.Size;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +40,7 @@ import java.util.List;
  * @date 2023/8/27
  */
 @Service
+@Slf4j
 public class RegisterService {
 
     @Autowired
@@ -40,13 +55,30 @@ public class RegisterService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private CustomAlipayClient customAlipayClient;
+
+    @Autowired
+    private AliyunFileClient aliyunFileClient;
+
+    @Autowired
+    private TenantPayRecordMapper tenantPayRecordMapper;
+
+    @Value("${unit.price:5}")
+    private Integer unitPrice;
+
+    @Value("${aliyunoos.config.url}")
+    private String url;
+
+
     /**
      * 企业注册
      * @param tenant 企业租户
      * @param entAdminList 企业消防安全责任人
      * @param entOperatorList 企业消防安全管理人
      */
-    public void regiestEnterprise(Tenant tenant,  List<UserAddRequestVO> entAdminList, List<UserAddRequestVO> entOperatorList) {
+    @Transactional
+    public EnterpriseRegiestDTO regiestEnterprise(Tenant tenant, List<UserAddRequestVO> entAdminList, List<UserAddRequestVO> entOperatorList) {
         Role entAdminCodeRole = roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
         if (entAdminCodeRole == null){
             throw new ServerException("企业消防安全责任人 权限不存在");
@@ -69,16 +101,69 @@ public class RegisterService {
             user.setRoleId(entOperatorCodeRole.getId());
             userList.add(user);
         }
+        //租户信息保存
         tenantService.add(tenant);
+        //用户信息保存
         userService.addUsers(userList);
+
+        //支付宝预下单，生成付款二维码
+        BigDecimal amount = new BigDecimal(unitPrice * userList.size());
+
+        AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
+        String outTradeNo = TraceFatch.getTraceId();
+        model.setOutTradeNo(outTradeNo);
+        model.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        model.setSubject("企业用户注册: " + tenant.getTenantName());
+        AlipayTradePrecreateResponse response = customAlipayClient.execute(model);
+
+        //二维码图片生成
+        BufferedImage image = null;
+        try {
+            image = QRCodeUtils.encode(response.getQrCode(), null, QRCodeUtils.IMG_RESOURCE_TYPE_LOCAL, false);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("图片生成失败: ", e);
+            throw new ServerException("图片生成失败");
+        }
+        //二维码图片上传
+        // 创建一个ByteArrayOutputStream
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // 将BufferedImage写入ByteArrayOutputStream
+        try {
+            ImageIO.write(image, "png", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 将ByteArrayOutputStream的内容转换为InputStream
+        InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+        String fileName = outTradeNo+".png";
+        try {
+            aliyunFileClient.upload(fileName, inputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("阿里云图片上传失败", e);
+            throw new ServerException("阿里云图片上传失败");
+        }
+
+        //生成预缴费记录
+        TenantPayRecord tenantPayRecord = new TenantPayRecord();
+        tenantPayRecord.setTenantId(tenant.getId());
+        tenantPayRecord.setOutTradeNo(outTradeNo);
+        tenantPayRecord.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+        tenantPayRecordMapper.insert(tenantPayRecord);
+
+        EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
+        enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+        enterpriseRegiestDTO.setQrcodeUrl(url + fileName);
+        return enterpriseRegiestDTO;
     }
 
     /**
      * 政府注册
-     * @param userList 政府用户集合
+     *
      * @param tenant 政府租户
-     * @param govAdminList
-     * @param govOperatorList
+     * @param govAdminList 负责人
+     * @param govOperatorList 管理人
      * @param entIndustryClassification 政府管理的行业
      */
     public void regiestGoverment(Tenant tenant, List<UserAddRequestVO> govAdminList,

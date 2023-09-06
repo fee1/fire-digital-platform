@@ -28,6 +28,19 @@ logging:
   config: classpath:log4j2.xml
 #  config: classpath:logback.xml
 
+alipay:
+  notify:
+    url: http://82.156.14.43:8080/alipay/notify/pre/pay/qrcode
+
+aliyunoos:
+  config:
+    endpoint: http://oss-rg-china-mainland.aliyuncs.com
+    accessKeyId: LTAI5tFyVFWYHGoFKYgJGUvE
+    accessKeySecret: 7i6VOEWshoUn57tiq3UaDrZG1RRe9I
+    bucketName: lanpukeji
+    objectName: qrcode/
+    url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/qrcode/
+
 
 swagger:
   enable: true

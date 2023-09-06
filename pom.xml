@@ -35,6 +35,9 @@
         <swagger-models.version>1.6.0</swagger-models.version>
         <swagger-annotations.version>1.6.0</swagger-annotations.version>
         <pagehelper.version>5.3.0</pagehelper.version>
+
+        <alipay-sdk.version>4.34.0.ALL</alipay-sdk.version>
+        <wechatpay.version>0.2.11</wechatpay.version>
     </properties>
 
     <dependencyManagement>
@@ -297,6 +300,25 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>${alipay-sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>${wechatpay.version}</version>
+        </dependency>
+
+        <!--todo 还未测试 完成暂时不启用-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.skywalking</groupId>-->
+<!--            <artifactId>apm-toolkit-log4j-2.x</artifactId>-->
+<!--            <version>8.1.0</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
