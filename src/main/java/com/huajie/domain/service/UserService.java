@@ -1,9 +1,9 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.UserMapper;
