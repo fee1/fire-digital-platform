@@ -30,7 +30,7 @@ public class CustomAlipayClient {
     @Autowired
     private AlipayClient alipayClient;
 
-    @Value("${alipay.notify.url:https://6cb0fd7a-369f-448c-8d0e-008ea7c00ece.mock.pstmn.io/alipay/scan/code/notify}")
+    @Value("${alipay.notify-url:https://6cb0fd7a-369f-448c-8d0e-008ea7c00ece.mock.pstmn.io/alipay/scan/code/notify}")
     private String alipayNotifyUrl;
 
     /**
@@ -38,7 +38,7 @@ public class CustomAlipayClient {
      * @param model
      * @return
      */
-    public AlipayTradePrecreateResponse preOrder(AlipayTradeAppPayModel model){
+    public AlipayTradePrecreateResponse preCreateOrder(AlipayTradeAppPayModel model){
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
         request.setNotifyUrl(alipayNotifyUrl);

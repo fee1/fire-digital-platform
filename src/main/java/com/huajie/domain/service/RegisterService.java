@@ -3,21 +3,22 @@ package com.huajie.domain.service;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.huajie.application.api.request.UserAddRequestVO;
-import com.huajie.domain.common.constants.PayChannelConstants;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.common.constants.TenantStatusConstants;
 import com.huajie.domain.common.exception.ServerException;
-import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
-import com.huajie.infrastructure.external.oss.AliyunFileClient;
 import com.huajie.infrastructure.external.pay.CustomAlipayClient;
+import com.huajie.infrastructure.external.pay.WechatPayClient;
+import com.huajie.infrastructure.external.pay.model.AmountModel;
+import com.huajie.infrastructure.external.pay.model.WechatPayCreateOrderModel;
+import com.huajie.infrastructure.external.pay.model.WechatPayCreateRespModel;
 import com.huajie.infrastructure.mapper.GovIndustryMapMapper;
 import com.huajie.infrastructure.mapper.TenantPayRecordMapper;
 import com.zxf.method.trace.util.TraceFatch;
@@ -29,12 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +58,10 @@ public class RegisterService {
     private CustomAlipayClient customAlipayClient;
 
     @Autowired
-    private AliyunFileClient aliyunFileClient;
+    private WechatPayClient wechatPayClient;
+
+    @Autowired
+    private CommonService commonService;
 
     @Autowired
     private TenantPayRecordMapper tenantPayRecordMapper;
@@ -71,8 +69,9 @@ public class RegisterService {
     @Value("${unit.price:5}")
     private Integer unitPrice;
 
-    @Value("${aliyunoos.config.url}")
-    private String url;
+
+    @Value("${wechat.pay.notify-url}")
+    private String wechatNotifyUrl;
 
 
     /**
@@ -118,54 +117,44 @@ public class RegisterService {
         //支付宝预下单，生成付款二维码
         BigDecimal amount = new BigDecimal(unitPrice * userList.size());
 
+        EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
+        enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+
         AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
         String outTradeNo = TraceFatch.getTraceId();
         model.setOutTradeNo(outTradeNo);
         model.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
         model.setSubject("企业用户注册: " + tenant.getTenantName());
-        AlipayTradePrecreateResponse response = customAlipayClient.preOrder(model);
+        AlipayTradePrecreateResponse response = customAlipayClient.preCreateOrder(model);
 
-        //二维码图片生成
-        BufferedImage image = null;
-        try {
-            image = QRCodeUtils.encode(response.getQrCode(), null, QRCodeUtils.IMG_RESOURCE_TYPE_LOCAL, false);
-        }catch (Exception e){
-            e.printStackTrace();
-            log.error("图片生成失败: ", e);
-            throw new ServerException("图片生成失败");
-        }
-        //二维码图片上传
-        // 创建一个ByteArrayOutputStream
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        // 将BufferedImage写入ByteArrayOutputStream
-        try {
-            ImageIO.write(image, "png", baos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 将ByteArrayOutputStream的内容转换为InputStream
-        InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
         String alipayQrcodeFileName = "alipay_" + outTradeNo+".png";
-        try {
-            aliyunFileClient.upload(alipayQrcodeFileName, inputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("阿里云图片上传失败", e);
-            throw new ServerException("阿里云图片上传失败");
-        }
-
-        EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
-        enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+        String alipayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(response.getQrCode(), alipayQrcodeFileName);
 
         //设置 alipay 缴费订单号和二维码地址
         enterpriseRegiestDTO.setAlipayOrderId(outTradeNo);
-        enterpriseRegiestDTO.setAlipayQrcodeUrl(url + alipayQrcodeFileName);
-        //todo 设置 wechat 缴费订单号和二维码地址
+        enterpriseRegiestDTO.setAlipayQrcodeUrl(alipayQrcodeUrl);
+
+        //设置 wechat 缴费订单号和二维码地址
+        WechatPayCreateOrderModel wechatPayCreateOrderModel = new WechatPayCreateOrderModel();
+        wechatPayCreateOrderModel.setAppId("");
+        wechatPayCreateOrderModel.setDescription("测试使用");
+        wechatPayCreateOrderModel.setMchId("1651245161");
+        AmountModel amountModel = new AmountModel();
+        amountModel.setTotal(1);
+        wechatPayCreateOrderModel.setAmount(amountModel);
+        wechatPayCreateOrderModel.setOutTradeNo(outTradeNo);
+        wechatPayCreateOrderModel.setNotifyUrl(wechatNotifyUrl);
+        WechatPayCreateRespModel wechatPayCreateRespModel = wechatPayClient.preCreateOrder(wechatPayCreateOrderModel);
+        String wechatpayQrcodeFileName = "wechatpay_" + outTradeNo + ".png";
+        String wechatpayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(wechatPayCreateRespModel.getCode_url(), wechatpayQrcodeFileName);
+
+        enterpriseRegiestDTO.setWechatPayOrderId(outTradeNo);
+        enterpriseRegiestDTO.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);
 
         //生成预缴费记录
         TenantPayRecord tenantPayRecord = new TenantPayRecord();
 //        tenantPayRecord.setPayChannel(PayChannelConstants.ALIPAY_CHANNEL);
-        tenantPayRecord.setStatus(PayRecordStatusConstants.WAIT_BUYER_PAY);
+        tenantPayRecord.setStatus(PayRecordStatusConstants.ALIPAY_WAIT_BUYER_PAY);
         tenantPayRecord.setTenantId(tenant.getId());
         tenantPayRecord.setOutTradeNo(outTradeNo);
         tenantPayRecord.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));

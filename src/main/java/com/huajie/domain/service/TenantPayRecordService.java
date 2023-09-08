@@ -1,7 +1,6 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.huajie.domain.common.constants.PayChannelConstants;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.infrastructure.mapper.TenantPayRecordMapper;
@@ -24,7 +23,7 @@ public class TenantPayRecordService {
     public List<TenantPayRecord> getAlipayRecordIsNotSuccess() {
         QueryWrapper<TenantPayRecord> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(TenantPayRecord::getStatus, PayRecordStatusConstants.WAIT_BUYER_PAY);
+                .eq(TenantPayRecord::getStatus, PayRecordStatusConstants.ALIPAY_WAIT_BUYER_PAY);
         return tenantPayRecordMapper.selectList(queryWrapper);
     }
 

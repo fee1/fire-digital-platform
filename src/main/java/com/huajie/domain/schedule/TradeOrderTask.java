@@ -10,6 +10,8 @@ import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.service.TenantPayRecordService;
 import com.huajie.domain.service.TenantService;
 import com.huajie.infrastructure.external.pay.CustomAlipayClient;
+import com.huajie.infrastructure.external.pay.WechatPayClient;
+import com.huajie.infrastructure.external.pay.model.WechatPayCheckRespModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,6 +35,9 @@ public class TradeOrderTask {
     private CustomAlipayClient customAlipayClient;
 
     @Autowired
+    private WechatPayClient wechatPayClient;
+
+    @Autowired
     private TenantService tenantService;
 
     @Scheduled(cron = "*/20 * * * * *")
@@ -42,8 +47,8 @@ public class TradeOrderTask {
             for (TenantPayRecord payRecordIsNotSuccess : tenantPayRecordIsNotSuccess) {
                 AlipayTradeQueryResponse alipayTradeQueryResponse = customAlipayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
                 // 支付宝订单号
-                if (StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.TRADE_SUCCESS)
-                        || StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.TRADE_FINISHED)) {
+                if (StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_SUCCESS)
+                        || StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_FINISHED)) {
                     payRecordIsNotSuccess.setStatus(alipayTradeQueryResponse.getTradeStatus());
                     payRecordIsNotSuccess.setTradeNo(alipayTradeQueryResponse.getTradeNo());
                     payRecordIsNotSuccess.setPayAmount(alipayTradeQueryResponse.getBuyerLogonId());
@@ -58,10 +63,36 @@ public class TradeOrderTask {
                     Tenant tenantByTenantId = tenantService.getTenantByTenantId(payRecordIsNotSuccess.getTenantId());
                     tenantByTenantId.setStatus(TenantStatusConstants.ENABLE);
                     tenantService.updateById(tenantByTenantId);
-                    break;
-                }else {
-                    //去查询微信的支付状态
+                    return;
+                }
 
+                WechatPayCheckRespModel wechatPayCheckRespModel = wechatPayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
+                if (StringUtils.equals(wechatPayCheckRespModel.getTrade_state(), PayRecordStatusConstants.WECHAT_PAY_SUCCESS)){
+                    payRecordIsNotSuccess.setStatus(wechatPayCheckRespModel.getTrade_state());
+                    payRecordIsNotSuccess.setTradeNo(wechatPayCheckRespModel.getTransaction_id());
+                    payRecordIsNotSuccess.setPayAmount(wechatPayCheckRespModel.getPayer().getOpenid());
+                    payRecordIsNotSuccess.setPayChannel(PayChannelConstants.WECHAT_CHANNEL);
+                    payRecordIsNotSuccess.setDate(wechatPayCheckRespModel.getSuccess_time());
+                    payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
+                    payRecordIsNotSuccess.setUpdateTime(new Date());
+                    //更新交易记录
+                    tenantPayRecordService.updateById(payRecordIsNotSuccess);
+
+                    //更新租户状态为可用状态
+                    Tenant tenantByTenantId = tenantService.getTenantByTenantId(payRecordIsNotSuccess.getTenantId());
+                    tenantByTenantId.setStatus(TenantStatusConstants.ENABLE);
+                    tenantService.updateById(tenantByTenantId);
+                    return;
+                }
+
+                //支付宝+微信 都超时未支付
+                if (StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_CLOSED)
+                        && StringUtils.equals(wechatPayCheckRespModel.getTrade_state(), PayRecordStatusConstants.WECHAT_PAY_CLOSED)){
+                    payRecordIsNotSuccess.setStatus(PayRecordStatusConstants.ALIPAY_TRADE_CLOSED);
+                    payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
+                    payRecordIsNotSuccess.setUpdateTime(new Date());
+                    //更新交易记录
+                    tenantPayRecordService.updateById(payRecordIsNotSuccess);
                 }
             }
         }

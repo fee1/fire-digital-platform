@@ -38,6 +38,7 @@
 
         <alipay-sdk.version>4.34.0.ALL</alipay-sdk.version>
         <wechatpay.version>0.2.11</wechatpay.version>
+        <wechatpay-apache-httpclient.version>0.4.9</wechatpay-apache-httpclient.version>
     </properties>
 
     <dependencyManagement>
@@ -307,10 +308,16 @@
             <version>${alipay-sdk.version}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.github.wechatpay-apiv3</groupId>-->
+<!--            <artifactId>wechatpay-java</artifactId>-->
+<!--            <version>${wechatpay.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>com.github.wechatpay-apiv3</groupId>
-            <artifactId>wechatpay-java</artifactId>
-            <version>${wechatpay.version}</version>
+            <artifactId>wechatpay-apache-httpclient</artifactId>
+            <version>${wechatpay-apache-httpclient.version}</version>
         </dependency>
 
         <!--todo 还未测试 完成暂时不启用-->

@@ -33,7 +33,7 @@ public class CustomAlipayClientTest extends BaseTest {
         model.setOutTradeNo(outTradeNo);
         model.setTotalAmount("1");
         model.setSubject("测试预下单"+outTradeNo);
-        AlipayTradePrecreateResponse response = customAlipayClient.preOrder(model);
+        AlipayTradePrecreateResponse response = customAlipayClient.preCreateOrder(model);
         System.out.println(response.getQrCode());
         File output = new File("D:\\project\\fire-digital-platform\\test_qrcode\\" + outTradeNo + ".png");
         BufferedImage image = QRCodeUtils.encode(response.getQrCode(), null, QRCodeUtils.IMG_RESOURCE_TYPE_LOCAL, false);
