@@ -3,8 +3,11 @@ package com.huajie.domain.service;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.huajie.application.api.request.UserAddRequestVO;
+import com.huajie.domain.common.constants.PayChannelConstants;
+import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SystemConstants;
+import com.huajie.domain.common.constants.TenantStatusConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.domain.entity.GovIndustryMap;
@@ -90,6 +93,7 @@ public class RegisterService {
         }
 
         //租户信息保存
+        tenant.setStatus(TenantStatusConstants.DISABLE);
         tenantService.add(tenant);
         List<User> userList = new ArrayList<>();
         for (UserAddRequestVO userAddRequestVO : entAdminList) {
@@ -119,7 +123,7 @@ public class RegisterService {
         model.setOutTradeNo(outTradeNo);
         model.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
         model.setSubject("企业用户注册: " + tenant.getTenantName());
-        AlipayTradePrecreateResponse response = customAlipayClient.execute(model);
+        AlipayTradePrecreateResponse response = customAlipayClient.preOrder(model);
 
         //二维码图片生成
         BufferedImage image = null;
@@ -141,26 +145,34 @@ public class RegisterService {
         }
         // 将ByteArrayOutputStream的内容转换为InputStream
         InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
-        String fileName = outTradeNo+".png";
+        String alipayQrcodeFileName = "alipay_" + outTradeNo+".png";
         try {
-            aliyunFileClient.upload(fileName, inputStream);
+            aliyunFileClient.upload(alipayQrcodeFileName, inputStream);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("阿里云图片上传失败", e);
             throw new ServerException("阿里云图片上传失败");
         }
 
+        EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
+        enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+
+        //设置 alipay 缴费订单号和二维码地址
+        enterpriseRegiestDTO.setAlipayOrderId(outTradeNo);
+        enterpriseRegiestDTO.setAlipayQrcodeUrl(url + alipayQrcodeFileName);
+        //todo 设置 wechat 缴费订单号和二维码地址
+
         //生成预缴费记录
         TenantPayRecord tenantPayRecord = new TenantPayRecord();
+//        tenantPayRecord.setPayChannel(PayChannelConstants.ALIPAY_CHANNEL);
+        tenantPayRecord.setStatus(PayRecordStatusConstants.WAIT_BUYER_PAY);
         tenantPayRecord.setTenantId(tenant.getId());
         tenantPayRecord.setOutTradeNo(outTradeNo);
         tenantPayRecord.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
         tenantPayRecord.setCreateUser(SystemConstants.SYSTEM);
         tenantPayRecordMapper.insert(tenantPayRecord);
 
-        EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
-        enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
-        enterpriseRegiestDTO.setQrcodeUrl(url + fileName);
+
         return enterpriseRegiestDTO;
     }
 

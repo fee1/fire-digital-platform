@@ -12,6 +12,10 @@ public class TenantPayRecord implements Serializable {
 
     private String outTradeNo;
 
+    private String tradeNo;
+
+    private String status;
+
     private BigDecimal totalAmount;
 
     private Integer tenantId;

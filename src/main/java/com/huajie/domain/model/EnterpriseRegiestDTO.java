@@ -12,8 +12,17 @@ import java.math.BigDecimal;
 @Data
 public class EnterpriseRegiestDTO {
 
-    @ApiModelProperty("二维码图片地址")
-    private String qrcodeUrl;
+    @ApiModelProperty("alipay二维码图片地址")
+    private String alipayQrcodeUrl;
+
+    @ApiModelProperty("alipay订单号")
+    private String alipayOrderId;
+
+    @ApiModelProperty("wechatPay二维码图片地址")
+    private String wechatPayQrcodeUrl;
+
+    @ApiModelProperty("wechatPay订单号")
+    private String wechatPayOrderId;
 
     @ApiModelProperty("金额")
     private BigDecimal amount;

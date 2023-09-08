@@ -1,7 +1,6 @@
 package com.huajie.infrastructure.external.pay;
 
 import com.alipay.api.domain.AlipayTradeAppPayModel;
-import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.huajie.BaseTest;
 import com.huajie.domain.common.utils.QRCodeUtils;
@@ -34,7 +33,7 @@ public class CustomAlipayClientTest extends BaseTest {
         model.setOutTradeNo(outTradeNo);
         model.setTotalAmount("1");
         model.setSubject("测试预下单"+outTradeNo);
-        AlipayTradePrecreateResponse response = customAlipayClient.execute(model);
+        AlipayTradePrecreateResponse response = customAlipayClient.preOrder(model);
         System.out.println(response.getQrCode());
         File output = new File("D:\\project\\fire-digital-platform\\test_qrcode\\" + outTradeNo + ".png");
         BufferedImage image = QRCodeUtils.encode(response.getQrCode(), null, QRCodeUtils.IMG_RESOURCE_TYPE_LOCAL, false);

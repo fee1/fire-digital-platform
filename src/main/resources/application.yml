@@ -28,9 +28,9 @@ logging:
   config: classpath:log4j2.xml
 #  config: classpath:logback.xml
 
-alipay:
-  notify:
-    url: http://82.156.14.43:8080/alipay/notify/pre/pay/qrcode
+#alipay:
+#  notify:
+#    url: http://82.156.14.43:8080/alipay/notify/pre/pay/qrcode
 
 aliyunoos:
   config:
