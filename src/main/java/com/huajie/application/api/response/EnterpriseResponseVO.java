@@ -16,16 +16,29 @@ public class EnterpriseResponseVO {
     private String enterpriseName;
 
     @ApiModelProperty("省")
-    private String province;
+    private Integer provinceId;
+
+    @ApiModelProperty("省名称")
+    private String provinceName;
 
     @ApiModelProperty("市")
-    private String city;
+    private Integer cityId;
+
+    @ApiModelProperty("市名称")
+    private String cityName;
 
     @ApiModelProperty("区/县")
-    private String region;
+    private Integer regionId;
+
+    @ApiModelProperty("区/县名称")
+    private String regionName;
 
     @ApiModelProperty("街道")
-    private String street;
+    private Integer streetId;
+
+    @ApiModelProperty("街道名称")
+    private String streetName;
+
 
     @ApiModelProperty("企业性质")
     private String enterpriseType;

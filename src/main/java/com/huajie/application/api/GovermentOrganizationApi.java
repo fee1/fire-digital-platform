@@ -79,7 +79,7 @@ public class GovermentOrganizationApi {
     @GetMapping("enterprise/list")
     public ApiResult<List<EnterpriseResponseVO>> getEnterpriseList(@RequestParam(required = false)@ApiParam("企业名称") String enterpriseName){
         List<EnterpriseResponseVO> enterpriseResponseVOList = govermentOrganizationAppService.getEnterpriseList(enterpriseName);
-        return ApiResult.ok();
+        return ApiResult.ok(enterpriseResponseVOList);
     }
 
 }

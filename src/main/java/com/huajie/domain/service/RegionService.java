@@ -40,4 +40,16 @@ public class RegionService {
         return regionMapper.selectList(queryWrapper);
     }
 
+    public Region getRegionById(Integer regionId){
+        QueryWrapper<Region> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Region::getId, regionId);
+        return regionMapper.selectOne(queryWrapper);
+    }
+
+    public List<Region> getRegionByIds(List<Integer> regionIds){
+        QueryWrapper<Region> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(Region::getId, regionIds);
+        return regionMapper.selectList(queryWrapper);
+    }
+
 }
