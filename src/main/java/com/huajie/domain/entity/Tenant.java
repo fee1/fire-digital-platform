@@ -21,13 +21,13 @@ public class Tenant implements Serializable {
 
     private Date effectiveEndDate;
 
-    private String province;
+    private Integer province;
 
-    private String city;
+    private Integer city;
 
-    private String region;
+    private Integer region;
 
-    private String street;
+    private Integer street;
 
     private String address;
 

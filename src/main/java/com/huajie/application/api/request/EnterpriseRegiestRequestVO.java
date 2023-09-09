@@ -23,22 +23,22 @@ public class EnterpriseRegiestRequestVO {
     @ApiModelProperty("省地址")
     @NotNull(message = "省地址 不能为空")
     @NotBlank(message = "省地址 不能为空")
-    private String province;
+    private Integer provinceId;
 
     @ApiModelProperty("市地址")
     @NotNull(message = "市地址 不能为空")
     @NotBlank(message = "市地址 不能为空")
-    private String city;
+    private Integer cityId;
 
     @ApiModelProperty("区/县地址")
     @NotNull(message = "区/县地址 不能为空")
     @NotBlank(message = "区/县地址 不能为空")
-    private String region;
+    private Integer regionId;
 
     @ApiModelProperty("街道地址")
     @NotNull(message = "街道地址 不能为空")
     @NotBlank(message = "街道地址 不能为空")
-    private String street;
+    private Integer streetId;
 
     @ApiModelProperty("门牌号")
     @NotBlank(message = "门牌号 不能为空")
