@@ -49,8 +49,8 @@ public class RegionApi {
 
     @ApiOperation("获取街道")
     @GetMapping("street/list")
-    public ApiResult<List<RegionResponseVO>> getStreets(@ApiParam("区县Id") @RequestParam Integer districtId){
-        List<RegionResponseVO> responseVOList = regionAppService.getRegionListByParentId(districtId);
+    public ApiResult<List<RegionResponseVO>> getStreets(@ApiParam("区县Id") @RequestParam Integer regionId){
+        List<RegionResponseVO> responseVOList = regionAppService.getRegionListByParentId(regionId);
         return ApiResult.ok(responseVOList);
     }
 
