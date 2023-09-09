@@ -13,6 +13,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -84,12 +86,17 @@ public class WechatPayConfig {
     public static String getPrivateKey() throws IOException, URISyntaxException {
 
         // 获取ClassLoader
-        ClassLoader classLoader = WechatPayConfig.class.getClassLoader();
+//        ClassLoader classLoader = WechatPayConfig.class.getClassLoader();
+        ClassPathResource resource = new ClassPathResource("cert/apiclient_key.pem");
 
         // 通过ClassLoader获取资源文件的URL
-        URL resourceUrl = classLoader.getResource("cert/apiclient_key.pem");
+//        URL resourceUrl = classLoader.getResource("cert/apiclient_key.pem");
 
-        String content = new String(Files.readAllBytes(Paths.get(resourceUrl.toURI())), StandardCharsets.UTF_8);
+//        String content = new String(Files.readAllBytes(Paths.get(resourceUrl.toURI())), StandardCharsets.UTF_8);
+
+        // 读取资源文件内容
+        byte[] data = FileCopyUtils.copyToByteArray(resource.getInputStream());
+        String content = new String(data, StandardCharsets.UTF_8);
         String privateKey = content.replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s+", "");
