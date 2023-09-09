@@ -35,8 +35,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/function/**",
                         "/place/**",
                         "/device/**",
-                        "/goverment/organization/**",
-                        "/region/**"
+                        "/goverment/organization/**"
                         );
 
     }
