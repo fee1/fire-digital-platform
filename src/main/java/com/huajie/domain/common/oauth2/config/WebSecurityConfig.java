@@ -41,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 //登录认证拦截
-                .antMatchers("/oauth/**", "/login/**", "/logout/**", "/register/**", "/alipay/notify/**", "/region/**")
+                .antMatchers("/oauth/**", "/login/**", "/logout/**", "/register/**", "/alipay/notify/**", "/region/**", "/sys/dic/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
