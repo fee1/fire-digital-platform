@@ -65,12 +65,12 @@ public class UserOauth2ServiceImpl implements UserDetailsService {
     }
 
     /**
-     * 根据邮箱号加载用户
-     * @param email
+     * 根据用户编号加载用户
+     * @param userNO
      * @return
      */
-    private UserDetails loadUserByEmail(String email){
-        User user = userService.getUserByEmail(email);
+    private UserDetails loadUserByUserNo(String userNO){
+        User user = userService.getUserByUserNo(userNO);
         if (!Objects.isNull(user)) {
             return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
                     Collections.singleton(loadGrantedAuthority(user)));
@@ -122,8 +122,7 @@ public class UserOauth2ServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //todo 邮箱与手机号的正则表达式判断走哪一个登录账号逻辑
-        UserDetails userDetails = loadUserByEmail(username);
+        UserDetails userDetails = loadUserByUserNo(username);
         if (Objects.isNull(userDetails)){
             userDetails = loadUserByPhone(username);
         }
