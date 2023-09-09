@@ -66,6 +66,12 @@ public class RegisterService {
     @Autowired
     private TenantPayRecordMapper tenantPayRecordMapper;
 
+    @Value("${wechat.pay.appId:}")
+    private String wechatAppId;
+
+    @Value("${wechat.pay.mchId:}")
+    private String mchId;
+
     @Value("${unit.price:5}")
     private Integer unitPrice;
 
@@ -136,11 +142,11 @@ public class RegisterService {
 
         //设置 wechat 缴费订单号和二维码地址
         WechatPayCreateOrderModel wechatPayCreateOrderModel = new WechatPayCreateOrderModel();
-        wechatPayCreateOrderModel.setAppId("");
-        wechatPayCreateOrderModel.setDescription("测试使用");
-        wechatPayCreateOrderModel.setMchId("1651245161");
+        wechatPayCreateOrderModel.setAppId(wechatAppId);
+        wechatPayCreateOrderModel.setDescription("企业用户注册: "+ tenant.getTenantName());
+        wechatPayCreateOrderModel.setMchId(mchId);
         AmountModel amountModel = new AmountModel();
-        amountModel.setTotal(1);
+        amountModel.setTotal(amount.multiply(new BigDecimal(100)).intValue());
         wechatPayCreateOrderModel.setAmount(amountModel);
         wechatPayCreateOrderModel.setOutTradeNo(outTradeNo);
         wechatPayCreateOrderModel.setNotifyUrl(wechatNotifyUrl);
