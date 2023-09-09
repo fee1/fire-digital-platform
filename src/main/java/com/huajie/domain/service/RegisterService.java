@@ -2,6 +2,7 @@ package com.huajie.domain.service;
 
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
+import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
@@ -101,21 +102,29 @@ public class RegisterService {
         tenant.setStatus(TenantStatusConstants.DISABLE);
         tenantService.add(tenant);
         List<User> userList = new ArrayList<>();
-        for (UserAddRequestVO userAddRequestVO : entAdminList) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(entAdminCodeRole.getId());
-            user.setTenantId(tenant.getId());
-            user.setCreateUser(SystemConstants.SYSTEM);
-            userList.add(user);
+        if (!CollectionUtils.isEmpty(entAdminList)) {
+            for (UserAddRequestVO userAddRequestVO : entAdminList) {
+                User user = new User();
+                BeanUtils.copyProperties(userAddRequestVO, user);
+                user.setRoleId(entAdminCodeRole.getId());
+                user.setTenantId(tenant.getId());
+                user.setCreateUser(SystemConstants.SYSTEM);
+                userList.add(user);
+            }
+        }else {
+            throw new ApiException("企业消防安全责任人 必须有一个以上");
         }
-        for (UserAddRequestVO userAddRequestVO : entOperatorList) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(entOperatorCodeRole.getId());
-            user.setTenantId(tenant.getId());
-            user.setCreateUser(SystemConstants.SYSTEM);
-            userList.add(user);
+        if (!CollectionUtils.isEmpty(entOperatorList)) {
+            for (UserAddRequestVO userAddRequestVO : entOperatorList) {
+                User user = new User();
+                BeanUtils.copyProperties(userAddRequestVO, user);
+                user.setRoleId(entOperatorCodeRole.getId());
+                user.setTenantId(tenant.getId());
+                user.setCreateUser(SystemConstants.SYSTEM);
+                userList.add(user);
+            }
+        }else {
+            throw new ApiException("企业消防安全管理人 必须有一个以上");
         }
         //用户信息保存
         userService.addUsers(userList);
@@ -191,17 +200,25 @@ public class RegisterService {
         }
 
         List<User> userList = new ArrayList<>();
-        for (UserAddRequestVO userAddRequestVO : govAdminList) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(govAdminCodeRole.getId());
-            userList.add(user);
+        if (!CollectionUtils.isEmpty(govAdminList)) {
+            for (UserAddRequestVO userAddRequestVO : govAdminList) {
+                User user = new User();
+                BeanUtils.copyProperties(userAddRequestVO, user);
+                user.setRoleId(govAdminCodeRole.getId());
+                userList.add(user);
+            }
+        }else {
+            throw new ApiException("政府消防安全责任人 必须有一个以上");
         }
-        for (UserAddRequestVO userAddRequestVO : govOperatorList) {
-            User user = new User();
-            BeanUtils.copyProperties(userAddRequestVO, user);
-            user.setRoleId(govOperatorCodeRole.getId());
-            userList.add(user);
+        if (!CollectionUtils.isEmpty(govOperatorList)) {
+            for (UserAddRequestVO userAddRequestVO : govOperatorList) {
+                User user = new User();
+                BeanUtils.copyProperties(userAddRequestVO, user);
+                user.setRoleId(govOperatorCodeRole.getId());
+                userList.add(user);
+            }
+        }else {
+            throw new ApiException("政府消防安全管理人 必须有一个以上");
         }
         tenantService.add(tenant);
         userService.addUsers(userList);
