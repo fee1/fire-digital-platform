@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class WechatPayCreateRespModel {
 
-    private String code_url;
+    private String codeUrl;
 
 }

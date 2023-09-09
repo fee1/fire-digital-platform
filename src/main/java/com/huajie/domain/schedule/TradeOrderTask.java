@@ -67,12 +67,12 @@ public class TradeOrderTask {
                 }
 
                 WechatPayCheckRespModel wechatPayCheckRespModel = wechatPayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
-                if (StringUtils.equals(wechatPayCheckRespModel.getTrade_state(), PayRecordStatusConstants.WECHAT_PAY_SUCCESS)){
-                    payRecordIsNotSuccess.setStatus(wechatPayCheckRespModel.getTrade_state());
-                    payRecordIsNotSuccess.setTradeNo(wechatPayCheckRespModel.getTransaction_id());
-                    payRecordIsNotSuccess.setPayAmount(wechatPayCheckRespModel.getPayer().getOpenid());
+                if (StringUtils.equals(wechatPayCheckRespModel.getTradeState(), PayRecordStatusConstants.WECHAT_PAY_SUCCESS)){
+                    payRecordIsNotSuccess.setStatus(wechatPayCheckRespModel.getTradeState());
+                    payRecordIsNotSuccess.setTradeNo(wechatPayCheckRespModel.getTransactionId());
+                    payRecordIsNotSuccess.setPayAmount(wechatPayCheckRespModel.getPayer().getOpenId());
                     payRecordIsNotSuccess.setPayChannel(PayChannelConstants.WECHAT_CHANNEL);
-                    payRecordIsNotSuccess.setDate(wechatPayCheckRespModel.getSuccess_time());
+                    payRecordIsNotSuccess.setDate(wechatPayCheckRespModel.getSuccessTime());
                     payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
                     payRecordIsNotSuccess.setUpdateTime(new Date());
                     //更新交易记录
@@ -87,7 +87,7 @@ public class TradeOrderTask {
 
                 //支付宝+微信 都超时未支付
                 if (StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_CLOSED)
-                        && StringUtils.equals(wechatPayCheckRespModel.getTrade_state(), PayRecordStatusConstants.WECHAT_PAY_CLOSED)){
+                        && StringUtils.equals(wechatPayCheckRespModel.getTradeState(), PayRecordStatusConstants.WECHAT_PAY_CLOSED)){
                     payRecordIsNotSuccess.setStatus(PayRecordStatusConstants.ALIPAY_TRADE_CLOSED);
                     payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
                     payRecordIsNotSuccess.setUpdateTime(new Date());

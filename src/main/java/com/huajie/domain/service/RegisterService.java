@@ -146,7 +146,7 @@ public class RegisterService {
         wechatPayCreateOrderModel.setNotifyUrl(wechatNotifyUrl);
         WechatPayCreateRespModel wechatPayCreateRespModel = wechatPayClient.preCreateOrder(wechatPayCreateOrderModel);
         String wechatpayQrcodeFileName = "wechatpay_" + outTradeNo + ".png";
-        String wechatpayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(wechatPayCreateRespModel.getCode_url(), wechatpayQrcodeFileName);
+        String wechatpayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(wechatPayCreateRespModel.getCodeUrl(), wechatpayQrcodeFileName);
 
         enterpriseRegiestDTO.setWechatPayOrderId(outTradeNo);
         enterpriseRegiestDTO.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);

@@ -67,8 +67,7 @@ public class WechatPayClient {
                 log.debug("failed,resp code = " + statusCode+ ",return body = " + EntityUtils.toString(response.getEntity()));
                 throw new ServerException("request failed");
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(entity.getContent(), WechatPayCreateRespModel.class);
+            return JSONObject.parseObject(EntityUtils.toString(response.getEntity()), WechatPayCreateRespModel.class);
         } catch (Exception e){
             e.printStackTrace();
             log.error("预下单失败: ", e);
@@ -105,9 +104,8 @@ public class WechatPayClient {
                 log.debug("failed,resp code = " + statusCode+ ",return body = " + EntityUtils.toString(response.getEntity()));
                 throw new IOException("request failed");
             }
-            HttpEntity entity = response.getEntity();
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(entity.getContent(), WechatPayCheckRespModel.class);
+
+            return JSONObject.parseObject(EntityUtils.toString(response.getEntity()), WechatPayCheckRespModel.class);
         }catch (Exception e){
             e.printStackTrace();
             log.error("查询订单失败: ", e);

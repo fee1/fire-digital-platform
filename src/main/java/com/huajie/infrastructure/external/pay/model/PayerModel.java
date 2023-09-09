@@ -12,6 +12,6 @@ public class PayerModel {
     /**
      * 用户标识
      */
-    private String openid;
+    private String openId;
 
 }

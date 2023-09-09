@@ -14,37 +14,37 @@ public class WechatPayCheckRespModel {
     /**
      * 应用ID
      */
-    private String appid;
+    private String appId;
 
     /**
      * 直连商户号
      */
-    private String mchid;
+    private String mchId;
 
     /**
      * 商户订单号
      */
-    private String out_trade_no;
+    private String outTradeNo;
 
     /**
      * 微信支付订单号
      */
-    private String transaction_id;
+    private String transactionId;
 
     /**
      * 交易状态
      */
-    private String trade_state;
+    private String tradeState;
 
     /**
      * 交易状态描述
      */
-    private String trade_state_desc;
+    private String tradeStateDesc;
 
     /**
      * 支付完成时间 string 2018-06-08T10:34:56+08:00
      */
-    private Date success_time;
+    private Date successTime;
 
     /**
      * 支付者
