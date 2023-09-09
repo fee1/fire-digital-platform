@@ -42,6 +42,10 @@ aliyunoos:
     objectName: qrcode/
     url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/qrcode/
 
+# 注册人数单价
+unit:
+  price: 0.01
+
 # 阿里支付配置
 alipay:
   serverUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do

@@ -73,7 +73,7 @@ public class RegisterService {
     private String mchId;
 
     @Value("${unit.price:5}")
-    private Integer unitPrice;
+    private Double unitPrice;
 
 
     @Value("${wechat.pay.notify-url}")
