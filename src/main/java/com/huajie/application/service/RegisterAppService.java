@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.EnterpriseRegiestRequestVO;
 import com.huajie.application.api.request.GovermentRegiestRequestVO;
 import com.huajie.application.api.response.EnterpriseRegiestResponseVO;
@@ -8,6 +9,7 @@ import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
 import com.huajie.domain.service.RegisterService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +66,13 @@ public class RegisterAppService {
         tenant.setStreet(regiestRequestVO.getStreetId());
         tenant.setAddress(regiestRequestVO.getAddress());
         tenant.setGovernmentType(regiestRequestVO.getGovernmentType());
-        tenant.setGovIndustrySector(regiestRequestVO.getGovIndustrySector());
+        if (StringUtils.equals(regiestRequestVO.getGovernmentType(), "IndustrySector")){
+            if (StringUtils.isNotBlank(regiestRequestVO.getGovIndustrySector())) {
+                tenant.setGovIndustrySector(regiestRequestVO.getGovIndustrySector());
+            }else {
+                throw new ApiException("政府行业部门 不能为空");
+            }
+        }
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
 //        tenant.setEntIndustryClassification(JSONObject.toJSONString(regiestRequestVO.getEntIndustryClassification()));
         tenant.setEntFireType(regiestRequestVO.getEntFireType());

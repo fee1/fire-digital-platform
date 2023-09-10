@@ -188,6 +188,7 @@ public class RegisterService {
      * @param govOperatorList 管理人
      * @param entIndustryClassification 政府管理的行业
      */
+    @Transactional
     public void regiestGoverment(Tenant tenant, List<UserAddRequestVO> govAdminList,
                                  List<UserAddRequestVO> govOperatorList, List<String> entIndustryClassification) {
         Role govAdminCodeRole = roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
@@ -198,6 +199,7 @@ public class RegisterService {
         if (govOperatorCodeRole == null){
             throw new ServerException("政府消防安全管理人 权限不存在");
         }
+        tenantService.add(tenant);
 
         List<User> userList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(govAdminList)) {
@@ -205,6 +207,8 @@ public class RegisterService {
                 User user = new User();
                 BeanUtils.copyProperties(userAddRequestVO, user);
                 user.setRoleId(govAdminCodeRole.getId());
+                user.setTenantId(tenant.getId());
+                user.setCreateUser(SystemConstants.SYSTEM);
                 userList.add(user);
             }
         }else {
@@ -215,12 +219,13 @@ public class RegisterService {
                 User user = new User();
                 BeanUtils.copyProperties(userAddRequestVO, user);
                 user.setRoleId(govOperatorCodeRole.getId());
+                user.setTenantId(tenant.getId());
+                user.setCreateUser(SystemConstants.SYSTEM);
                 userList.add(user);
             }
         }else {
             throw new ApiException("政府消防安全管理人 必须有一个以上");
         }
-        tenantService.add(tenant);
         userService.addUsers(userList);
         if (!CollectionUtils.isEmpty(entIndustryClassification)){
             for (String code : entIndustryClassification) {

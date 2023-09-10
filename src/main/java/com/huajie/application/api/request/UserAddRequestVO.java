@@ -39,7 +39,7 @@ public class UserAddRequestVO {
     private String email;
 
     @ApiModelProperty("分配的角色id")
-    @NotNull(message = "分配的角色id不能位空")
+//    @NotNull(message = "分配的角色id不能位空")
     private Integer roleId;
 
 }

@@ -61,10 +61,11 @@ alipay:
 # 微信支付配置
 wechat:
   pay:
+    appId:
     mchId:
     mchSerialNo:
     apiV3Key:
-    notify-url: http://localhost:8080/pay/callback
+    notify-url:
 
 swagger:
   enable: true

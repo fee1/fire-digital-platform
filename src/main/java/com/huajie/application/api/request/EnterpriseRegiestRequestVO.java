@@ -3,6 +3,7 @@ package com.huajie.application.api.request;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -58,10 +59,12 @@ public class EnterpriseRegiestRequestVO {
 
     @ApiModelProperty("企业消防安全责任人")
     @Size(min = 1, message = "企业消防安全责任人 最少有一个")
+    @Valid
     private List<UserAddRequestVO> entAdminList;
 
     @ApiModelProperty("企业消防安全管理人")
     @Size(min = 1, message = "企业消防安全管理人 最少有一个")
+    @Valid
     private List<UserAddRequestVO> entOperatorList;
 
 }

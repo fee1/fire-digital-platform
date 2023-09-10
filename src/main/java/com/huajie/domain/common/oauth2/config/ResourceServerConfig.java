@@ -36,7 +36,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/device/**",
                         "/goverment/organization/**",
                         "/sys/dic/add",
-                        "/sys/dic/value/add"
+                        "/sys/dic/value/add",
+                        "/pay/record/select"
                 );
 
     }
