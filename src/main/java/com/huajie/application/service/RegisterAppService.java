@@ -56,7 +56,7 @@ public class RegisterAppService {
     public void regiestGoverment(GovermentRegiestRequestVO regiestRequestVO) {
         Tenant tenant = new Tenant();
         tenant.setTenantName(regiestRequestVO.getGovernmentName());
-        tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
+        tenant.setTenantType(TenantTypeConstants.GOVERMENT);
         tenant.setStatus(TenantStatusConstants.ENABLE);
         //todo 可用截至时间未确定
         tenant.setEffectiveEndDate(new Date());
