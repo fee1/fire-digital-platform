@@ -19,7 +19,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         Object createUser = this.getFieldValByName("createUser", metaObject);
         Object createTime = this.getFieldValByName("createTime", metaObject);
         if (Objects.isNull(createUser)){
-            this.setFieldValByName("createUser", this.getCurrentUser().getUsername(), metaObject);
+            this.setFieldValByName("createUser", this.getCurrentUserName(), metaObject);
         }
         if (Objects.isNull(createTime)){
             this.setFieldValByName("createTime", new Date(), metaObject);
@@ -31,16 +31,24 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         Object updateUser = this.getFieldValByName("updateUser", metaObject);
         Object updateTime = this.getFieldValByName("updateTime", metaObject);
         if (Objects.isNull(updateUser)){
-            this.setFieldValByName("updateUser", this.getCurrentUser().getUsername(), metaObject);
+            this.setFieldValByName("updateUser", this.getCurrentUserName(), metaObject);
         }
         if (Objects.isNull(updateTime)){
             this.setFieldValByName("updateTime", new Date(), metaObject);
         }
     }
 
-    private User getCurrentUser(){
+    private String getCurrentUserName(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (User) auth.getPrincipal();
+        try {
+            User principal = (User) auth.getPrincipal();
+            if (principal != null){
+                return principal.getUsername();
+            }
+            return "";
+        }catch (Exception e){
+            return "";
+        }
     }
 
 }
