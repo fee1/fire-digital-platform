@@ -1,34 +1,41 @@
-package com.huajie.application.api.request;
+package com.huajie.application.api.response;
 
+import com.huajie.application.api.request.UserAddRequestVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
  * @author zhuxiaofeng
- * @date 2023/9/3
+ * @date 2023/9/10
  */
 @Data
-public class EditGovermentInfoRequestVO {
+public class GovermentInfoResponseVO {
+
 
     @ApiModelProperty("政府机关名称")
     private String governmentName;
 
-    @ApiModelProperty("省地址")
     private Integer provinceId;
 
-    @ApiModelProperty("市地址")
+    @ApiModelProperty("省地址")
+    private Integer provinceName;
+
     private Integer cityId;
 
-    @ApiModelProperty("区/县地址")
+    @ApiModelProperty("市地址")
+    private Integer cityName;
+
     private Integer regionId;
 
-    @ApiModelProperty("街道地址")
+    @ApiModelProperty("区/县地址")
+    private Integer regionName;
+
     private Integer streetId;
+
+    @ApiModelProperty("街道地址")
+    private Integer streetName;
 
     @ApiModelProperty("地址")
     private String address;
@@ -44,5 +51,11 @@ public class EditGovermentInfoRequestVO {
 
     @ApiModelProperty("管理行业类别 字典value code")
     private List<String> entIndustryClassification;
+
+    @ApiModelProperty("政府消防安全责任人")
+    private List<UserDetailResponseVO> govAdminList;
+
+    @ApiModelProperty("政府消防安全管理人")
+    private List<UserDetailResponseVO> govOperatorList;
 
 }

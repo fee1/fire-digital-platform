@@ -158,4 +158,10 @@ public class UserService {
             this.addUser(user);
         }
     }
+
+    public List<User> getUsersByTenantIdAndRoleId(Integer tenantId, Integer roleId) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getTenantId, tenantId).eq(User::getRoleId, roleId);
+        return this.userMapper.selectList(queryWrapper);
+    }
 }

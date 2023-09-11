@@ -1,6 +1,6 @@
 package com.huajie.domain.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
 import com.huajie.application.api.request.EditEnterpriseRequestVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.exception.ServerException;
@@ -10,12 +10,10 @@ import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
-import com.huajie.infrastructure.mapper.GovIndustryMapMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,24 +75,19 @@ public class GovermentOrganizationService {
         userService.addUser(user);
     }
 
-    public List<Tenant> getEnterpriseVerifyList(String enterpriseName) {
-        List<Tenant> tenantLikeNameAndNotapprove = tenantService.getTenantLikeNameAndNotapprove(enterpriseName);
+    public Page<Tenant> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName) {
+
         TenantModel currentTenant = UserContext.getCurrentTenant();
+
         List<GovIndustryMap> govIndustryMapByTenantId = govIndustryMapService.getGovIndustryMapByTenantId(currentTenant.getId());
 
+        Set<String> industryClassifications = govIndustryMapByTenantId.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(govIndustryMapByTenantId)){
             throw new ServerException("当前政府无管理的行业，请配置");
         }
 
-        //筛选出属于管理行业范围的租户
-        List<Tenant> tenantList = new ArrayList<>();
-        Set<String> industryClassifications = govIndustryMapByTenantId.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toSet());
-        for (Tenant tenant : tenantLikeNameAndNotapprove) {
-            if (industryClassifications.contains(tenant.getEntIndustryClassification())){
-                tenantList.add(tenant);
-            }
-        }
-        return tenantList;
+        Page<Tenant> tenantLikeNameAndNotapprove = tenantService.getEnterpriseVerifyList(pageNum, pageSize, enterpriseName, industryClassifications);
+        return tenantLikeNameAndNotapprove;
     }
 
     public void enterpriseVerifyPass(Integer enterpriseId) {
@@ -112,22 +105,16 @@ public class GovermentOrganizationService {
     }
 
 
-    public List<Tenant> getEnterpriseList(String enterpriseName) {
+    public Page<Tenant> getEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseName) {
         TenantModel currentTenant = UserContext.getCurrentTenant();
         List<GovIndustryMap> govIndustryMaps = govIndustryMapService.getGovIndustryMapByTenantId(currentTenant.getId());
+
+        Set<String> industryClassifications = govIndustryMaps.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(govIndustryMaps)){
             throw new ServerException("当前政府无管理的行业，请配置");
         }
-        List<Tenant> tenantLikeNameAndApprove = tenantService.getTenantLikeNameAndApprove(enterpriseName);
 
         //筛选出属于管理行业范围的租户
-        List<Tenant> tenantList = new ArrayList<>();
-        Set<String> industryClassifications = govIndustryMaps.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toSet());
-        for (Tenant tenant : tenantLikeNameAndApprove) {
-            if (industryClassifications.contains(tenant.getEntIndustryClassification())){
-                tenantList.add(tenant);
-            }
-        }
-        return tenantList;
+        return tenantService.getEnterpriseList(pageNum, pageSize, enterpriseName, industryClassifications);
     }
 }

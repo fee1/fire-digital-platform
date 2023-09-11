@@ -1,15 +1,23 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.huajie.domain.common.constants.SystemConstants;
+import com.huajie.domain.common.oauth2.model.TenantModel;
+import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.infrastructure.mapper.TenantMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author zhuxiaofeng
@@ -35,23 +43,58 @@ public class TenantService {
         tenantMapper.updateById(tenant);
     }
 
-    public List<Tenant> getTenantLikeNameAndNotapprove(String enterpriseName) {
+    public Page<Tenant> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName, Collection<String> industryClassifications) {
+        PageHelper.startPage(pageNum, pageSize);
+        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant tenant = tenantMapper.selectById(currentTenant.getId());
+
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(Tenant::getApproveStatus, 0);
+                .eq(Tenant::getApproveStatus, 0)
+                .eq(Tenant::getProvince, tenant.getProvince())
+                .in(Tenant::getEntIndustryClassification, industryClassifications);
+        if (!Objects.isNull(tenant.getCity())){
+            queryWrapper.lambda().eq(Tenant::getCity, tenant.getCity());
+        }
+        if (!Objects.isNull(tenant.getRegion())){
+            queryWrapper.lambda().eq(Tenant::getRegion, tenant.getRegion());
+        }
+        if (!Objects.isNull(tenant.getStreet())){
+            queryWrapper.lambda().eq(Tenant::getStreet, tenant.getStreet());
+        }
         if (StringUtils.isNotBlank(enterpriseName)){
             queryWrapper.lambda().like(Tenant::getTenantName, enterpriseName);
         }
-        return tenantMapper.selectList(queryWrapper);
+        return (Page<Tenant>)tenantMapper.selectList(queryWrapper);
     }
 
-    public List<Tenant> getTenantLikeNameAndApprove(String enterpriseName) {
+    public Page<Tenant> getEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseName, Collection<String> industryClassifications) {
+        PageHelper.startPage(pageNum, pageSize);
+
+        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant tenant = tenantMapper.selectById(currentTenant.getId());
+
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(Tenant::getApproveStatus, 1);
+                .eq(Tenant::getApproveStatus, 1)
+                .eq(Tenant::getProvince, tenant.getProvince())
+                .in(Tenant::getEntIndustryClassification, industryClassifications);
+
+        if (!Objects.isNull(tenant.getCity())){
+            queryWrapper.lambda().eq(Tenant::getCity, tenant.getCity());
+        }
+        if (!Objects.isNull(tenant.getRegion())){
+            queryWrapper.lambda().eq(Tenant::getRegion, tenant.getRegion());
+        }
+        if (!Objects.isNull(tenant.getStreet())){
+            queryWrapper.lambda().eq(Tenant::getStreet, tenant.getStreet());
+        }
         if (StringUtils.isNotBlank(enterpriseName)){
             queryWrapper.lambda().like(Tenant::getTenantName, enterpriseName);
         }
-        return tenantMapper.selectList(queryWrapper);
+        if (StringUtils.isNotBlank(enterpriseName)){
+            queryWrapper.lambda().like(Tenant::getTenantName, enterpriseName);
+        }
+        return (Page<Tenant>) tenantMapper.selectList(queryWrapper);
     }
 }

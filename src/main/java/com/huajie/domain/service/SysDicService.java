@@ -63,9 +63,21 @@ public class SysDicService {
         return (Page<SysDicValue>) sysDicValueMapper.selectList(queryWrapper);
     }
 
+    public List<SysDicValue> getDicValueList(List<String> valueCode) {
+        QueryWrapper<SysDicValue> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(SysDicValue::getValueCode, valueCode);
+        return  sysDicValueMapper.selectList(queryWrapper);
+    }
+
     public void addDicValue(DicValueAddDTO dicValueAddDTO) {
         SysDicValue sysDicValue = new SysDicValue();
         BeanUtils.copyProperties(dicValueAddDTO, sysDicValue);
         sysDicValueMapper.insert(sysDicValue);
+    }
+
+    public SysDicValue getDicValueByValueCode(String valueCode) {
+        QueryWrapper<SysDicValue> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysDicValue::getValueCode, valueCode);
+        return sysDicValueMapper.selectOne(queryWrapper);
     }
 }

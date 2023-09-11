@@ -39,14 +39,24 @@ public class EnterpriseResponseVO {
     @ApiModelProperty("街道名称")
     private String streetName;
 
+    private String address;
 
     @ApiModelProperty("企业性质")
     private String enterpriseType;
 
+    private String enterpriseTypeName;
+
     @ApiModelProperty("行业类别")
     private String entIndustryClassification;
 
+    @ApiModelProperty("行业类别")
+    private String entIndustryClassificationName;
+
     @ApiModelProperty("消防安全管理类别")
     private String entFireType;
+
+    @ApiModelProperty("消防安全管理类别")
+    private String entFireTypeName;
+
 
 }

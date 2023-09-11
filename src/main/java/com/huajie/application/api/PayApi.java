@@ -2,6 +2,8 @@ package com.huajie.application.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.huajie.application.api.common.ApiResult;
+import com.huajie.application.api.request.GeneratePayQrcodeImageRequestVO;
+import com.huajie.application.api.response.QrcodeImageResponseVO;
 import com.huajie.application.api.response.TenantPayRecordResponseVO;
 import com.huajie.application.service.PayAppService;
 import io.swagger.annotations.Api;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -42,6 +45,12 @@ public class PayApi {
     public ApiResult<Void> callback(@RequestBody Map<String, String> requestVO){
         log.debug("pay callback: {}", JSONObject.toJSONString(requestVO));
         return ApiResult.ok();
+    }
+
+    @ApiOperation("生成支付二维码")
+    @PostMapping("generate/qrcode/image")
+    public ApiResult<QrcodeImageResponseVO> generatePayQrcodeImage(@Valid@RequestBody GeneratePayQrcodeImageRequestVO requestVO){
+        return ApiResult.ok(payAppService.generatePayQrcodeImage(requestVO));
     }
 
 }

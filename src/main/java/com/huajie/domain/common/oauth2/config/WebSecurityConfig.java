@@ -44,7 +44,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/oauth/**", "/login/**", "/logout/**",
                         "/register/**", "/alipay/notify/**", "/region/**",
                         "/sys/dic/list", "/sys/dic/value/list",
-                        "/pay/callback")
+                        "/pay/callback",
+                        "/pay/record/select",
+                        "/pay/generate/qrcode/image")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
