@@ -28,22 +28,22 @@ public class CustomizeGrantedAuthority implements GrantedAuthority {
     /**
      * 角色信息
      */
-    private RoleModel role;
+    private Role role;
 
     /**
      * 租户信息
      */
-    private TenantModel tenant;
+    private Tenant tenant;
 
     /**
      * 角色菜单关联关系信息
      */
-    private List<Integer> roleMenuRelationIds;
+    private List<RoleMenuRelation> roleMenuRelations;
 
     /**
      * 角色方法关联关系信息
      */
-    private List<Integer> roleFunctionRelationIds;
+    private List<RoleFunctionRelation> roleFunctionRelations;
 
 
     @Override

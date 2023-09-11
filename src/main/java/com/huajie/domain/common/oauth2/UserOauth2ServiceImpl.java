@@ -2,8 +2,6 @@ package com.huajie.domain.common.oauth2;
 
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
-import com.huajie.domain.common.oauth2.model.RoleModel;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.RoleFunctionRelation;
 import com.huajie.domain.entity.RoleMenuRelation;
@@ -94,23 +92,12 @@ public class UserOauth2ServiceImpl implements UserDetailsService {
             throw new ApiException("该用户没有角色，请给予角色后再尝试登录");
         }
         CustomizeGrantedAuthority customizeGrantedAuthority = new CustomizeGrantedAuthority();
-        RoleModel roleModel = new RoleModel();
-        BeanUtils.copyProperties(role, roleModel);
-        customizeGrantedAuthority.setRole(roleModel);
+        customizeGrantedAuthority.setRole(role);
 
-        if (!CollectionUtils.isEmpty(roleMenuRelations)) {
-            List<Integer> menuIds = roleMenuRelations.stream().map(RoleMenuRelation::getMenuId).collect(Collectors.toList());
-            customizeGrantedAuthority.setRoleMenuRelationIds(menuIds);
-        }
+        customizeGrantedAuthority.setRoleMenuRelations(roleMenuRelations);
+        customizeGrantedAuthority.setRoleFunctionRelations(roleFunctionRelations);
 
-        if (!CollectionUtils.isEmpty(roleFunctionRelations)) {
-            List<Integer> functionIds = roleFunctionRelations.stream().map(RoleFunctionRelation::getFunctionId).collect(Collectors.toList());
-            customizeGrantedAuthority.setRoleFunctionRelationIds(functionIds);
-        }
-
-        TenantModel tenantModel = new TenantModel();
-        BeanUtils.copyProperties(tenant, tenantModel);
-        customizeGrantedAuthority.setTenant(tenantModel);
+        customizeGrantedAuthority.setTenant(tenant);
 
         customizeGrantedAuthority.setUserId(user.getId());
         customizeGrantedAuthority.setUserNo(user.getUserNo());

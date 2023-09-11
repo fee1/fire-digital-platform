@@ -7,17 +7,14 @@ import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.application.api.request.UserUpdateRequestVO;
 import com.huajie.application.api.response.CurrentUserResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
-import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Role;
+import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.service.RoleService;
 import com.huajie.domain.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -64,7 +61,7 @@ public class UserAppService {
     public void addUser(UserAddRequestVO requestVO) {
         User user = new User();
         BeanUtils.copyProperties(requestVO, user);
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
         Integer id = currentTenant.getId();
         user.setTenantId(id);
         userService.addUser(user);

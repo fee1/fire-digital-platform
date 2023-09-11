@@ -7,9 +7,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Place;
+import com.huajie.domain.entity.Tenant;
 import com.huajie.infrastructure.mapper.PlaceMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class PlaceService {
             queryWrapper.lambda().like(Place::getPlaceAddress, placeAddress);
         }
 
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
         queryWrapper.lambda().eq(Place::getTenantId,currentTenant.getId());
         queryWrapper.lambda().eq(Place::getDeleted,"0");
 

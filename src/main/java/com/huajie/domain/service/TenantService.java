@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huajie.domain.common.constants.SystemConstants;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.common.utils.UserContext;
-import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.infrastructure.mapper.TenantMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author zhuxiaofeng
@@ -45,8 +41,7 @@ public class TenantService {
 
     public Page<Tenant> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName, Collection<String> industryClassifications) {
         PageHelper.startPage(pageNum, pageSize);
-        TenantModel currentTenant = UserContext.getCurrentTenant();
-        Tenant tenant = tenantMapper.selectById(currentTenant.getId());
+        Tenant tenant = UserContext.getCurrentTenant();
 
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
@@ -70,9 +65,7 @@ public class TenantService {
 
     public Page<Tenant> getEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseName, Collection<String> industryClassifications) {
         PageHelper.startPage(pageNum, pageSize);
-
-        TenantModel currentTenant = UserContext.getCurrentTenant();
-        Tenant tenant = tenantMapper.selectById(currentTenant.getId());
+        Tenant tenant = UserContext.getCurrentTenant();
 
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()

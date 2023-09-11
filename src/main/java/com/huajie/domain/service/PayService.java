@@ -6,8 +6,8 @@ import com.huajie.domain.common.constants.PayChannelConstants;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.common.exception.ServerException;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
@@ -70,7 +70,7 @@ public class PayService {
 
     @Transactional
     public EnterpriseRegiestDTO generatePayQrcodeImage(String orderId, String channel) {
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
         Integer tenantId = currentTenant.getId();
         List<User> usersByTenantId = userService.getUsersByTenantId(tenantId);
         BigDecimal amount = new BigDecimal(unitPrice * usersByTenantId.size());

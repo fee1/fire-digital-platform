@@ -11,10 +11,8 @@ import com.huajie.application.api.response.DicValueResponseVO;
 import com.huajie.application.api.response.EntIndustryClassificationResponseVO;
 import com.huajie.application.api.response.EnterpriseResponseVO;
 import com.huajie.application.api.response.GovermentInfoResponseVO;
-import com.huajie.application.api.response.TenantResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Region;
@@ -78,7 +76,7 @@ public class GovermentOrganizationAppService {
         if (StringUtils.isNotBlank(requestVO.getGovernmentName())){
             tenant.setTenantName(requestVO.getGovernmentName());
         }
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
         tenant.setId(currentTenant.getId());
         govermentOrganizationService.editGovermentInfo(tenant, requestVO.getEntIndustryClassification());
     }
@@ -236,20 +234,19 @@ public class GovermentOrganizationAppService {
     }
 
     public GovermentInfoResponseVO getInfo() {
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
 
-        Tenant tenantByTenantId = tenantService.getTenantByTenantId(currentTenant.getId());
         GovermentInfoResponseVO govermentInfoResponseVO = new GovermentInfoResponseVO();
 
-        govermentInfoResponseVO.setGovernmentName(tenantByTenantId.getTenantName());
-        govermentInfoResponseVO.setProvinceId(tenantByTenantId.getProvince());
-        govermentInfoResponseVO.setCityId(tenantByTenantId.getCity());
-        govermentInfoResponseVO.setRegionId(tenantByTenantId.getRegion());
-        govermentInfoResponseVO.setStreetId(tenantByTenantId.getStreet());
-        govermentInfoResponseVO.setAddress(tenantByTenantId.getAddress());
-        govermentInfoResponseVO.setGovernmentType(tenantByTenantId.getGovernmentType());
-        govermentInfoResponseVO.setGovIndustrySector(tenantByTenantId.getGovIndustrySector());
-        govermentInfoResponseVO.setEntFireType(tenantByTenantId.getEntFireType());
+        govermentInfoResponseVO.setGovernmentName(currentTenant.getTenantName());
+        govermentInfoResponseVO.setProvinceId(currentTenant.getProvince());
+        govermentInfoResponseVO.setCityId(currentTenant.getCity());
+        govermentInfoResponseVO.setRegionId(currentTenant.getRegion());
+        govermentInfoResponseVO.setStreetId(currentTenant.getStreet());
+        govermentInfoResponseVO.setAddress(currentTenant.getAddress());
+        govermentInfoResponseVO.setGovernmentType(currentTenant.getGovernmentType());
+        govermentInfoResponseVO.setGovIndustrySector(currentTenant.getGovIndustrySector());
+        govermentInfoResponseVO.setEntFireType(currentTenant.getEntFireType());
 
         List<GovIndustryMap> govIndustryMapByTenantId = govIndustryMapService.getGovIndustryMapByTenantId(currentTenant.getId());
         List<String> valueCodes = govIndustryMapByTenantId.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toList());

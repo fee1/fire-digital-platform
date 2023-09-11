@@ -4,7 +4,6 @@ import com.github.pagehelper.Page;
 import com.huajie.application.api.request.EditEnterpriseRequestVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.exception.ServerException;
-import com.huajie.domain.common.oauth2.model.TenantModel;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Role;
@@ -77,7 +76,7 @@ public class GovermentOrganizationService {
 
     public Page<Tenant> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName) {
 
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
 
         List<GovIndustryMap> govIndustryMapByTenantId = govIndustryMapService.getGovIndustryMapByTenantId(currentTenant.getId());
 
@@ -106,7 +105,7 @@ public class GovermentOrganizationService {
 
 
     public Page<Tenant> getEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseName) {
-        TenantModel currentTenant = UserContext.getCurrentTenant();
+        Tenant currentTenant = UserContext.getCurrentTenant();
         List<GovIndustryMap> govIndustryMaps = govIndustryMapService.getGovIndustryMapByTenantId(currentTenant.getId());
 
         Set<String> industryClassifications = govIndustryMaps.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toSet());
