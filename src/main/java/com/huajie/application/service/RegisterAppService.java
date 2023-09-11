@@ -6,6 +6,7 @@ import com.huajie.application.api.request.GovermentRegiestRequestVO;
 import com.huajie.application.api.response.EnterpriseRegiestResponseVO;
 import com.huajie.domain.common.constants.TenantStatusConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
+import com.huajie.domain.common.utils.LocalDateUtil;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
 import com.huajie.domain.service.RegisterService;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -33,8 +35,7 @@ public class RegisterAppService {
         tenant.setTenantName(regiestRequestVO.getEnterpriseName());
         tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
         tenant.setStatus(TenantStatusConstants.ENABLE);
-        //todo 可用截至时间未确定
-        tenant.setEffectiveEndDate(new Date());
+        tenant.setEffectiveEndDate(LocalDateUtil.addYears(new Date(), 1));
         tenant.setProvince(regiestRequestVO.getProvinceId());
         tenant.setCity(regiestRequestVO.getCityId());
         tenant.setRegion(regiestRequestVO.getRegionId());
@@ -58,8 +59,7 @@ public class RegisterAppService {
         tenant.setTenantName(regiestRequestVO.getGovernmentName());
         tenant.setTenantType(TenantTypeConstants.GOVERMENT);
         tenant.setStatus(TenantStatusConstants.ENABLE);
-        //todo 可用截至时间未确定
-        tenant.setEffectiveEndDate(new Date());
+        tenant.setEffectiveEndDate(LocalDateUtil.addYears(new Date(), 1));
         tenant.setProvince(regiestRequestVO.getProvinceId());
         tenant.setCity(regiestRequestVO.getCityId());
         tenant.setRegion(regiestRequestVO.getRegionId());
