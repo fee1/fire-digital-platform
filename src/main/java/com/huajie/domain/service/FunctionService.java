@@ -30,4 +30,11 @@ public class FunctionService {
         }
         return (Page<Function>) functionMapper.selectList(queryWrapper);
     }
+
+
+    public Function getFunctionByFuntionCode(String functionCode) {
+        QueryWrapper<Function> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Function::getFunctionCode, functionCode);
+        return functionMapper.selectOne(queryWrapper);
+    }
 }
