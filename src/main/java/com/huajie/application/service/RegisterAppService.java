@@ -51,8 +51,7 @@ public class RegisterAppService {
 
 
         EnterpriseRegiestResponseVO enterpriseRegiestResponseVO = new EnterpriseRegiestResponseVO();
-        BeanUtils.copyProperties(regiestDTO, enterpriseRegiestResponseVO);
-        enterpriseRegiestResponseVO.setAmount(regiestDTO.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        enterpriseRegiestResponseVO.setOrderId(regiestDTO.getAlipayOrderId());
         return enterpriseRegiestResponseVO;
     }
 
@@ -82,7 +81,9 @@ public class RegisterAppService {
             throw new ApiException("当前政府管理类型 管理行业不可为空");
         }
 
+//        tenant.setEntFireType(regiestRequestVO.getEntFireType());
 //        tenant.setEntIndustryClassification(JSONObject.toJSONString(regiestRequestVO.getEntIndustryClassification()));
+//        tenant.setEntFireType(regiestRequestVO.getEntFireType());
         this.registerService.regiestGoverment(tenant, regiestRequestVO.getGovAdminList(),
                 regiestRequestVO.getGovOperatorList(), regiestRequestVO.getEntIndustryClassification());
     }

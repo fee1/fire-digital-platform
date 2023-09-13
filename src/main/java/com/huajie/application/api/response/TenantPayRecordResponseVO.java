@@ -41,6 +41,12 @@ public class TenantPayRecordResponseVO {
     @ApiModelProperty("支付渠道")
     private String payChannel;
 
+    @ApiModelProperty("微信支付二维码")
+    private String wechatPayQrcodeUrl;
+
+    @ApiModelProperty("支付包支付二维码")
+    private String alipayQrcodeUrl;
+
     @ApiModelProperty("支付时间")
     private Date date;
 

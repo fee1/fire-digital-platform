@@ -3,9 +3,11 @@ package com.huajie.application.service;
 import com.huajie.application.api.request.GeneratePayQrcodeImageRequestVO;
 import com.huajie.application.api.response.QrcodeImageResponseVO;
 import com.huajie.application.api.response.TenantPayRecordResponseVO;
+import com.huajie.domain.common.constants.PayChannelConstants;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
 import com.huajie.domain.service.PayService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,14 @@ public class PayAppService {
     public QrcodeImageResponseVO generatePayQrcodeImage(GeneratePayQrcodeImageRequestVO requestVO) {
         EnterpriseRegiestDTO enterpriseRegiestDTO = payService.generatePayQrcodeImage(requestVO.getOutTradeNo(), requestVO.getChannel());
         QrcodeImageResponseVO qrcodeImageResponseVO = new QrcodeImageResponseVO();
-        BeanUtils.copyProperties(enterpriseRegiestDTO, qrcodeImageResponseVO);
+        qrcodeImageResponseVO.setAmount(enterpriseRegiestDTO.getAmount().toPlainString());
+        if (StringUtils.equals(requestVO.getChannel(), PayChannelConstants.ALIPAY_CHANNEL)){
+            qrcodeImageResponseVO.setOrderId(enterpriseRegiestDTO.getAlipayOrderId());
+            qrcodeImageResponseVO.setQrcodeUrl(enterpriseRegiestDTO.getAlipayQrcodeUrl());
+        }else if (StringUtils.equals(requestVO.getChannel(), PayChannelConstants.WECHAT_CHANNEL)){
+            qrcodeImageResponseVO.setOrderId(enterpriseRegiestDTO.getWechatPayOrderId());
+            qrcodeImageResponseVO.setQrcodeUrl(enterpriseRegiestDTO.getWechatPayQrcodeUrl());
+        }
         return qrcodeImageResponseVO;
     }
 

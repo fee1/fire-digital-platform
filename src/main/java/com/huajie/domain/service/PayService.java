@@ -49,6 +49,9 @@ public class PayService {
     @Autowired
     private WechatPayClient wechatPayClient;
 
+    @Autowired
+    private TenantService tenantService;
+
     @Value("${unit.price:5}")
     private Double unitPrice;
 
@@ -70,12 +73,11 @@ public class PayService {
 
     @Transactional
     public EnterpriseRegiestDTO generatePayQrcodeImage(String orderId, String channel) {
-        Tenant currentTenant = UserContext.getCurrentTenant();
-        Integer tenantId = currentTenant.getId();
-        List<User> usersByTenantId = userService.getUsersByTenantId(tenantId);
+        TenantPayRecord payRecordByOrderId = this.getPayRecordByOrderId(orderId);
+        List<User> usersByTenantId = userService.getUsersByTenantId(payRecordByOrderId.getTenantId());
+        Tenant currentTenant = tenantService.getTenantByTenantId(payRecordByOrderId.getTenantId());
         BigDecimal amount = new BigDecimal(unitPrice * usersByTenantId.size());
 
-        TenantPayRecord payRecordByOrderId = this.getPayRecordByOrderId(orderId);
         String outTradeNo = "";
         if (StringUtils.equals(payRecordByOrderId.getStatus(), PayRecordStatusConstants.ALIPAY_TRADE_CLOSED)){
             outTradeNo = TraceFatch.getTraceId();
@@ -84,43 +86,44 @@ public class PayService {
             TenantPayRecord tenantPayRecord = new TenantPayRecord();
 //        tenantPayRecord.setPayChannel(PayChannelConstants.ALIPAY_CHANNEL);
             tenantPayRecord.setStatus(PayRecordStatusConstants.ALIPAY_WAIT_BUYER_PAY);
-            tenantPayRecord.setTenantId(tenantId);
+            tenantPayRecord.setTenantId(currentTenant.getId());
             tenantPayRecord.setOutTradeNo(outTradeNo);
             tenantPayRecord.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
             tenantPayRecord.setCreateUser(SystemConstants.SYSTEM);
-            tenantPayRecordMapper.insert(tenantPayRecord);
-        }else {
-            outTradeNo = payRecordByOrderId.getOutTradeNo();
-        }
-
-        String subject = "企业用户注册: " + currentTenant.getTenantName();
-        if (StringUtils.equals(channel, PayChannelConstants.ALIPAY_CHANNEL)) {
-            String alipayQrcodeFileName = "alipay_" + outTradeNo + ".png";
-            AlipayTradePrecreateResponse response = this.alipayPreCreateOrder(outTradeNo, subject, amount.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
-            String alipayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(response.getQrCode(), alipayQrcodeFileName);
 
             EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
             enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+            String subject = "企业用户注册: " + currentTenant.getTenantName();
+            String alipayQrcodeFileName = "alipay_" + outTradeNo + ".png";
+            AlipayTradePrecreateResponse response = this.alipayPreCreateOrder(outTradeNo, subject, amount.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+            String alipayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(response.getQrCode(), alipayQrcodeFileName);
+            tenantPayRecord.setAlipayQrcodeUrl(alipayQrcodeUrl);
+
+
             //设置 alipay 缴费订单号和二维码地址
             enterpriseRegiestDTO.setAlipayOrderId(outTradeNo);
             enterpriseRegiestDTO.setAlipayQrcodeUrl(alipayQrcodeUrl);
 
-            return enterpriseRegiestDTO;
-        }else if (StringUtils.equals(channel, PayChannelConstants.WECHAT_CHANNEL)) {
 
             String wechatpayQrcodeFileName = "wechatpay_" + outTradeNo + ".png";
             WechatPayCreateRespModel wechatPayCreateRespModel = this.wechatPayCreateOrder(outTradeNo, subject, amount);
             String wechatpayQrcodeUrl = commonService.generateQrImageAndUpLoadAliyun(wechatPayCreateRespModel.getCodeUrl(), wechatpayQrcodeFileName);
-            EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
-            enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+            tenantPayRecord.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);
             //设置订单号和二维码地址
-            enterpriseRegiestDTO.setAlipayOrderId(outTradeNo);
-            enterpriseRegiestDTO.setAlipayQrcodeUrl(wechatpayQrcodeUrl);
+            enterpriseRegiestDTO.setWechatPayOrderId(outTradeNo);
+            enterpriseRegiestDTO.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);
 
-
+            tenantPayRecordMapper.insert(tenantPayRecord);
             return enterpriseRegiestDTO;
         }else {
-            throw new ServerException("没有这个渠道");
+            outTradeNo = payRecordByOrderId.getOutTradeNo();
+            EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
+            enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+            enterpriseRegiestDTO.setWechatPayQrcodeUrl(payRecordByOrderId.getWechatPayQrcodeUrl());
+            enterpriseRegiestDTO.setAlipayQrcodeUrl(payRecordByOrderId.getAlipayQrcodeUrl());
+            enterpriseRegiestDTO.setWechatPayOrderId(outTradeNo);
+            enterpriseRegiestDTO.setAlipayOrderId(outTradeNo);
+            return enterpriseRegiestDTO;
         }
     }
 

@@ -12,6 +12,7 @@ import com.huajie.domain.service.TenantService;
 import com.huajie.infrastructure.external.pay.CustomAlipayClient;
 import com.huajie.infrastructure.external.pay.WechatPayClient;
 import com.huajie.infrastructure.external.pay.model.WechatPayCheckRespModel;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,6 +27,7 @@ import java.util.List;
  * @date 2023/9/7
  */
 @Component
+@Slf4j
 public class TradeOrderTask {
 
     @Autowired
@@ -45,7 +47,15 @@ public class TradeOrderTask {
         List<TenantPayRecord> tenantPayRecordIsNotSuccess = tenantPayRecordService.getAlipayRecordIsNotSuccess();
         if (!CollectionUtils.isEmpty(tenantPayRecordIsNotSuccess)) {
             for (TenantPayRecord payRecordIsNotSuccess : tenantPayRecordIsNotSuccess) {
-                AlipayTradeQueryResponse alipayTradeQueryResponse = customAlipayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
+                AlipayTradeQueryResponse alipayTradeQueryResponse = null;
+
+                try {
+                    alipayTradeQueryResponse = customAlipayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
+                }catch (Exception e){
+                    log.error(e.getMessage());
+                    log.error("查询订单失败: ", e);
+                    continue;
+                }
                 // 支付宝订单号
                 if (StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_SUCCESS)
                         || StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_FINISHED)) {

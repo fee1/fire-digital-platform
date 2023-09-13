@@ -1,5 +1,6 @@
 package com.huajie.domain.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,6 +24,10 @@ public class TenantPayRecord implements Serializable {
     private String payAmount;
 
     private String payChannel;
+
+    private String wechatPayQrcodeUrl;
+
+    private String alipayQrcodeUrl;
 
     private Date date;
 

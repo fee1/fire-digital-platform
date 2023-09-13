@@ -52,10 +52,10 @@ public class GovermentRegiestRequestVO {
 //    @NotNull(message = "政府行业部门 不能为空")
     private String govIndustrySector;
 
-    @ApiModelProperty("消防安全管理类别 字典value code")
-    @NotBlank(message = "消防安全管理类别 不能为空")
-    @NotNull(message = "消防安全管理类别 不能为空")
-    private String entFireType;
+//    @ApiModelProperty("消防安全管理类别 字典value code")
+//    @NotBlank(message = "消防安全管理类别 不能为空")
+//    @NotNull(message = "消防安全管理类别 不能为空")
+//    private String entFireType;
 
     @ApiModelProperty("管理行业类别 字典value code")
     private List<String> entIndustryClassification;

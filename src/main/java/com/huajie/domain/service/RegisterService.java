@@ -173,6 +173,8 @@ public class RegisterService {
         tenantPayRecord.setTenantId(tenant.getId());
         tenantPayRecord.setOutTradeNo(outTradeNo);
         tenantPayRecord.setTotalAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
+        tenantPayRecord.setAlipayQrcodeUrl(alipayQrcodeUrl);
+        tenantPayRecord.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);
         tenantPayRecord.setCreateUser(SystemConstants.SYSTEM);
         tenantPayRecordMapper.insert(tenantPayRecord);
 
