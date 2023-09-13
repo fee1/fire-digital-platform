@@ -33,6 +33,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -176,6 +177,7 @@ public class RegisterService {
         tenantPayRecord.setAlipayQrcodeUrl(alipayQrcodeUrl);
         tenantPayRecord.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);
         tenantPayRecord.setCreateUser(SystemConstants.SYSTEM);
+        tenantPayRecord.setCreateTime(new Date());
         tenantPayRecordMapper.insert(tenantPayRecord);
 
 
