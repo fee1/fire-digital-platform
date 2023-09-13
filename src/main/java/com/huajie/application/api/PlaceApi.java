@@ -28,12 +28,12 @@ public class PlaceApi {
     @Autowired
     private PlaceAppService placeAppService;
 
-    @ApiOperation("分页获取点位列表")
+    @ApiOperation("分页获取点位列表(企业)")
     @GetMapping("/page")
     public ApiResult<ApiPage<PlaceResponseVO>> pagePlaceList(@RequestParam(required = false, defaultValue = "1")Integer pageNum,
                                                                               @RequestParam(required = false, defaultValue = "10")Integer pageSize,
                                                                               PlaceQueryRequestVO requestVO){
-        ApiPage<PlaceResponseVO> result = ApiPage.restPage(placeAppService.pagePlaceListWithDevices(pageNum, pageSize, requestVO));
+        ApiPage<PlaceResponseVO> result = ApiPage.restPage(placeAppService.pageEntPlaceList(pageNum, pageSize, requestVO));
         return ApiResult.ok(result);
     }
 

@@ -70,7 +70,7 @@ public class GovermentOrganizationApi {
     public ApiResult<ApiPage<EnterpriseResponseVO>> getEnterpriseVerifyList(@ApiParam("当前页码")@RequestParam(required = false, defaultValue = "0") Integer pageNum,
                                                                          @ApiParam("每页数量")@RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                                          @RequestParam(required = false)@ApiParam("企业名称") String enterpriseName){
-        Page<EnterpriseResponseVO> enterpriseResponseVOList = govermentOrganizationAppService.getEnterpriseVerifyList(pageNum, pageSize, enterpriseName);
+        Page<EnterpriseResponseVO> enterpriseResponseVOList = govermentOrganizationAppService.getEnterpriseVerifyList(pageNum, pageSize, null, enterpriseName);
         return ApiResult.ok(ApiPage.restPage(enterpriseResponseVOList));
     }
 
@@ -92,8 +92,9 @@ public class GovermentOrganizationApi {
     @GetMapping("enterprise/list")
     public ApiResult<ApiPage<EnterpriseResponseVO>> getEnterpriseList(@ApiParam("当前页码")@RequestParam(required = false, defaultValue = "0") Integer pageNum,
                                                                       @ApiParam("每页数量")@RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                                      @ApiParam("企业名称")@RequestParam(required = false) String enterpriseName){
-        Page<EnterpriseResponseVO> enterpriseResponseVOList = govermentOrganizationAppService.getEnterpriseList(pageNum, pageSize, enterpriseName);
+                                                                      @ApiParam("企业名称")@RequestParam(required = false) String enterpriseName,
+                                                                      @ApiParam("企业类型")@RequestParam(required = false) String enterpriseType){
+        Page<EnterpriseResponseVO> enterpriseResponseVOList = govermentOrganizationAppService.getAdminEnterpriseList(pageNum, pageSize,enterpriseType, enterpriseName);
         return ApiResult.ok(ApiPage.restPage(enterpriseResponseVOList));
     }
 

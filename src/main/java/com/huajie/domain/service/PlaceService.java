@@ -23,8 +23,14 @@ public class PlaceService {
     @Autowired
     private PlaceMapper placeMapper;
 
+    public Integer getPlaceCountByTenantId(Integer tenantId){
+        QueryWrapper<Place> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Place::getTenantId,tenantId);
+        return placeMapper.selectCount(queryWrapper);
+    }
 
-    public Page<Place> getPagePlaceList(Integer pageNum, Integer pageSize, Integer placeId, String placeName, String placeAddress){
+
+    public Page<Place> getPagePlaceList(Integer pageNum, Integer pageSize, Integer placeId, String placeName, String placeAddress,Integer tenantId){
         QueryWrapper<Place> queryWrapper = new QueryWrapper<>();
         if (placeId != null){
             queryWrapper.lambda().eq(Place::getId,placeId);
@@ -35,9 +41,7 @@ public class PlaceService {
         if (StringUtils.isNotBlank(placeAddress)){
             queryWrapper.lambda().like(Place::getPlaceAddress, placeAddress);
         }
-
-        Tenant currentTenant = UserContext.getCurrentTenant();
-        queryWrapper.lambda().eq(Place::getTenantId,currentTenant.getId());
+        queryWrapper.lambda().eq(Place::getTenantId,tenantId);
         queryWrapper.lambda().eq(Place::getDeleted,"0");
 
         PageHelper.startPage(pageNum, pageSize);
