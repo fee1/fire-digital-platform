@@ -58,5 +58,11 @@ public class EnterpriseResponseVO {
     @ApiModelProperty("消防安全管理类别")
     private String entFireTypeName;
 
+    @ApiModelProperty("已采集点位数量")
+    private Integer placeCount;
+
+    @ApiModelProperty("已采集设备数量")
+    private Integer deviceCount;
+
 
 }

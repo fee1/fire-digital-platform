@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class DeviceResponseVO {
@@ -76,4 +77,6 @@ public class DeviceResponseVO {
     private Date updateTime;
 
     private String updateUser;
+
+    private List<InspectDetailResponseVO> inspectDetailList;
 }

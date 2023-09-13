@@ -26,7 +26,7 @@ public class GovermentRegiestRequestVO {
     private Integer provinceId;
 
     @ApiModelProperty("市地址")
-//    @NotNull(message = "市地址 不能为空")
+    @NotNull(message = "市地址 不能为空")
     private Integer cityId;
 
     @ApiModelProperty("区/县地址")

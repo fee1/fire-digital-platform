@@ -24,6 +24,12 @@ public class DeviceService {
     @Autowired
     private DeviceMapper deviceMapper;
 
+    public Integer getDeviceCountByTenantId(Integer tenantId){
+        QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Device::getTenantId,tenantId);
+        return deviceMapper.selectCount(queryWrapper);
+    }
+
     public List<Device> getDeviceListByPlaceId(Integer placeId){
         if(placeId == null){
             return Collections.emptyList();

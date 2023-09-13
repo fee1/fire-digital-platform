@@ -13,6 +13,8 @@ import com.huajie.application.api.response.EnterpriseResponseVO;
 import com.huajie.application.api.response.GovermentInfoResponseVO;
 import com.huajie.application.api.response.UserDetailResponseVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
+import com.huajie.domain.common.enums.EnterpriseFireTypeEnum;
+import com.huajie.domain.common.enums.EnterpriseTypeEnum;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Region;
@@ -20,13 +22,7 @@ import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.SysDicValue;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
-import com.huajie.domain.service.GovIndustryMapService;
-import com.huajie.domain.service.GovermentOrganizationService;
-import com.huajie.domain.service.RegionService;
-import com.huajie.domain.service.RoleService;
-import com.huajie.domain.service.SysDicService;
-import com.huajie.domain.service.TenantService;
-import com.huajie.domain.service.UserService;
+import com.huajie.domain.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +62,12 @@ public class GovermentOrganizationAppService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private DeviceService deviceService;
+
+    @Autowired
+    private PlaceService placeService;
+
     public void editGovermentInfo(EditGovermentInfoRequestVO requestVO) {
         Tenant tenant = new Tenant();
         BeanUtils.copyProperties(requestVO, tenant);
@@ -100,8 +102,8 @@ public class GovermentOrganizationAppService {
         }
     }
 
-    public Page<EnterpriseResponseVO> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName) {
-        Page<Tenant> tenants = govermentOrganizationService.getEnterpriseVerifyList(pageNum, pageSize, enterpriseName);
+    public Page<EnterpriseResponseVO> getEnterpriseVerifyList(Integer pageNum, Integer pageSize,String enterpriseType, String enterpriseName) {
+        Page<Tenant> tenants = govermentOrganizationService.getAdminEnterpriseList(pageNum, pageSize,enterpriseType, enterpriseName,0);
         if (CollectionUtils.isEmpty(tenants)){
             return new Page<>();
         }
@@ -149,14 +151,12 @@ public class GovermentOrganizationAppService {
                 enterpriseResponseVO.setStreetName(regionList.get(0).getRegionName());
             }
 
-            SysDicValue enterpriseType = this.sysDicService.getDicValueByValueCode(tenant.getEnterpriseType());
-            enterpriseResponseVO.setEnterpriseTypeName(enterpriseType.getValueName());
+            enterpriseResponseVO.setEnterpriseTypeName(EnterpriseTypeEnum.valueOf(tenant.getEnterpriseType()).getName());
+
+            enterpriseResponseVO.setEntFireTypeName(EnterpriseFireTypeEnum.valueOf(tenant.getEntFireType()).getName());
 
             SysDicValue entIndustryClassification = this.sysDicService.getDicValueByValueCode(tenant.getEntIndustryClassification());
             enterpriseResponseVO.setEntIndustryClassificationName(entIndustryClassification.getValueName());
-
-            SysDicValue entFireType= this.sysDicService.getDicValueByValueCode(tenant.getEntFireType());
-            enterpriseResponseVO.setEntFireTypeName(entFireType.getValueName());
 
             enterpriseResponseVOList.add(enterpriseResponseVO);
         }
@@ -171,8 +171,8 @@ public class GovermentOrganizationAppService {
         govermentOrganizationService.editEnterprise(requestVO);
     }
 
-    public Page<EnterpriseResponseVO> getEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseName) {
-        Page<Tenant> tenants = govermentOrganizationService.getEnterpriseList(pageNum, pageSize, enterpriseName);
+    public Page<EnterpriseResponseVO> getAdminEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseType,String enterpriseName) {
+        Page<Tenant> tenants = govermentOrganizationService.getAdminEnterpriseList(pageNum, pageSize, enterpriseType,enterpriseName,1);
         if (CollectionUtils.isEmpty(tenants)){
             return new Page<>();
         }
@@ -219,14 +219,17 @@ public class GovermentOrganizationAppService {
                 enterpriseResponseVO.setStreetName(regionList.get(0).getRegionName());
             }
 
-            SysDicValue enterpriseType = this.sysDicService.getDicValueByValueCode(tenant.getEnterpriseType());
-            enterpriseResponseVO.setEnterpriseTypeName(enterpriseType.getValueName());
+            enterpriseResponseVO.setEnterpriseTypeName(EnterpriseTypeEnum.valueOf(tenant.getEnterpriseType()).getName());
+            enterpriseResponseVO.setEntFireTypeName(EnterpriseFireTypeEnum.valueOf(tenant.getEntFireType()).getName());
 
             SysDicValue entIndustryClassification = this.sysDicService.getDicValueByValueCode(tenant.getEntIndustryClassification());
             enterpriseResponseVO.setEntIndustryClassificationName(entIndustryClassification.getValueName());
 
-            SysDicValue entFireType= this.sysDicService.getDicValueByValueCode(tenant.getEntFireType());
-            enterpriseResponseVO.setEntFireTypeName(entFireType.getValueName());
+            Integer deviceCount = deviceService.getDeviceCountByTenantId(tenant.getId());
+            enterpriseResponseVO.setDeviceCount(deviceCount);
+
+            Integer placeCount = placeService.getPlaceCountByTenantId(tenant.getId());
+            enterpriseResponseVO.setPlaceCount(placeCount);
 
             enterpriseResponseVOList.add(enterpriseResponseVO);
         }

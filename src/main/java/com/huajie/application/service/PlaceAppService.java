@@ -11,9 +11,11 @@ import com.huajie.application.api.response.DeviceResponseVO;
 import com.huajie.application.api.response.MenuResponseVO;
 import com.huajie.application.api.response.PlaceResponseVO;
 import com.huajie.application.api.response.RegionResponseVO;
+import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Device;
 import com.huajie.domain.entity.Menu;
 import com.huajie.domain.entity.Place;
+import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.service.DeviceService;
 import com.huajie.domain.service.PlaceService;
 import org.springframework.beans.BeanUtils;
@@ -27,8 +29,8 @@ public class PlaceAppService {
     @Autowired
     private PlaceService placeService;
 
-    public Page<PlaceResponseVO> pagePlaceListWithDevices(Integer pageNum, Integer pageSize, PlaceQueryRequestVO requestVO){
-        Page<Place> page = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getPlaceAddress());
+    public Page<PlaceResponseVO> pageEntPlaceList(Integer pageNum, Integer pageSize, PlaceQueryRequestVO requestVO){
+        Page<Place> page = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getPlaceAddress(), UserContext.getCurrentTenant().getId());
         Page<PlaceResponseVO> result = new Page<>();
         for (Place place: page) {
             PlaceResponseVO placeResponseVO = new PlaceResponseVO();

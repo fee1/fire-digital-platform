@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huajie.domain.common.constants.SystemConstants;
+import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.infrastructure.mapper.TenantMapper;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author zhuxiaofeng
@@ -39,12 +42,18 @@ public class TenantService {
         tenantMapper.updateById(tenant);
     }
 
+    public Page<Tenant> pageTenantByQueryWrapper(Integer pageNum, Integer pageSize,QueryWrapper<Tenant> queryWrapper){
+        PageHelper.startPage(pageNum, pageSize);
+        return (Page<Tenant>)tenantMapper.selectList(queryWrapper);
+    }
+
     public Page<Tenant> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName, Collection<String> industryClassifications) {
         PageHelper.startPage(pageNum, pageSize);
         Tenant tenant = UserContext.getCurrentTenant();
 
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
+                .eq(Tenant::getTenantType, TenantTypeConstants.ENTERPRISE)
                 .eq(Tenant::getApproveStatus, 0)
                 .eq(Tenant::getProvince, tenant.getProvince())
                 .in(Tenant::getEntIndustryClassification, industryClassifications);
@@ -69,6 +78,7 @@ public class TenantService {
 
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
+                .eq(Tenant::getTenantType, TenantTypeConstants.ENTERPRISE)
                 .eq(Tenant::getApproveStatus, 1)
                 .eq(Tenant::getProvince, tenant.getProvince())
                 .in(Tenant::getEntIndustryClassification, industryClassifications);
