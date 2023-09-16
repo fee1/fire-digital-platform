@@ -40,13 +40,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                //登录认证拦截
-                .antMatchers("/oauth/**", "/login/**", "/logout/**",
-                        "/register/**", "/alipay/notify/**", "/region/**",
-                        "/sys/dic/list", "/sys/dic/value/list",
-                        "/pay/callback",
-                        "/pay/record/select",
-                        "/pay/generate/qrcode/image")
+                //登录认证拦截的路径
+                .antMatchers("/oauth/**",
+                        "/login/**",
+                        "/logout/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -59,8 +56,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //放行swagger
+        //放行的url
         web.ignoring().antMatchers(
+                "/register/**", "/alipay/notify/**", "/region/**",
+                "/sys/dic/list", "/sys/dic/value/list",
+                "/pay/callback",
+                "/pay/record/select",
+                "/pay/generate/qrcode/image",
+                //放行 swagger
                 "/v2/api-docs",
                 "/swagger-resources/**",
                 "/swagger-ui.html","/css/**", "/js/**", "/webjars/**"
