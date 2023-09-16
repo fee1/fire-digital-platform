@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 @Data
 public class SelfCheckQueryRequestVO {
 
-    @ApiModelProperty("开始时间")
+    @ApiModelProperty("开始日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDateTime startTime;
+    LocalDateTime startDate;
 
-    @ApiModelProperty("截止时间")
+    @ApiModelProperty("截止日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDateTime endTime;
+    LocalDateTime endDate;
 
 
 }

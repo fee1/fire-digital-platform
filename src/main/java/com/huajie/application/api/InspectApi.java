@@ -15,8 +15,10 @@ import com.huajie.application.api.response.PlaceResponseVO;
 import com.huajie.application.service.InspectAppService;
 import com.huajie.domain.common.utils.Base64Util;
 import com.huajie.domain.entity.DeviceInspectInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("inspect")
+@Api(tags = "巡查检查")
 public class InspectApi {
 
     @Autowired
@@ -43,7 +46,7 @@ public class InspectApi {
 
     @ApiOperation("根据设备类型获取检查项")
     @GetMapping(value = "/getDeviceInspectInfos")
-    public ApiResult<List<DeviceInspectInfo>> save(@RequestParam String deviceType){
+    public ApiResult<List<DeviceInspectInfo>> save(@RequestParam @ApiParam("设备类型") String deviceType){
         inspectAppService.getDeviceInspectInfos(deviceType);
         return ApiResult.ok();
     }
@@ -52,12 +55,12 @@ public class InspectApi {
     @ApiOperation("wx-根据点位Code获取设备列表及检查信息")
     @GetMapping("/getDeviceListWithInspectByNFC")
     public ApiResult<List<DeviceResponseVO>> getDeviceListWithInspectByNFC(
-            @RequestParam String nfcCode,
-            @RequestParam String inspectType){
+            @RequestParam @ApiParam("点位nfcCode") String nfcCode,
+            @RequestParam @ApiParam("检查类型, patrol：巡查；inspect：检查") String inspectType){
         return ApiResult.ok(inspectAppService.getDeviceListWithInspectByNFC(nfcCode,inspectType));
     }
 
-    @ApiOperation("分页查询企业巡查记录(企业)")
+    @ApiOperation("企业PC-分页查询企业巡查记录")
     @GetMapping("/getPatrolList")
     public ApiResult<ApiPage<InspectDetailResponseVO>> getPagePatrolList(
             @RequestParam(required = false, defaultValue = "1")Integer pageNum,
