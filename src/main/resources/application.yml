@@ -1,10 +1,13 @@
+custom:
+  # http启动端口
+  http-port: 8080
 server:
-  port: 8080
+  port: 8081
   ssl:
-    key-alias: lanlingfire.hj-ai.cn
-    key-store-password: k1bs30in #填写jks-password.txt文件内的密码。
-    key-store-type: JKS #JKS格式证书密钥库类型。PFX格式的证书密钥库类型为PKCS12。
-    key-store:  classpath:lanlingfire.hj-ai.cn.jks   #您需要使用实际的证书名称替换domain_name.jks。
+    enabled: true
+    key-store: classpath:lanlingfire.hj-ai.cn.jks
+    key-store-password: k1bs30in
+    key-store-type: JKS
 spring:
   application:
     name: fire-digital-platform
