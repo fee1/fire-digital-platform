@@ -2,10 +2,10 @@ package com.huajie.domain.common.enums;
 
 public enum ExtinguisherTypeEnum {
 
-    WaterBase("waterBase","水基型"),
-    DryPowder("dryPowder","干粉"),
-    Foam("foam","泡沫"),
-    Gas("gas","气体");
+    WaterBase("WaterBase","水基型"),
+    DryPowder("DryPowder","干粉"),
+    Foam("Foam","泡沫"),
+    Gas("Gas","气体");
 
     String code;
 

@@ -35,6 +35,32 @@ public class InspectDetailService {
         return inspectDetail;
     }
 
+    public List<InspectDetail> getEnterpriseInspectList(Integer enterpriseId, LocalDateTime startTime, LocalDateTime endTime){
+        QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(InspectDetail::getEntTenantId, enterpriseId)
+                .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT);
+        queryWrapper.lambda().gt(InspectDetail::getCreateTime,startTime);
+        queryWrapper.lambda().lt(InspectDetail::getCreateTime,endTime);
+        queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
+
+        return inspectDetailMapper.selectList(queryWrapper);
+    }
+
+    public List<InspectDetail> getGovernmentInspectList(Integer enterpriseId, List<Integer> adminGovernmentIds, LocalDateTime startTime, LocalDateTime endTime){
+        QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(InspectDetail::getEntTenantId,enterpriseId)
+                .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT)
+                .in(InspectDetail::getGovTenantId, adminGovernmentIds);
+        queryWrapper.lambda().gt(InspectDetail::getCreateTime,startTime);
+        queryWrapper.lambda().lt(InspectDetail::getCreateTime,endTime);
+        queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
+
+        return inspectDetailMapper.selectList(queryWrapper);
+    }
+
+
     public Page<InspectDetail> getPageSelfCheckList(Integer pageNum, Integer pageSize,
                                                  LocalDateTime startTime, LocalDateTime endTime){
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();

@@ -1,13 +1,13 @@
 package com.huajie.application.service;
 
 import com.github.pagehelper.Page;
+import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.AddInspectRequestVO;
+import com.huajie.application.api.request.InspectQueryRequestVO;
 import com.huajie.application.api.request.PatrolQueryRequestVO;
 import com.huajie.application.api.request.SelfCheckQueryRequestVO;
-import com.huajie.application.api.response.DeviceResponseVO;
-import com.huajie.application.api.response.InspectDetailResponseVO;
-import com.huajie.application.api.response.PlaceResponseVO;
+import com.huajie.application.api.response.*;
 import com.huajie.domain.common.constants.InspectTypeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.DeviceTypeEnum;
@@ -26,12 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,9 +53,102 @@ public class InspectAppService {
     @Autowired
     private GovermentOrganizationService govermentOrganizationService;
 
+    public InspectRecordResponseVO getInspectRecord(Integer pageNum, Integer pageSize,InspectQueryRequestVO requestVO){
+        InspectRecordResponseVO responseVO = new InspectRecordResponseVO();
+        Tenant enterprise = tenantService.getTenantByTenantId(requestVO.getEnterpriseId());
+        if(enterprise == null || !TenantTypeConstants.ENTERPRISE.equals(enterprise.getTenantType())){
+            throw new ApiException("企业不存在");
+        }
+
+        LocalDateTime startDate = requestVO.getStartDate();
+        LocalDateTime endDate = requestVO.getEndDate();
+        if(startDate == null || endDate == null){
+            PeriodDTO periodDTO = PeriodUtil.getPeriodByEnterprise(enterprise.getEnterpriseType(), enterprise.getEntFireType());
+            startDate = periodDTO.getStartDateTime();
+            endDate = periodDTO.getEndDateTime();
+        }
+
+        List<InspectDetail> inspectList;
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        if(TenantTypeConstants.GOVERMENT.equals(currentTenant.getTenantType())){
+            // 政府租户只能查询 当前政府及管辖下一级政府的检查记录
+            Page<Tenant> adminGovernmentList = govermentOrganizationService.getAdminGovernmentList(0, 10000, null);
+            List<Integer> adminGovernmentIds = adminGovernmentList.stream().map(Tenant::getId).distinct().collect(Collectors.toList());
+            inspectList = inspectDetailService.getGovernmentInspectList(enterprise.getId(), adminGovernmentIds, startDate, endDate);
+        }else if(TenantTypeConstants.ENTERPRISE.equals(currentTenant.getTenantType())){
+            // 企业用户只能查询 本企业的检查记录
+            inspectList = inspectDetailService.getEnterpriseInspectList(enterprise.getId(), startDate,endDate);
+        }else{
+            throw new ApiException("当前租户无法访问此功能");
+        }
+
+        Page<Place> placePage = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), null, UserContext.getCurrentTenant().getId());
+        responseVO.setPlaceCount(placePage.getTotal());
+        // 已检查点位数
+        responseVO.setInspectPlaceCount(CollectionUtils.isEmpty(inspectList) ? 0 : inspectList.stream().map(InspectDetail::getPlaceId).distinct().count());
+
+        Page<PlaceInspectRecordResponseVO> placeList = new Page<>();
+        BeanUtils.copyProperties(placePage,placeList);
+
+        // 点位对应设备列表Map
+        List<Integer> placeIds = placePage.stream().map(Place::getId).collect(Collectors.toList());
+        Map<Integer, List<Device>> placeDeviceMap = deviceService.getPlaceDeviceMap(placeIds);
+
+        // 点位对应检查列表Map
+        Map<Integer, List<InspectDetail>> placeInspcetMap = inspectList.stream().collect(Collectors.groupingBy(InspectDetail::getPlaceId));
+
+        // 设置点位信息
+        for(Place place: placePage){
+            List<Device> devices = placeDeviceMap.get(place.getId());
+            List<InspectDetail> placeInspectDetailList = placeInspcetMap.get(place.getId());
+
+            PlaceInspectRecordResponseVO placeInspectRecord = new PlaceInspectRecordResponseVO();
+            placeInspectRecord.setId(place.getId());
+            placeInspectRecord.setPlaceName(place.getPlaceName());
+            placeInspectRecord.setPlaceAddress(place.getPlaceAddress());
+            placeInspectRecord.setDeviceCount(devices.size());
+            placeInspectRecord.setInspectDeviceCount(CollectionUtils.isEmpty(placeInspectDetailList) ? 0 : placeInspectDetailList.stream().map(InspectDetail::getDeviceId).distinct().count());
+
+            Map<Integer, List<InspectDetail>> deviceInspcetMap = placeInspectDetailList.stream().collect(Collectors.groupingBy(InspectDetail::getDeviceId));
+
+            // 设置点位下设备信息
+            List<DeviceInspectRecordResponseVO> deviceList = new ArrayList<>();
+            for (Device device:devices){
+                DeviceInspectRecordResponseVO deviceInspectRecord = new DeviceInspectRecordResponseVO();
+                deviceInspectRecord.setId(device.getId());
+                deviceInspectRecord.setDeviceType(device.getDeviceType());
+                deviceInspectRecord.setDeviceTypeDesc(DeviceTypeEnum.valueOf(device.getPowerType()).getName());
+                deviceInspectRecord.setDeviceName(device.getDeviceName());
+
+                List<InspectDetail> deviceInspcetDetailList = deviceInspcetMap.get(device.getId());
+                if(!CollectionUtils.isEmpty(deviceInspcetDetailList)){
+                    deviceInspectRecord.setInspectCount(deviceInspcetDetailList.size());
+
+                    // 设置设备对应检查记录
+                    List<InspectDetailResponseVO> inspectDetailResponseVOS = new ArrayList<>();
+                    for (InspectDetail inspectDetail : deviceInspcetDetailList){
+                        InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
+                        BeanUtils.copyProperties(inspectDetail,inspectDetailResponseVO);
+                        inspectDetailResponseVOS.add(inspectDetailResponseVO);
+                    }
+                    deviceInspectRecord.setInspectDetailResponseVOS(inspectDetailResponseVOS);
+                }
+
+                deviceList.add(deviceInspectRecord);
+            }
+            placeInspectRecord.setDeviceList(deviceList);
+            placeList.add(placeInspectRecord);
+        }
+        responseVO.setPlacePage(ApiPage.restPage(placeList));
+        return responseVO;
+    }
+
     public Page<InspectDetailResponseVO> getPageSelfCheckList(Integer pageNum, Integer pageSize, SelfCheckQueryRequestVO requestVO){
         Page<InspectDetail> inspectDetails = inspectDetailService.getPageSelfCheckList(pageNum, pageSize, requestVO.getStartDate(), requestVO.getEndDate());
+
         Page<InspectDetailResponseVO> result = new Page<>();
+        BeanUtils.copyProperties(inspectDetails,result);
+
         for (InspectDetail inspectDetail : inspectDetails){
             InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
             BeanUtils.copyProperties(inspectDetail,inspectDetailResponseVO);
@@ -66,10 +157,11 @@ public class InspectAppService {
         return result;
     }
 
-
     public Page<InspectDetailResponseVO> getPagePatrolList(Integer pageNum, Integer pageSize, PatrolQueryRequestVO requestVO){
         Page<InspectDetail> inspectDetails = inspectDetailService.getPagePatrolList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getDeviceId(), requestVO.getDeviceName(), requestVO.getStartDate(), requestVO.getEndDate());
+
         Page<InspectDetailResponseVO> result = new Page<>();
+        BeanUtils.copyProperties(inspectDetails,result);
         for (InspectDetail inspectDetail : inspectDetails){
             InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
             BeanUtils.copyProperties(inspectDetail,inspectDetailResponseVO);

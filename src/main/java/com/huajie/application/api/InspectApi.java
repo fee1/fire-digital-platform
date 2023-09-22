@@ -4,14 +4,8 @@ package com.huajie.application.api;
 import com.github.pagehelper.Page;
 import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
-import com.huajie.application.api.request.AddInspectRequestVO;
-import com.huajie.application.api.request.LoginRequestVO;
-import com.huajie.application.api.request.PatrolQueryRequestVO;
-import com.huajie.application.api.request.SelfCheckQueryRequestVO;
-import com.huajie.application.api.response.DeviceResponseVO;
-import com.huajie.application.api.response.InspectDetailResponseVO;
-import com.huajie.application.api.response.LoginResponseVO;
-import com.huajie.application.api.response.PlaceResponseVO;
+import com.huajie.application.api.request.*;
+import com.huajie.application.api.response.*;
 import com.huajie.application.service.InspectAppService;
 import com.huajie.domain.common.utils.Base64Util;
 import com.huajie.domain.entity.DeviceInspectInfo;
@@ -37,7 +31,7 @@ public class InspectApi {
     @Autowired
     private InspectAppService inspectAppService;
 
-    @ApiOperation("保存巡查检查记录")
+    @ApiOperation("登录限制-保存巡查检查记录")
     @PostMapping(value = "/save")
     public ApiResult save(@RequestBody @Validated AddInspectRequestVO requestVO){
         inspectAppService.save(requestVO);
@@ -60,6 +54,15 @@ public class InspectApi {
         return ApiResult.ok(inspectAppService.getDeviceListWithInspectByNFC(nfcCode,inspectType));
     }
 
+    @ApiOperation("根据企业id查询指定季度/月度检查记录(按点位分页),政府企业通用")
+    @GetMapping("/getInspectRecord")
+    public ApiResult<InspectRecordResponseVO> getInspectRecord(
+            @RequestParam(required = false, defaultValue = "1")Integer pageNum,
+            @RequestParam(required = false, defaultValue = "10")Integer pageSize,
+            @Validated InspectQueryRequestVO requestVO){
+        return ApiResult.ok(inspectAppService.getInspectRecord(pageNum,pageSize,requestVO));
+    }
+
     @ApiOperation("企业PC-分页查询企业巡查记录")
     @GetMapping("/getPatrolList")
     public ApiResult<ApiPage<InspectDetailResponseVO>> getPagePatrolList(
@@ -71,7 +74,7 @@ public class InspectApi {
     }
 
 
-    @ApiOperation("分页查询企业自查记录(企业)")
+    @ApiOperation("企业PC-分页查询企业自查记录(企业)")
     @GetMapping("/getSelfCheckList")
     public ApiResult<ApiPage<InspectDetailResponseVO>> getPageSelfCheckList(
             @RequestParam(required = false, defaultValue = "1")Integer pageNum,
@@ -80,22 +83,5 @@ public class InspectApi {
 
         return ApiResult.ok(ApiPage.restPage(inspectAppService.getPageSelfCheckList(pageNum,pageSize,requestVO)));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

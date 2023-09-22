@@ -5,10 +5,10 @@ package com.huajie.domain.common.enums;
  */
 public enum EnterpriseTypeEnum {
 
-    Company("company","机关团体事业单位"),
-    Enterprise("enterprise","企业、场所"),
-    Merchant("merchant","一般商户"),
-    RentalHouse("rentalHouse","出租房");
+    Company("Company","机关团体事业单位"),
+    Enterprise("Enterprise","企业、场所"),
+    Merchant("Merchant","一般商户"),
+    RentalHouse("RentalHouse","出租房");
 
     String code;
 

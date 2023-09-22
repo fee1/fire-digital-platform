@@ -5,9 +5,9 @@ package com.huajie.domain.common.enums;
  */
 public enum EnterpriseFireTypeEnum {
 
-    ImportantFirePlace("importantFirePlace","消防重点单位"),
-    PublicPlace("publicPlace","公共聚集场所"),
-    GeneralPlace("generalPlace","一般场所");
+    ImportantFirePlace("ImportantFirePlace","消防重点单位"),
+    PublicPlace("PublicPlace","公共聚集场所"),
+    GeneralPlace("GeneralPlace","一般场所");
 
     String code;
 

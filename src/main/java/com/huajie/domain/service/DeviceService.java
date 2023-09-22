@@ -37,7 +37,6 @@ public class DeviceService {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getPlaceId,placeId);
         queryWrapper.lambda().eq(Device::getDeleted,"0");
-        queryWrapper.lambda().eq(Device::getTenantId,UserContext.getCurrentTenant().getId());
         return deviceMapper.selectList(queryWrapper);
     }
 
@@ -49,7 +48,6 @@ public class DeviceService {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().in(Device::getPlaceId,placeIds);
         queryWrapper.lambda().eq(Device::getDeleted,"0");
-        queryWrapper.lambda().eq(Device::getTenantId,UserContext.getCurrentTenant().getId());
 
         List<Device> devices = deviceMapper.selectList(queryWrapper);
         if(CollectionUtils.isEmpty(devices)){

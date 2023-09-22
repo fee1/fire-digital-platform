@@ -2,8 +2,8 @@ package com.huajie.domain.common.enums;
 
 public enum PowerTypeEnum {
 
-    DeviceType01("battery","蓄电池"),
-    DeviceType02("lamp","照明电");
+    Battery("Battery","蓄电池"),
+    Lamp("Lamp","照明电");
 
     String code;
 
