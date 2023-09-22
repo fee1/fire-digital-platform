@@ -1,6 +1,10 @@
 server:
   port: 8080
 spring:
+  ssl:
+    key-store: classpath:lanlingfire.hj-ai.cn.jks
+    key-store-password: k1bs30in
+    keyStoreType: JKS
   application:
     name: fire-digital-platform
   datasource:
