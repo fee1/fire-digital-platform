@@ -56,7 +56,7 @@ public class InspectAppService {
     private GovermentOrganizationService govermentOrganizationService;
 
     public Page<InspectDetailResponseVO> getPageSelfCheckList(Integer pageNum, Integer pageSize, SelfCheckQueryRequestVO requestVO){
-        Page<InspectDetail> inspectDetails = inspectDetailService.getPageSelfCheckList(pageNum, pageSize, requestVO.getStartTime(), requestVO.getEndTime());
+        Page<InspectDetail> inspectDetails = inspectDetailService.getPageSelfCheckList(pageNum, pageSize, requestVO.getStartDate(), requestVO.getEndDate());
         Page<InspectDetailResponseVO> result = new Page<>();
         for (InspectDetail inspectDetail : inspectDetails){
             InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
@@ -68,7 +68,7 @@ public class InspectAppService {
 
 
     public Page<InspectDetailResponseVO> getPagePatrolList(Integer pageNum, Integer pageSize, PatrolQueryRequestVO requestVO){
-        Page<InspectDetail> inspectDetails = inspectDetailService.getPagePatrolList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getDeviceId(), requestVO.getDeviceName(), requestVO.getStartTime(), requestVO.getEndTime());
+        Page<InspectDetail> inspectDetails = inspectDetailService.getPagePatrolList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getDeviceId(), requestVO.getDeviceName(), requestVO.getStartDate(), requestVO.getEndDate());
         Page<InspectDetailResponseVO> result = new Page<>();
         for (InspectDetail inspectDetail : inspectDetails){
             InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
