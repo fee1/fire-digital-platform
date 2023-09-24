@@ -63,6 +63,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/pay/callback",
                 "/pay/record/select",
                 "/pay/generate/qrcode/image",
+                "/wechat/app/login",
+                "/wechat/get/user/phone/number",
                 //放行 swagger
                 "/v2/api-docs",
                 "/swagger-resources/**",

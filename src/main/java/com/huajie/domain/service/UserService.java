@@ -100,10 +100,21 @@ public class UserService {
         }
 
         User updateUserInfo = new User();
-        updateUserInfo.setEmail(user.getEmail());
-        updateUserInfo.setPhone(user.getPhone());
-        updateUserInfo.setUserName(user.getUserName());
-        updateUserInfo.setRoleId(user.getRoleId());
+        if (StringUtils.isNotBlank(user.getEmail())) {
+            updateUserInfo.setEmail(user.getEmail());
+        }
+        if (StringUtils.isNotBlank(user.getPhone())) {
+            updateUserInfo.setPhone(user.getPhone());
+        }
+        if (StringUtils.isNotBlank(user.getUserName())) {
+            updateUserInfo.setUserName(user.getUserName());
+        }
+        if (user.getRoleId() != null) {
+            updateUserInfo.setRoleId(user.getRoleId());
+        }
+        if (StringUtils.isNotBlank(user.getOpenId())) {
+            updateUserInfo.setOpenId(user.getOpenId());
+        }
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, user.getId());
@@ -163,5 +174,11 @@ public class UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getTenantId, tenantId).eq(User::getRoleId, roleId);
         return this.userMapper.selectList(queryWrapper);
+    }
+
+    public User getUserByOpenId(String openid) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getOpenId, openid);
+        return this.userMapper.selectOne(queryWrapper);
     }
 }

@@ -1,6 +1,7 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+import com.huajie.domain.common.constants.CommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,10 +43,10 @@ public class LoginService {
                 .disabled(false).build();
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, null);
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("scope", "all");
-        parameters.put("grant_type", "password");
-        parameters.put("username", username);
-        parameters.put("password", password);
+        parameters.put(CommonConstants.SCOPE, CommonConstants.ALL);
+        parameters.put(CommonConstants.GRANT_TYPE, CommonConstants.PASSWORD);
+        parameters.put(CommonConstants.USERNAME, username);
+        parameters.put(CommonConstants.PASSWORD, password);
         try {
             ResponseEntity<OAuth2AccessToken> responseEntity = tokenEndpoint.postAccessToken(usernamePasswordAuthenticationToken, parameters);
             return responseEntity.getBody();

@@ -24,6 +24,10 @@ public class User implements Serializable {
 
     private Integer roleId;
 
+    private String openId;
+
+    private String unionId;
+
     private Date createTime;
 
     private String createUser;

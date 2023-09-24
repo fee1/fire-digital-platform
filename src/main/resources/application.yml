@@ -69,11 +69,17 @@ alipay:
 # 微信支付配置
 wechat:
   pay:
+    # 公众号APPID
     appId:
+    appSecret:
     mchId:
     mchSerialNo:
     apiV3Key:
     notify-url:
+  app:
+    id:
+    secret:
+
 
 swagger:
   enable: true

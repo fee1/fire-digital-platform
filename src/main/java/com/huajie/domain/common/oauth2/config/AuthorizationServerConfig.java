@@ -1,5 +1,6 @@
 package com.huajie.domain.common.oauth2.config;
 
+import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.oauth2.UserOauth2ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -39,20 +40,20 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     /**
-     * 授权码模式的时候使用
+     *
      * @param clients
      * @throws Exception
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("admin")//配置client_id
-                .secret(passwordEncoder.encode("admin"))//配置client_secret
+                .withClient(CommonConstants.CLIENT_ID)//配置client_id
+                .secret(passwordEncoder.encode(CommonConstants.SECRET))//配置client_secret
                 .accessTokenValiditySeconds(3600)//配置访问token的有效期
                 .refreshTokenValiditySeconds(864000)//配置刷新token的有效期
                 .redirectUris("http://127.0.0.1:8080/user/login")//配置redirect_uri，用于授权成功后跳转
-                .scopes("all")//配置申请的权限范围
-                .authorizedGrantTypes("authorization_code","password");//配置grant_type，表示授权类型
+                .scopes(CommonConstants.ALL)//配置申请的权限范围
+                .authorizedGrantTypes("authorization_code",CommonConstants.PASSWORD);//配置grant_type，表示授权类型
     }
 
 }
