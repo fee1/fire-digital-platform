@@ -8,13 +8,15 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author zhuxiaofeng
- * @date 2023/9/16
+ * @date 2023/9/24
  */
 @Data
-public class AppRequestVO {
+public class PhoneBindingRequestVO extends AppRequestVO {
 
-    @ApiModelProperty("前端自己获取的jsCode")
-    @NotNull(message = "jsCode不能为空")
-    @NotBlank(message = "jsCode不能为空")
-    private String jsCode;
+    @ApiModelProperty("openId")
+    @NotNull(message = "openId不能为空")
+    @NotBlank(message = "openId不能为空")
+    private String openId;
+
+
 }

@@ -12,8 +12,13 @@ public enum ResultCode implements IErrorCode {
      */
     //通用成功响应
     SUCCESS("200", "成功"),
+
+    //登录失败
+    WECHAT_FAIL_LOGIN("401", "微信登录失败"),
+
     //通用失败响应
     FAIL("500", "失败"),
+
     //参数校验失败
     PARAM_VALID_FAIL("501", "参数校验失败");
 

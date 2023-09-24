@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.stereotype.Service;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,6 +138,7 @@ public class WechatService {
 
     }
 
+    @PostConstruct
     public synchronized void refreshAccessToken(){
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put(APP_ID, appId);
