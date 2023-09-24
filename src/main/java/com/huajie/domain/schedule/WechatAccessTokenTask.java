@@ -23,7 +23,7 @@ public class WechatAccessTokenTask {
      * todo 日志查看是否两小时运行一次
      * 每两小时运行一次
      */
-    @Scheduled(cron = "* * */2 * * *")
+    @Scheduled(cron = "0 */59 * * * ?")
     public void refresh(){
         wechatService.refreshAccessToken();
     }
