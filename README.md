@@ -32,8 +32,8 @@ nohup java -javaagent:aspectjweaver-1.8.13.jar -javaagent:trace-agent.jar -jar f
 细分如下: 
 Application:主要是多进程管理及调度，多线程管理及调度，多协程调度和状态机管理，等等。
     api:提供给外部调用暴露的服务
-        request:入参实体 (DTO结尾表示为应用交互间传输的对象)
-        response:出参实体(DTO结尾表示为应用交互间传输的对象)
+        request:入参实体 (DTO结尾表示为应用交互间传输的对象,VO结尾表示与前端交互的对象)
+        response:出参实体(DTO结尾表示为应用交互间传输的对象,VO结尾表示与前端交互的对象)
     service:没有任何复杂的逻辑，用于编排协调服务
             (1.例如调用外部第三方服务不需要任何业务逻辑，可以直接到[infrastructure.external]找到对应的client。
              2.例如调用本项目的domain-service，部分入参需要做转换，我们就在此层做转换，逻辑层专注于做逻辑)
