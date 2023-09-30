@@ -27,6 +27,7 @@ public class WechatAppService {
         responseVO.setScope(wechatOAuth2AccessToken.getScope());
         responseVO.setTokenType(wechatOAuth2AccessToken.getTokenType());
         responseVO.setSessionKey(wechatOAuth2AccessToken.getSessionKey());
+        responseVO.setOpenId(wechatOAuth2AccessToken.getOpenId());
         return responseVO;
     }
 

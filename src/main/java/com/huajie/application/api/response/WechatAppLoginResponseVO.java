@@ -11,4 +11,6 @@ public class WechatAppLoginResponseVO extends LoginResponseVO {
 
     private String sessionKey;
 
+    private String openId;
+
 }

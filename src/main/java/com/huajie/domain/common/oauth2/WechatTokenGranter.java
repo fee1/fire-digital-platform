@@ -32,9 +32,14 @@ public class WechatTokenGranter extends AbstractTokenGranter {
 
     private static final String GRANT_TYPE = CommonConstants.WECHAT;
 
+    private final ClientDetailsService clientDetailsService;
 
-    public WechatTokenGranter(AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
+    private final AuthenticationManager authenticationManager;
+
+    public WechatTokenGranter(AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory, GRANT_TYPE);
+        this.clientDetailsService = clientDetailsService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -43,11 +48,25 @@ public class WechatTokenGranter extends AbstractTokenGranter {
         String username = parameters.get(CommonConstants.USERNAME);
         String openId = parameters.get(CommonConstants.OPEN_ID);
 
-        AbstractAuthenticationToken userAuth = new WechatAuthenticationToken(username, openId);
-        userAuth.setDetails(parameters);
+//        clientDetailsService.loadClientByClientId(username);
 
-        OAuth2Request oAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
-        return new OAuth2Authentication(oAuth2Request, userAuth);
+        Authentication userAuth = new WechatAuthenticationToken(username, openId);
+//        Authentication userAuth = new UsernamePasswordAuthenticationToken(username, password);
+        ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
+        try {
+            userAuth = authenticationManager.authenticate(userAuth);
+        }
+        catch (AccountStatusException | BadCredentialsException ase) {
+            //covers expired, locked, disabled cases (mentioned in section 5.2, draft 31)
+            throw new InvalidGrantException(ase.getMessage());
+        } // If the username/password are wrong the spec says we should send 400/invalid grant
+
+        if (userAuth == null || !userAuth.isAuthenticated()) {
+            throw new InvalidGrantException("Could not authenticate user: " + username);
+        }
+
+        OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
+        return new OAuth2Authentication(storedOAuth2Request, userAuth);
     }
 
     @Override
@@ -58,6 +77,7 @@ public class WechatTokenGranter extends AbstractTokenGranter {
         BeanUtils.copyProperties(grant, wechatOAuth2AccessToken);
         String sessionKey = parameters.get(CommonConstants.SESSION_KEY);
         wechatOAuth2AccessToken.setSessionKey(sessionKey);
+        wechatOAuth2AccessToken.setOpenId(parameters.get(CommonConstants.OPEN_ID));
         return wechatOAuth2AccessToken;
     }
 }

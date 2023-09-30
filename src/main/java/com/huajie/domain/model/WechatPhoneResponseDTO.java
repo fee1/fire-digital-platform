@@ -22,6 +22,6 @@ public class WechatPhoneResponseDTO {
     /**
      * 用户手机号信息
      */
-    private PhoneInfoDTO phoneInfoDTO;
+    private PhoneInfoDTO phoneInfo;
 
 }

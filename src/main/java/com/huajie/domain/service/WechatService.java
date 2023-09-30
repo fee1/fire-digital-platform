@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
+import com.huajie.domain.common.oauth2.token.WechatAuthenticationToken;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
 import com.huajie.domain.common.utils.OkHttpUtil;
 import com.huajie.domain.entity.User;
@@ -72,6 +73,7 @@ public class WechatService {
             String openid = wechatAppLoginResponseDTO.getOpenid();
             String sessionKey = wechatAppLoginResponseDTO.getSessionKey();
             User userByOpenId = userService.getUserByOpenId(openid);
+            System.out.println(this.login(userService.getUserByOpenId("oB7PV5fWmFxl9a7qVAljav9ZL4ys"), "oB7PV5fWmFxl9a7qVAljav9ZL4ys", ""));
             if (userByOpenId == null){
                 WechatOAuth2AccessToken wechatOAuth2AccessToken = new WechatOAuth2AccessToken();
                 wechatOAuth2AccessToken.setSessionKey(sessionKey);
@@ -87,7 +89,7 @@ public class WechatService {
         }
     }
 
-    private OAuth2AccessToken login(User user, String openid, String sessionKey){
+    public OAuth2AccessToken login(User user, String openid, String sessionKey){
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(CommonConstants.CLIENT_ID)
                 .password(CommonConstants.SECRET)
@@ -96,7 +98,7 @@ public class WechatService {
                 .accountLocked(false)
                 .credentialsExpired(false)
                 .disabled(false).build();
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+        WechatAuthenticationToken wechatAuthenticationToken = new WechatAuthenticationToken(userDetails, null, null);
         Map<String, String> parameters = new HashMap<>();
         parameters.put(CommonConstants.SCOPE, CommonConstants.ALL);
         parameters.put(CommonConstants.GRANT_TYPE, CommonConstants.WECHAT);
@@ -104,7 +106,7 @@ public class WechatService {
         parameters.put(CommonConstants.OPEN_ID, openid);
         parameters.put(CommonConstants.SESSION_KEY, sessionKey);
         try {
-            ResponseEntity<OAuth2AccessToken> responseEntity = tokenEndpoint.postAccessToken(usernamePasswordAuthenticationToken, parameters);
+            ResponseEntity<OAuth2AccessToken> responseEntity = tokenEndpoint.postAccessToken(wechatAuthenticationToken, parameters);
             return responseEntity.getBody();
         } catch (HttpRequestMethodNotSupportedException e) {
             e.printStackTrace();
@@ -120,7 +122,7 @@ public class WechatService {
             log.debug("getuserphonenumber http response: {}", response.toJSONString());
             WechatPhoneResponseDTO wechatPhoneResponseDTO = response.toJavaObject(WechatPhoneResponseDTO.class);
             log.debug("wechatPhoneResponseDTO: {}", wechatPhoneResponseDTO);
-            User userByPhone = userService.getUserByPhone(wechatPhoneResponseDTO.getPhoneInfoDTO().getPhoneNumber());
+            User userByPhone = userService.getUserByPhone(wechatPhoneResponseDTO.getPhoneInfo().getPhoneNumber());
             if (userByPhone != null){
                 User user = new User();
                 user.setId(userByPhone.getId());

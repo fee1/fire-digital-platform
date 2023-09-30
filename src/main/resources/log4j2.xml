@@ -69,6 +69,8 @@
         </root>
         <Logger name="com.huajie" level="DEBUG" />
         <Logger name="com.zxf" level="DEBUG" />
+        <!--oauth2日志打印-->
+        <Logger name="org.springframework.security" level="DEBUG" />
 <!--        <Logger name="org.springframework.security" level="DEBUG" />-->
     </loggers>
 </configuration>
