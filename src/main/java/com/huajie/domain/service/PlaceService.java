@@ -61,19 +61,18 @@ public class PlaceService {
         return place;
     }
 
-    public Place editPlace(Place place){
+    public int editPlace(Place place){
         Place updatePlace = new Place();
         updatePlace.setId(place.getId());
         updatePlace.setVersion(place.getVersion());
         updatePlace.setPlaceName(place.getPlaceName());
         updatePlace.setPlaceAddress(place.getPlaceAddress());
         updatePlace.setRemark(place.getRemark());
-        placeMapper.updateById(updatePlace);
-        return place;
+        return placeMapper.updateById(updatePlace);
     }
 
-    public void deletePlace(Integer placeId){
-        placeMapper.deleteById(placeId);
+    public int deletePlace(Integer placeId){
+        return placeMapper.deleteById(placeId);
     }
 
     public Place getPlaceById(Integer placeId){

@@ -60,5 +60,12 @@ public class DeviceApi {
         return ApiResult.ok(deviceAppService.getDeviceListByPlaceId(placeId));
     }
 
+    @ApiOperation("根据设备id获取设备信息")
+    @GetMapping("/getDeviceById")
+    public ApiResult<DeviceResponseVO> getDeviceById(
+            Integer deviceId){
+        return ApiResult.ok(deviceAppService.getDeviceById(deviceId));
+    }
+
 
 }

@@ -60,7 +60,7 @@ public class DeviceAppService {
         // 校验点位下设备数是否超过上限 5
         List<Device> deviceList = deviceService.getDeviceListByPlaceId(placeId);
         if(deviceList.size() >= 5){
-            throw new ServerException("新增设备失败，当前点位下设备数量已达上限");
+            throw new ApiException("新增设备失败，当前点位下设备数量已达上限");
         }
         // 3 插入
         Device device = new Device();
@@ -76,11 +76,22 @@ public class DeviceAppService {
     public void editDevice(DeviceEditRequestVO requestVO){
         Device device = new Device();
         BeanUtils.copyProperties(requestVO,device);
-        deviceService.editDevice(device);
+        if(deviceService.editDevice(device) < 1){
+            throw new ApiException("编辑设备失败，请重试");
+        }
     }
 
     public void deleteDevice(Integer deviceId){
-        deviceService.deleteDevice(deviceId);
+        if(deviceService.deleteDevice(deviceId) < 1){
+            throw new ApiException("删除设备失败，请重试");
+        }
+    }
+
+    public DeviceResponseVO getDeviceById(Integer deviceId){
+        Device device = deviceService.getDeviceById(deviceId);
+        DeviceResponseVO deviceResponseVO = new DeviceResponseVO();
+        BeanUtils.copyProperties(device,deviceResponseVO);
+        return deviceResponseVO;
     }
 
     public List<DeviceResponseVO> getDeviceListByPlaceId(Integer placeId){

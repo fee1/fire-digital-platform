@@ -4,6 +4,7 @@ package com.huajie.application.service;
 import com.github.pagehelper.Page;
 import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
+import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.PlaceAddRequestVO;
 import com.huajie.application.api.request.PlaceEditRequestVO;
 import com.huajie.application.api.request.PlaceQueryRequestVO;
@@ -50,17 +51,18 @@ public class PlaceAppService {
         return placeResponseVO;
     }
 
-    public PlaceResponseVO editPlace(PlaceEditRequestVO requestVO){
+    public void editPlace(PlaceEditRequestVO requestVO){
         Place place = new Place();
-        place = placeService.editPlace(place);
-
-        PlaceResponseVO placeResponseVO = new PlaceResponseVO();
-        BeanUtils.copyProperties(place,placeResponseVO);
-        return placeResponseVO;
+        BeanUtils.copyProperties(requestVO,place);
+        if(placeService.editPlace(place) < 1){
+            throw new ApiException("更新点位失败，请重试");
+        }
     }
 
     public void deletePlace(Integer placeId){
-        placeService.deletePlace(placeId);
+        if(placeService.deletePlace(placeId) < 1){
+            throw new ApiException("删除点位失败，请重试");
+        }
     }
 
 

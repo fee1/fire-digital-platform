@@ -69,7 +69,7 @@ public class DeviceService {
         return device;
     }
 
-    public void editDevice(Device device){
+    public int editDevice(Device device){
         Device updateDevice = new Device();
         updateDevice.setVersion(device.getVersion());
         updateDevice.setId(device.getId());
@@ -78,11 +78,11 @@ public class DeviceService {
         updateDevice.setLastReplaceDate(device.getLastReplaceDate());
         updateDevice.setLastUseDate(device.getLastUseDate());
         updateDevice.setRemark(device.getRemark());
-        deviceMapper.updateById(updateDevice);
+        return deviceMapper.updateById(updateDevice);
     }
 
-    public void deleteDevice(Integer deviceId){
-        deviceMapper.deleteById(deviceId);
+    public int deleteDevice(Integer deviceId){
+        return deviceMapper.deleteById(deviceId);
     }
 
     public Device getDeviceById(Integer deviceId){
