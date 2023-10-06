@@ -41,8 +41,7 @@ public class InspectApi {
     @ApiOperation("根据设备类型获取检查项")
     @GetMapping(value = "/getDeviceInspectInfos")
     public ApiResult<List<DeviceInspectInfo>> save(@RequestParam @ApiParam("设备类型") String deviceType){
-        inspectAppService.getDeviceInspectInfos(deviceType);
-        return ApiResult.ok();
+        return ApiResult.ok(inspectAppService.getDeviceInspectInfos(deviceType));
     }
 
 
