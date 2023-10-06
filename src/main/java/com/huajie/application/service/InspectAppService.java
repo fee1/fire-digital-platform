@@ -247,18 +247,19 @@ public class InspectAppService {
     }
 
     private void checkPlaceAndDevice(AddInspectRequestVO addInspectRequestVO){
-        if(addInspectRequestVO.getDeviceId() == null || addInspectRequestVO.getPlaceId() == null){
+        if(addInspectRequestVO.getDeviceId() == null){
             throw new ApiException("点位或设备不可为空");
         }
-        Place place = placeService.getPlaceById(addInspectRequestVO.getPlaceId());
-        if(place == null){
-            throw new ApiException("点位信息不存在");
-        }
+
         Device device = deviceService.getDeviceById(addInspectRequestVO.getDeviceId());
         if(device == null){
             throw new ApiException("设备信息不存在");
         }
-
+        Place place = placeService.getPlaceById(device.getPlaceId());
+        if(place == null){
+            throw new ApiException("点位信息不存在");
+        }
+        addInspectRequestVO.setPlaceId(place.getId());
         addInspectRequestVO.setPlaceName(place.getPlaceName());
         addInspectRequestVO.setPlaceAddress(place.getPlaceAddress());
         addInspectRequestVO.setDeviceName(device.getDeviceName());
