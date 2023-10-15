@@ -14,8 +14,10 @@ import com.huajie.infrastructure.mapper.InspectDetailMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,9 @@ public class InspectDetailService {
     }
 
     public List<InspectDetail> getGovernmentInspectList(Integer enterpriseId, List<Integer> adminGovernmentIds, LocalDateTime startTime, LocalDateTime endTime){
+        if(CollectionUtils.isEmpty(adminGovernmentIds)){
+            return Collections.EMPTY_LIST;
+        }
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(InspectDetail::getEntTenantId,enterpriseId)

@@ -106,18 +106,21 @@ public class InspectAppService {
             placeInspectRecord.setId(place.getId());
             placeInspectRecord.setPlaceName(place.getPlaceName());
             placeInspectRecord.setPlaceAddress(place.getPlaceAddress());
-            placeInspectRecord.setDeviceCount(devices.size());
             placeInspectRecord.setInspectDeviceCount(CollectionUtils.isEmpty(placeInspectDetailList) ? 0 : placeInspectDetailList.stream().map(InspectDetail::getDeviceId).distinct().count());
 
-            Map<Integer, List<InspectDetail>> deviceInspcetMap = placeInspectDetailList.stream().collect(Collectors.groupingBy(InspectDetail::getDeviceId));
-
+            if(CollectionUtils.isEmpty(devices)){
+                placeInspectRecord.setDeviceCount(0);
+                continue;
+            }
+            placeInspectRecord.setDeviceCount(devices.size());
+            Map<Integer, List<InspectDetail>> deviceInspcetMap = CollectionUtils.isEmpty(placeInspectDetailList) ? new HashMap<>() :  placeInspectDetailList.stream().collect(Collectors.groupingBy(InspectDetail::getDeviceId));
             // 设置点位下设备信息
             List<DeviceInspectRecordResponseVO> deviceList = new ArrayList<>();
             for (Device device:devices){
                 DeviceInspectRecordResponseVO deviceInspectRecord = new DeviceInspectRecordResponseVO();
                 deviceInspectRecord.setId(device.getId());
                 deviceInspectRecord.setDeviceType(device.getDeviceType());
-                deviceInspectRecord.setDeviceTypeDesc(DeviceTypeEnum.valueOf(device.getPowerType()).getName());
+                deviceInspectRecord.setDeviceTypeDesc(DeviceTypeEnum.valueOf(device.getDeviceType()).getName());
                 deviceInspectRecord.setDeviceName(device.getDeviceName());
 
                 List<InspectDetail> deviceInspcetDetailList = deviceInspcetMap.get(device.getId());
