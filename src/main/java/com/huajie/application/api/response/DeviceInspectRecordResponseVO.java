@@ -3,6 +3,7 @@ package com.huajie.application.api.response;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,6 +20,12 @@ public class DeviceInspectRecordResponseVO {
 
     @ApiModelProperty("设备名称")
     private String deviceName;
+
+    @ApiModelProperty("设备编号")
+    private String deviceNo;
+
+    @ApiModelProperty("出厂日期")
+    private Date productionDate;
 
     @ApiModelProperty("检查次数")
     private long inspectCount ;

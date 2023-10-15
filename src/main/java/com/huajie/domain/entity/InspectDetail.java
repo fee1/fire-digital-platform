@@ -1,5 +1,7 @@
 package com.huajie.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -53,15 +55,19 @@ public class InspectDetail implements Serializable {
     private String submitUserPhone ;
     /** 创建时间 */
     @ApiModelProperty(name = "创建时间",notes = "")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private Date createTime ;
     /** 创建人 */
     @ApiModelProperty(name = "创建人",notes = "")
+    @TableField(value = "create_user", fill = FieldFill.INSERT)
     private String createUser ;
     /** 更新时间 */
     @ApiModelProperty(name = "更新时间",notes = "")
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
     private Date updateTime ;
     /** 更新人 */
     @ApiModelProperty(name = "更新人",notes = "")
+    @TableField(value = "update_user", fill = FieldFill.UPDATE)
     private String updateUser ;
 
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,11 +24,11 @@ public class InspectQueryRequestVO {
 
     @ApiModelProperty("开始日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDateTime startDate;
+    LocalDate startDate;
 
     @ApiModelProperty("截止日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDateTime endDate;
+    LocalDate endDate;
 
 
 }

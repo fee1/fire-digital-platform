@@ -22,11 +22,11 @@ public class PatrolQueryRequestVO {
     String deviceName;
 
     @ApiModelProperty("开始日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime startDate;
 
     @ApiModelProperty("截止日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime endDate;
 
 

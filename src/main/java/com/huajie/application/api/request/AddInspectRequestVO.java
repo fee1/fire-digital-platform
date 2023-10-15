@@ -60,5 +60,7 @@ public class AddInspectRequestVO {
     private String deviceName ;
     /** 企业租户id */
     private Integer entTenantId ;
+    /** 政府租户id */
+    private Integer govTenantId;
 
 }

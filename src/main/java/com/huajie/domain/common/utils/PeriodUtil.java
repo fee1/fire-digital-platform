@@ -4,6 +4,7 @@ import com.huajie.domain.common.enums.EnterpriseFireTypeEnum;
 import com.huajie.domain.common.enums.EnterpriseTypeEnum;
 import com.huajie.domain.model.PeriodDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 
@@ -19,9 +20,9 @@ public class PeriodUtil {
         return LocalDateTime.of(now.getYear(),now.getMonth(), now.getDayOfMonth(), 0,0,0).plusDays(1).minusSeconds(1);
     }
 
-    public static LocalDateTime getLast15Days(){
-        LocalDateTime time = LocalDateTime.now().minusDays(15);
-        return LocalDateTime.of(time.getYear(),time.getMonth(),time.getDayOfMonth(),0,0,0);
+    public static LocalDate getLast15Days(){
+        LocalDate time = LocalDate.now().minusDays(15);
+        return time;
     }
 
     public static PeriodDTO getPeriodByEnterprise(String enterpriseType, String enterpriseFireType){
@@ -41,10 +42,10 @@ public class PeriodUtil {
      */
     public static PeriodDTO getCurrentMonthPeriod(){
         PeriodDTO periodDTO = new PeriodDTO();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = LocalDateTime.of(now.getYear(), now.getMonth(), 1, 0, 0, 0);
-        periodDTO.setStartDateTime(start);
-        periodDTO.setEndDateTime(start.plusMonths(1).minusSeconds(1));
+        LocalDate now = LocalDate.now();
+        LocalDate start = LocalDate.of(now.getYear(), now.getMonth(), 1);
+        periodDTO.setStartDate(start);
+        periodDTO.setEndDate(start.plusMonths(1).minusDays(1));
         return periodDTO;
     }
 
@@ -55,15 +56,16 @@ public class PeriodUtil {
     public static PeriodDTO getCurrentQuarterPeriod(){
         PeriodDTO periodDTO = new PeriodDTO();
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
+
         int quarter = (now.getMonthValue()+2) / 3;
         int month = (quarter - 1) * 3 + 1;
 
-        LocalDateTime start = LocalDateTime.of(now.getYear(), month, 1, 0, 0, 0);
+        LocalDate start = LocalDate.of(now.getYear(), month, 1);
 
-        LocalDateTime end = LocalDateTime.of(now.getYear(), month+3, 1, 0, 0, 0);
-        periodDTO.setStartDateTime(start);
-        periodDTO.setEndDateTime(end.minusSeconds(1));
+        LocalDate end = LocalDate.of(now.getYear(), month+3, 1);
+        periodDTO.setStartDate(start);
+        periodDTO.setEndDate(end.minusDays(1));
         return periodDTO;
     }
 

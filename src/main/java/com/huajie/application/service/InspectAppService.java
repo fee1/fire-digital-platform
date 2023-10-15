@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,12 +61,12 @@ public class InspectAppService {
             throw new ApiException("企业不存在");
         }
 
-        LocalDateTime startDate = requestVO.getStartDate();
-        LocalDateTime endDate = requestVO.getEndDate();
+        LocalDate startDate = requestVO.getStartDate();
+        LocalDate endDate = requestVO.getEndDate();
         if(startDate == null || endDate == null){
             PeriodDTO periodDTO = PeriodUtil.getPeriodByEnterprise(enterprise.getEnterpriseType(), enterprise.getEntFireType());
-            startDate = periodDTO.getStartDateTime();
-            endDate = periodDTO.getEndDateTime();
+            startDate = periodDTO.getStartDate();
+            endDate = periodDTO.getEndDate();
         }
 
         List<InspectDetail> inspectList;
@@ -83,7 +84,7 @@ public class InspectAppService {
         }
 
         Page<Place> placePage = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), null, UserContext.getCurrentTenant().getId());
-        responseVO.setPlaceCount(placePage.getTotal());
+        responseVO.setPlaceCount(placePage.size());
         // 已检查点位数
         responseVO.setInspectPlaceCount(CollectionUtils.isEmpty(inspectList) ? 0 : inspectList.stream().map(InspectDetail::getPlaceId).distinct().count());
 
@@ -122,6 +123,8 @@ public class InspectAppService {
                 deviceInspectRecord.setDeviceType(device.getDeviceType());
                 deviceInspectRecord.setDeviceTypeDesc(DeviceTypeEnum.valueOf(device.getDeviceType()).getName());
                 deviceInspectRecord.setDeviceName(device.getDeviceName());
+                deviceInspectRecord.setDeviceNo(device.getDeviceNo());
+                deviceInspectRecord.setProductionDate(device.getProductionDate());
 
                 List<InspectDetail> deviceInspcetDetailList = deviceInspcetMap.get(device.getId());
                 if(!CollectionUtils.isEmpty(deviceInspcetDetailList)){
@@ -180,8 +183,8 @@ public class InspectAppService {
         }
         List<Device> deviceList = deviceService.getDeviceListByPlaceId(place.getId());
 
-        LocalDateTime startDate = null;
-        LocalDateTime endDate = null;
+        LocalDate startDate = null;
+        LocalDate endDate = null;
         if(InspectTypeConstants.PATROL.equals(inspectType)){
             // 巡查, 查询近15天检查记录
             startDate = PeriodUtil.getLast15Days();
@@ -189,8 +192,8 @@ public class InspectAppService {
             // 检查，根据点位对应企业获取检查期段
             Tenant entTenant = tenantService.getTenantByTenantId(place.getTenantId());
             PeriodDTO periodDTO = PeriodUtil.getPeriodByEnterprise(entTenant.getEnterpriseType(), entTenant.getEntFireType());
-            startDate = periodDTO.getStartDateTime();
-            endDate = periodDTO.getEndDateTime();
+            startDate = periodDTO.getStartDate();
+            endDate = periodDTO.getEndDate();
         }
 
         List<InspectDetail> inspectDetailList = inspectDetailService.getInspectListByPlaceId(place.getId(),startDate,endDate,inspectType);
@@ -222,9 +225,9 @@ public class InspectAppService {
         switch (inspectType) {
             case "patrol":
             case "inspect":
-                checkInspectResult(inspectRequestVO);
-                checkPlaceAndDevice(inspectRequestVO);break;
-            case "selfCheck":checkInspectResult(inspectRequestVO);break;
+                inspectSaveInfoCheck(inspectRequestVO);break;
+            case "selfCheck":
+                selfCheckSaveInfoCheck(inspectRequestVO);break;
         }
 
         InspectDetail inspectDetail = createInspectDetail(inspectRequestVO);
@@ -249,7 +252,7 @@ public class InspectAppService {
         }
     }
 
-    private void checkPlaceAndDevice(AddInspectRequestVO addInspectRequestVO){
+    private void inspectSaveInfoCheck(AddInspectRequestVO addInspectRequestVO){
         if(addInspectRequestVO.getDeviceId() == null){
             throw new ApiException("点位或设备不可为空");
         }
@@ -267,6 +270,24 @@ public class InspectAppService {
         addInspectRequestVO.setPlaceAddress(place.getPlaceAddress());
         addInspectRequestVO.setDeviceName(device.getDeviceName());
         addInspectRequestVO.setEntTenantId(device.getTenantId());
+
+        CustomizeGrantedAuthority authority = UserContext.getCustomizeGrantedAuthority();
+        if(TenantTypeConstants.GOVERMENT.equals(authority.getTenant().getTenantType())){
+            addInspectRequestVO.setGovTenantId(authority.getTenant().getId());
+        }
+
+        checkInspectResult(addInspectRequestVO);
+    }
+
+    private void selfCheckSaveInfoCheck(AddInspectRequestVO addInspectRequestVO){
+        CustomizeGrantedAuthority authority = UserContext.getCustomizeGrantedAuthority();
+
+        if(TenantTypeConstants.GOVERMENT.equals(authority.getTenant().getTenantType())){
+            throw new ApiException("政府租户无权限进行自查操作");
+        }
+        addInspectRequestVO.setEntTenantId(authority.getTenant().getId());
+
+        checkInspectResult(addInspectRequestVO);
     }
 
     private InspectDetail createInspectDetail(AddInspectRequestVO inspectRequestVO){
@@ -279,9 +300,6 @@ public class InspectAppService {
         inspectDetail.setSubmitUserName(authority.getUserName());
         inspectDetail.setSubmitUserPhone(authority.getPhone());
 
-        if(TenantTypeConstants.GOVERMENT.equals(authority.getTenant().getTenantType())){
-            inspectDetail.setGovTenantId(authority.getTenant().getId());
-        }
 
         return inspectDetail;
     }
