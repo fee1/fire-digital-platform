@@ -1,8 +1,10 @@
 package com.huajie.domain.service;
 
+import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.infrastructure.external.oss.AliyunFileClient;
+import com.huajie.infrastructure.external.oss.model.SignModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ public class CommonService {
 
     @Value("${aliyunoos.config.url}")
     private String url;
+    private Object sign;
 
     /**
      * 生成二维码图片并上传至阿里云
@@ -58,13 +61,17 @@ public class CommonService {
         // 将ByteArrayOutputStream的内容转换为InputStream
         InputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
         try {
-            aliyunFileClient.upload(fileName, inputStream);
+            aliyunFileClient.upload(CommonConstants.QRCODE_FOLDER, fileName, inputStream);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("阿里云图片上传失败", e);
             throw new ServerException("阿里云图片上传失败");
         }
-        return url + fileName;
+        return url + CommonConstants.QRCODE_FOLDER + fileName;
     }
 
+    public SignModel getSign() {
+        SignModel sign = aliyunFileClient.getSign();
+        return sign;
+    }
 }

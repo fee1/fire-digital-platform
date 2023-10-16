@@ -1,6 +1,7 @@
 package com.huajie.infrastructure.external.oss;
 
 import com.huajie.BaseTest;
+import com.huajie.domain.common.constants.CommonConstants;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,6 @@ public class AliyunFileClientTest extends BaseTest {
     public void upload() {
         File file = new File("D:\\project\\fire-digital-platform\\test_qrcode\\my_118602652131418112.png");
         InputStream inputStream = new FileInputStream(file);
-        aliyunFileClient.upload(file.getName(), inputStream);
+        aliyunFileClient.upload(CommonConstants.QRCODE_FOLDER, file.getName(), inputStream);
     }
 }

@@ -47,8 +47,7 @@ aliyunoos:
     accessKeyId:
     accessKeySecret:
     bucketName: lanpukeji
-    objectName: qrcode/
-    url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/qrcode/
+    url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/
 
 # 注册人数单价
 unit:

@@ -26,4 +26,8 @@ public class CommonConstants {
 
     public final static String SCOPE = "scope";
 
+    public final static String QRCODE_FOLDER = "qrcode/";
+
+    public final static String OTHER_FOLDER = "other/";
+
 }

@@ -73,7 +73,7 @@ public class WechatService {
             String openid = wechatAppLoginResponseDTO.getOpenid();
             String sessionKey = wechatAppLoginResponseDTO.getSessionKey();
             User userByOpenId = userService.getUserByOpenId(openid);
-            System.out.println(this.login(userService.getUserByOpenId("oB7PV5fWmFxl9a7qVAljav9ZL4ys"), "oB7PV5fWmFxl9a7qVAljav9ZL4ys", ""));
+//            System.out.println(this.login(userService.getUserByOpenId("oB7PV5fWmFxl9a7qVAljav9ZL4ys"), "oB7PV5fWmFxl9a7qVAljav9ZL4ys", ""));
             if (userByOpenId == null){
                 WechatOAuth2AccessToken wechatOAuth2AccessToken = new WechatOAuth2AccessToken();
                 wechatOAuth2AccessToken.setSessionKey(sessionKey);
