@@ -18,10 +18,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -53,7 +50,7 @@ public class InspectDetailService {
     public List<InspectDetail> getGovernmentInspectList(Integer enterpriseId, List<Integer> adminGovernmentIds,
                                                         LocalDate startDate, LocalDate endDate ){
         if(CollectionUtils.isEmpty(adminGovernmentIds)){
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>();
         }
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
