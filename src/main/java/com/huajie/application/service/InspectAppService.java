@@ -150,7 +150,20 @@ public class InspectAppService {
     }
 
     public Page<InspectDetailResponseVO> getPageSelfCheckList(Integer pageNum, Integer pageSize, SelfCheckQueryRequestVO requestVO){
-        Page<InspectDetail> inspectDetails = inspectDetailService.getPageSelfCheckList(pageNum, pageSize, requestVO.getStartDate(), requestVO.getEndDate());
+
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        if(currentTenant == null || !TenantTypeConstants.ENTERPRISE.equals(currentTenant.getTenantType())){
+            throw new ApiException("企业不存在");
+        }
+        LocalDate startDate = requestVO.getStartDate();
+        LocalDate endDate = requestVO.getEndDate();
+        if(startDate == null || endDate == null){
+            PeriodDTO periodDTO = PeriodUtil.getPeriodByEnterprise(currentTenant.getEnterpriseType(), currentTenant.getEntFireType());
+            startDate = periodDTO.getStartDate();
+            endDate = periodDTO.getEndDate();
+        }
+
+        Page<InspectDetail> inspectDetails = inspectDetailService.getPageSelfCheckList(pageNum, pageSize, startDate, endDate);
 
         Page<InspectDetailResponseVO> result = new Page<>();
         BeanUtils.copyProperties(inspectDetails,result);

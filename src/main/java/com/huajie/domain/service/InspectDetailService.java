@@ -41,7 +41,7 @@ public class InspectDetailService {
                 .eq(InspectDetail::getEntTenantId, enterpriseId)
                 .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT);
         queryWrapper.lambda().ge(InspectDetail::getCreateTime,startTime);
-        queryWrapper.lambda().le(InspectDetail::getCreateTime,endTime);
+        queryWrapper.lambda().le(InspectDetail::getCreateTime,endTime.plusDays(1));
         queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
 
         return inspectDetailMapper.selectList(queryWrapper);
@@ -58,7 +58,7 @@ public class InspectDetailService {
                 .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT)
                 .in(InspectDetail::getGovTenantId, adminGovernmentIds);
         queryWrapper.lambda().ge(InspectDetail::getCreateTime,startDate);
-        queryWrapper.lambda().le(InspectDetail::getCreateTime,endDate);
+        queryWrapper.lambda().le(InspectDetail::getCreateTime,endDate.plusDays(1));
         queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
 
         return inspectDetailMapper.selectList(queryWrapper);
@@ -73,7 +73,7 @@ public class InspectDetailService {
                 .eq(InspectDetail::getEntTenantId, UserContext.getCurrentTenant().getId())
                 .eq(InspectDetail::getInspectType,InspectTypeConstants.SELF_CHECK);
         queryWrapper.lambda().ge(InspectDetail::getCreateTime,startDate);
-        queryWrapper.lambda().le(InspectDetail::getCreateTime,endDate);
+        queryWrapper.lambda().le(InspectDetail::getCreateTime,endDate.plusDays(1));
         queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
         PageHelper.startPage(pageNum, pageSize);
         return (Page<InspectDetail>) inspectDetailMapper.selectList(queryWrapper);
@@ -84,7 +84,7 @@ public class InspectDetailService {
     public Page<InspectDetail> getPagePatrolList(Integer pageNum, Integer pageSize,
                                                  Integer placeId, String placeName,
                                                  Integer deviceId, String deviceName,
-                                                 LocalDateTime startTime, LocalDateTime endTime){
+                                                 LocalDate startTime, LocalDate endTime){
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
 
         queryWrapper.lambda()
@@ -103,10 +103,10 @@ public class InspectDetailService {
             queryWrapper.lambda().like(InspectDetail::getDeviceName,deviceName);
         }
         if(startTime == null){
-            startTime = PeriodUtil.getTodayStartTime();
+            startTime = PeriodUtil.getTodayStartTime().toLocalDate();
         }
         if(endTime == null){
-            endTime = PeriodUtil.getTodayEndTime();
+            endTime = PeriodUtil.getTodayEndTime().toLocalDate().plusDays(1);
         }
         queryWrapper.lambda().ge(InspectDetail::getCreateTime,startTime);
         queryWrapper.lambda().le(InspectDetail::getCreateTime,endTime);
@@ -121,10 +121,10 @@ public class InspectDetailService {
         queryWrapper.lambda().eq(InspectDetail::getPlaceId,placeId);
         queryWrapper.lambda().eq(InspectDetail::getInspectType,inspectType);
         if(startTime != null){
-            queryWrapper.lambda().gt(InspectDetail::getCreateTime,startTime);
+            queryWrapper.lambda().ge(InspectDetail::getCreateTime,startTime);
         }
         if(endTime != null){
-            queryWrapper.lambda().lt(InspectDetail::getCreateTime,endTime);
+            queryWrapper.lambda().le(InspectDetail::getCreateTime,endTime.plusDays(1));
         }
         queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
         return inspectDetailMapper.selectList(queryWrapper);
