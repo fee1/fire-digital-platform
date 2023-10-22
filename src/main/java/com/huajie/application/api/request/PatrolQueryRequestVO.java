@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,12 +23,12 @@ public class PatrolQueryRequestVO {
     String deviceName;
 
     @ApiModelProperty("开始日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate startDate;
 
     @ApiModelProperty("截止日期")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime endDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    LocalDate endDate;
 
 
 }
