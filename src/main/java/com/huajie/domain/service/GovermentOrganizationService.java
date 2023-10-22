@@ -186,7 +186,7 @@ public class GovermentOrganizationService {
             queryWrapper.lambda().isNotNull(Tenant::getStreet);
         } else if(!Objects.isNull(currentTenant.getRegion()) && !Objects.isNull(currentTenant.getStreet())){
             // 乡镇街道级政府，无可管理政府机构
-            return  (Page<Tenant>) Collections.EMPTY_LIST;
+            return new Page<Tenant>();
         }
 
         // 消防救援机构,行业部门管理政府机构范围特殊，其余政府机构都属于上一级分管领导管理
