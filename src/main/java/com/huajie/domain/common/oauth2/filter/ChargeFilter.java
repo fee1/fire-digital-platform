@@ -1,5 +1,8 @@
 package com.huajie.domain.common.oauth2.filter;
 
+import com.huajie.domain.common.exception.PermissionException;
+import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.entity.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,6 +24,10 @@ public class ChargeFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        if (currentTenant.getStatus() == 0){
+            throw new PermissionException("请及时缴费后，再尝试使用");
+        }
         filterChain.doFilter(request, response);
     }
 }
