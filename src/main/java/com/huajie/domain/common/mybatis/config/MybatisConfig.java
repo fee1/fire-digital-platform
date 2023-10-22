@@ -68,6 +68,7 @@ public class MybatisConfig {
         List<Interceptor> interceptors = Lists.newArrayList();
         interceptors.add(getOptimisticLockerInterceptor());
         interceptors.add(pageInterceptor());
+        interceptors.add(paramInterceptor());
         return interceptors.toArray(new Interceptor[0]);
 
     }
@@ -91,6 +92,11 @@ public class MybatisConfig {
     @Bean
     public PageInterceptor pageInterceptor() {
         return new PageInterceptor();
+    }
+
+    @Bean
+    public ParamInterceptor paramInterceptor(){
+        return new ParamInterceptor();
     }
 
     @Primary
