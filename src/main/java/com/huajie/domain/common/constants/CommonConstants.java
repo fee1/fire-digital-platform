@@ -30,4 +30,12 @@ public class CommonConstants {
 
     public final static String OTHER_FOLDER = "other/";
 
+    public final static String CREATE_USER = "createUser";
+
+    public final static String CREATE_TIME = "createTime";
+
+    public final static String UPDATE_USER = "updateUser";
+
+    public final static String UPDATE_TIME = "updateTime";
+
 }

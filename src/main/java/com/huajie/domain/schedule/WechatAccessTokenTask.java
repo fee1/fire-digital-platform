@@ -20,7 +20,6 @@ public class WechatAccessTokenTask {
     private WechatService wechatService;
 
     /**
-     * todo 日志查看是否两小时运行一次
      * 每两小时运行一次
      */
     @Scheduled(cron = "0 */59 * * * ?")

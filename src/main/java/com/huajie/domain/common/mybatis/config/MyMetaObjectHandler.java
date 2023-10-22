@@ -1,6 +1,7 @@
 package com.huajie.domain.common.mybatis.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.huajie.domain.common.constants.CommonConstants;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,25 +17,25 @@ import java.util.Objects;
 public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        Object createUser = this.getFieldValByName("createUser", metaObject);
-        Object createTime = this.getFieldValByName("createTime", metaObject);
+        Object createUser = this.getFieldValByName(CommonConstants.CREATE_USER, metaObject);
+        Object createTime = this.getFieldValByName(CommonConstants.CREATE_TIME, metaObject);
         if (Objects.isNull(createUser)){
-            this.setFieldValByName("createUser", this.getCurrentUserName(), metaObject);
+            this.setFieldValByName(CommonConstants.CREATE_USER, this.getCurrentUserName(), metaObject);
         }
         if (Objects.isNull(createTime)){
-            this.setFieldValByName("createTime", new Date(), metaObject);
+            this.setFieldValByName(CommonConstants.CREATE_TIME, new Date(), metaObject);
         }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        Object updateUser = this.getFieldValByName("updateUser", metaObject);
-        Object updateTime = this.getFieldValByName("updateTime", metaObject);
+        Object updateUser = this.getFieldValByName(CommonConstants.UPDATE_USER, metaObject);
+        Object updateTime = this.getFieldValByName(CommonConstants.UPDATE_TIME, metaObject);
         if (Objects.isNull(updateUser)){
-            this.setFieldValByName("updateUser", this.getCurrentUserName(), metaObject);
+            this.setFieldValByName(CommonConstants.UPDATE_USER, this.getCurrentUserName(), metaObject);
         }
         if (Objects.isNull(updateTime)){
-            this.setFieldValByName("updateTime", new Date(), metaObject);
+            this.setFieldValByName(CommonConstants.UPDATE_TIME, new Date(), metaObject);
         }
     }
 
