@@ -111,6 +111,7 @@ public class InspectAppService {
 
             if(CollectionUtils.isEmpty(devices)){
                 placeInspectRecord.setDeviceCount(0);
+                placeList.add(placeInspectRecord);
                 continue;
             }
             placeInspectRecord.setDeviceCount(devices.size());
