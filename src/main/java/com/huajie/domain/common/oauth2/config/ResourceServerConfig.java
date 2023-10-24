@@ -41,7 +41,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/sys/dic/value/add",
                         "/pay/record/select",
                         "/inspect/**",
-                        "/file/upload/**"
+                        "/file/upload/**",
+                        "/notice/**",
+                        "/tenant/**"
                 ).and().addFilterAfter(chargeFilter, FilterSecurityInterceptor.class);
     }
 
