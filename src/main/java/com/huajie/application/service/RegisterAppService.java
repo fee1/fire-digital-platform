@@ -33,7 +33,7 @@ public class RegisterAppService {
         Tenant tenant = new Tenant();
         tenant.setTenantName(regiestRequestVO.getEnterpriseName());
         tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
-        tenant.setStatus(TenantStatusConstants.ENABLE);
+        tenant.setStatus(TenantStatusConstants.DISABLE);
         tenant.setEffectiveEndDate(DateUtil.addYears(new Date(), 1));
         tenant.setProvince(regiestRequestVO.getProvinceId());
         tenant.setCity(regiestRequestVO.getCityId());
