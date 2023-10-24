@@ -24,37 +24,34 @@ import java.util.Properties;
 public class ParamInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-
+        try {
             Object[] args = invocation.getArgs();
             MappedStatement ms = (MappedStatement) args[0];
-            for (int i = 1; i < args.length; i++) {
-                try {
-                    Object param = args[i];
-                    if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-                        Object createUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_USER);
-                        if (createUser == null){
-                            ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_USER, "");
-                        }
-                        Object createTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_TIME);
-                        if (createTime == null){
-                            ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_TIME, new Date());
-                        }
-                    }
-                    if (SqlCommandType.UPDATE == ms.getSqlCommandType()){
-                        Object updateUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_USER);
-                        if (updateUser == null){
-                            ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_USER, "");
-                        }
-                        Object updateTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_TIME);
-                        if (updateTime == null){
-                            ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_TIME, new Date());
-                        }
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                    log.error("ParamInterceptor exception", e);
+            Object param = args[1];
+            if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
+                Object createUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_USER);
+                if (createUser == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_USER, "");
+                }
+                Object createTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_TIME);
+                if (createTime == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_TIME, new Date());
                 }
             }
+            if (SqlCommandType.UPDATE == ms.getSqlCommandType()){
+                Object updateUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_USER);
+                if (updateUser == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_USER, "");
+                }
+                Object updateTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_TIME);
+                if (updateTime == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_TIME, new Date());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("ParamInterceptor exception", e);
+        }
 
         return invocation.proceed();
     }
