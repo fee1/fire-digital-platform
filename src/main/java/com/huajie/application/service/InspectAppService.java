@@ -11,25 +11,20 @@ import com.huajie.application.api.response.*;
 import com.huajie.domain.common.constants.InspectTypeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.DeviceTypeEnum;
-import com.huajie.domain.common.enums.ExtinguisherTypeEnum;
-import com.huajie.domain.common.enums.PowerTypeEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.PeriodUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.*;
 import com.huajie.domain.model.PeriodDTO;
 import com.huajie.domain.service.*;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,10 +66,11 @@ public class InspectAppService {
 
         List<InspectDetail> inspectList;
         Tenant currentTenant = UserContext.getCurrentTenant();
-        if(TenantTypeConstants.GOVERMENT.equals(currentTenant.getTenantType())){
+        if(TenantTypeConstants.GOVERNMENT.equals(currentTenant.getTenantType())){
             // 政府租户只能查询 当前政府及管辖下一级政府的检查记录
-            Page<Tenant> adminGovernmentList = govermentOrganizationService.getAdminGovernmentList(0, 10000, null);
+            Page<Tenant> adminGovernmentList = govermentOrganizationService.getAdminGovernmentList(1, 10000, null);
             List<Integer> adminGovernmentIds = adminGovernmentList.stream().map(Tenant::getId).distinct().collect(Collectors.toList());
+            adminGovernmentIds.add(currentTenant.getId());
             inspectList = inspectDetailService.getGovernmentInspectList(enterprise.getId(), adminGovernmentIds, startDate, endDate);
         }else if(TenantTypeConstants.ENTERPRISE.equals(currentTenant.getTenantType())){
             // 企业用户只能查询 本企业的检查记录
@@ -83,7 +79,7 @@ public class InspectAppService {
             throw new ApiException("当前租户无法访问此功能");
         }
 
-        Page<Place> placePage = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), null, UserContext.getCurrentTenant().getId());
+        Page<Place> placePage = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), null, enterprise.getId());
         responseVO.setPlaceCount(placePage.size());
         // 已检查点位数
         responseVO.setInspectPlaceCount(CollectionUtils.isEmpty(inspectList) ? 0 : inspectList.stream().map(InspectDetail::getPlaceId).distinct().count());
@@ -279,15 +275,23 @@ public class InspectAppService {
         if(place == null){
             throw new ApiException("点位信息不存在");
         }
+        CustomizeGrantedAuthority authority = UserContext.getCustomizeGrantedAuthority();
+
         addInspectRequestVO.setPlaceId(place.getId());
         addInspectRequestVO.setPlaceName(place.getPlaceName());
         addInspectRequestVO.setPlaceAddress(place.getPlaceAddress());
         addInspectRequestVO.setDeviceName(device.getDeviceName());
         addInspectRequestVO.setEntTenantId(device.getTenantId());
 
-        CustomizeGrantedAuthority authority = UserContext.getCustomizeGrantedAuthority();
-        if(TenantTypeConstants.GOVERMENT.equals(authority.getTenant().getTenantType())){
+        if(TenantTypeConstants.GOVERNMENT.equals(authority.getTenant().getTenantType())){
+            // 政府检查
             addInspectRequestVO.setGovTenantId(authority.getTenant().getId());
+        }else{
+            // 企业检查
+            if (!place.getTenantId().equals(authority.getTenant().getId())){
+                // 点位租户与实际登录用户不符
+                throw new ApiException("系统异常，请联系管理员");
+            }
         }
 
         checkInspectResult(addInspectRequestVO);
@@ -296,7 +300,7 @@ public class InspectAppService {
     private void selfCheckSaveInfoCheck(AddInspectRequestVO addInspectRequestVO){
         CustomizeGrantedAuthority authority = UserContext.getCustomizeGrantedAuthority();
 
-        if(TenantTypeConstants.GOVERMENT.equals(authority.getTenant().getTenantType())){
+        if(TenantTypeConstants.GOVERNMENT.equals(authority.getTenant().getTenantType())){
             throw new ApiException("政府租户无权限进行自查操作");
         }
         addInspectRequestVO.setEntTenantId(authority.getTenant().getId());

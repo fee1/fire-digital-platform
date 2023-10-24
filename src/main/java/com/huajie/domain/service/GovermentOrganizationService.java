@@ -6,7 +6,6 @@ import com.huajie.application.api.request.EditEnterpriseRequestVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.EnterpriseFireTypeEnum;
-import com.huajie.domain.common.enums.EnterpriseTypeEnum;
 import com.huajie.domain.common.enums.GovernmentTypeEnum;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.utils.UserContext;
@@ -171,7 +170,7 @@ public class GovermentOrganizationService {
 
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(Tenant::getTenantType, TenantTypeConstants.GOVERMENT)
+                .eq(Tenant::getTenantType, TenantTypeConstants.GOVERNMENT)
                 .eq(Tenant::getProvince, currentTenant.getProvince());
 
         if (Objects.isNull(currentTenant.getRegion()) && Objects.isNull(currentTenant.getStreet())){
