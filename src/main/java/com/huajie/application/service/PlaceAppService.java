@@ -33,6 +33,7 @@ public class PlaceAppService {
     public Page<PlaceResponseVO> pageEntPlaceList(Integer pageNum, Integer pageSize, PlaceQueryRequestVO requestVO){
         Page<Place> page = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getPlaceAddress(), UserContext.getCurrentTenant().getId());
         Page<PlaceResponseVO> result = new Page<>();
+        BeanUtils.copyProperties(page,result);
         for (Place place: page) {
             PlaceResponseVO placeResponseVO = new PlaceResponseVO();
             BeanUtils.copyProperties(place,placeResponseVO);

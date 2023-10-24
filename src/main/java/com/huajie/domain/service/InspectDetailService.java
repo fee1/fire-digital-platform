@@ -49,14 +49,13 @@ public class InspectDetailService {
 
     public List<InspectDetail> getGovernmentInspectList(Integer enterpriseId, List<Integer> adminGovernmentIds,
                                                         LocalDate startDate, LocalDate endDate ){
-        if(CollectionUtils.isEmpty(adminGovernmentIds)){
-            return new ArrayList<>();
-        }
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(InspectDetail::getEntTenantId,enterpriseId)
-                .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT)
-                .in(InspectDetail::getGovTenantId, adminGovernmentIds);
+                .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT);
+        if(!CollectionUtils.isEmpty(adminGovernmentIds)){
+            queryWrapper.lambda().in(InspectDetail::getGovTenantId, adminGovernmentIds);
+        }
         queryWrapper.lambda().ge(InspectDetail::getCreateTime,startDate);
         queryWrapper.lambda().le(InspectDetail::getCreateTime,endDate.plusDays(1));
         queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);

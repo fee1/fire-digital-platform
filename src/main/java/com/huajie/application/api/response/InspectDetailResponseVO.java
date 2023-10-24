@@ -62,4 +62,8 @@ public class InspectDetailResponseVO {
     @ApiModelProperty(name = "更新人",notes = "")
     private String updateUser ;
 
+    /** 关联隐患id */
+    @ApiModelProperty(name = "关联隐患id",notes = "")
+    private Integer relationProblemId ;
+
 }

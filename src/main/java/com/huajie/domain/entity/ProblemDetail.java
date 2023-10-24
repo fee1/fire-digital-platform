@@ -24,7 +24,7 @@ public class ProblemDetail implements Serializable {
     private String problemSource ;
     /** 隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查, system 系统定时巡查 */
     @ApiModelProperty(name = "隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查, system 系统定时巡查",notes = "")
-    private String porblemType ;
+    private String problemType ;
     /** 关联id */
     @ApiModelProperty(name = "关联id",notes = "")
     private Integer relationId ;
@@ -63,7 +63,7 @@ public class ProblemDetail implements Serializable {
     private String submitUserPhone ;
     /** 提交时间 */
     @ApiModelProperty(name = "提交时间",notes = "")
-    private Date submitItme ;
+    private Date submitTime ;
     /** 隐患图片1 */
     @ApiModelProperty(name = "隐患图片1",notes = "")
     private String problemPic1 ;

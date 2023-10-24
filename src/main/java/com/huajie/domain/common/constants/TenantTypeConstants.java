@@ -19,6 +19,6 @@ public class TenantTypeConstants {
     /**
      * 政府类型租户
      */
-    public static final String GOVERMENT = "goverment";
+    public static final String GOVERNMENT = "goverment";
 
 }

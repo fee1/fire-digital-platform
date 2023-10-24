@@ -62,11 +62,10 @@ public class PeriodUtil {
         int month = (quarter - 1) * 3 + 1;
 
         LocalDate start = LocalDate.of(now.getYear(), month, 1);
-
-        LocalDate end = LocalDate.of(now.getYear(), month+3, 1);
         periodDTO.setStartDate(start);
-        periodDTO.setEndDate(end.minusDays(1));
+
+        LocalDate end = LocalDate.of(now.getYear(), month+2, 1);
+        periodDTO.setEndDate(end.withDayOfMonth(end.lengthOfMonth()));
         return periodDTO;
     }
-
 }
