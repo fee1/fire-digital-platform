@@ -94,6 +94,7 @@ public class InspectAppService {
         // 点位对应检查列表Map
         Map<Integer, List<InspectDetail>> placeInspcetMap = inspectList.stream().collect(Collectors.groupingBy(InspectDetail::getPlaceId));
 
+        Map<Integer, Integer> inspectProblemMap = problemDetailService.getInspectProblemMapByInspectIds(inspectList.stream().map(InspectDetail::getId).collect(Collectors.toList()));
         // 设置点位信息
         for(Place place: placePage){
             List<Device> devices = placeDeviceMap.get(place.getId());
@@ -132,6 +133,9 @@ public class InspectAppService {
                     for (InspectDetail inspectDetail : deviceInspcetDetailList){
                         InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
                         BeanUtils.copyProperties(inspectDetail,inspectDetailResponseVO);
+                        if("error".equals(inspectDetail.getInspectResult())){
+                            inspectDetailResponseVO.setRelationProblemId(inspectProblemMap.get(inspectDetail.getId()));
+                        }
                         inspectDetailResponseVOS.add(inspectDetailResponseVO);
                     }
                     deviceInspectRecord.setInspectDetailResponseVOS(inspectDetailResponseVOS);
@@ -215,7 +219,7 @@ public class InspectAppService {
             deviceResponseVO.setDeviceTypeDesc(DeviceTypeEnum.valueOf(device.getDeviceType()).getName());
 
             // 设置检查记录
-            List<InspectDetail> inspectDetails = inspectDetailList.stream().filter(item -> device.getId() == item.getDeviceId()).collect(Collectors.toList());
+            List<InspectDetail> inspectDetails = inspectDetailList.stream().filter(item -> item.getDeviceId().equals(device.getId())).collect(Collectors.toList());
             List<InspectDetailResponseVO>  inspectDetailResponseVOS = new ArrayList<>();
             for (InspectDetail inspectDetail : inspectDetails){
                 InspectDetailResponseVO inspectDetailResponseVO = new InspectDetailResponseVO();
@@ -331,7 +335,7 @@ public class InspectAppService {
         problemDetail.setTenantId(inspectRequestVO.getEntTenantId());
         problemDetail.setProblemSource(authority.getTenant().getTenantType());
         problemDetail.setState("submit");
-        problemDetail.setPorblemType(inspectRequestVO.getInspectType());
+        problemDetail.setProblemType(inspectRequestVO.getInspectType());
 
         problemDetail.setSubmitUserId(authority.getUserId());
         problemDetail.setSubmitUserName(authority.getUserName());

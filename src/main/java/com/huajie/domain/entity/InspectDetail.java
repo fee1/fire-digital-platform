@@ -21,7 +21,7 @@ public class InspectDetail implements Serializable {
     @ApiModelProperty(name = "政府租戶id",notes = "")
     private Integer govTenantId ;
     /** 隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查 */
-    @ApiModelProperty(name = "隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查",notes = "")
+    @ApiModelProperty(name = "检查类型 patrol 巡查，inspect 检查，selfcheck 综合自查",notes = "")
     private String inspectType ;
     /** 检查结果 pass/error */
     @ApiModelProperty(name = "检查结果 pass/error",notes = "")
