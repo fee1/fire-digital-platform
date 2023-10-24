@@ -68,11 +68,4 @@ public class PeriodUtil {
         periodDTO.setEndDate(end.withDayOfMonth(end.lengthOfMonth()));
         return periodDTO;
     }
-
-    public static void main(String[] args) {
-        LocalDate now = LocalDate.now();
-        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
-        System.out.println(end);
-    }
-
 }
