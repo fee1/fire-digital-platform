@@ -2,6 +2,7 @@ package com.huajie.domain.common.mybatis.config;
 
 import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.utils.ObjectReflectUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -19,32 +20,39 @@ import java.util.Properties;
  * @date 2023/10/22
  */
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
+@Slf4j
 public class ParamInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object[] args = invocation.getArgs();
-        MappedStatement ms = (MappedStatement) args[0];
-        Object param = args[1];
-        if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-            Object createUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_USER);
-            if (createUser == null){
-                ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_USER, "");
+        try {
+            Object[] args = invocation.getArgs();
+            MappedStatement ms = (MappedStatement) args[0];
+            Object param = args[1];
+            if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
+                Object createUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_USER);
+                if (createUser == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_USER, "");
+                }
+                Object createTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_TIME);
+                if (createTime == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_TIME, new Date());
+                }
             }
-            Object createTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.CREATE_TIME);
-            if (createTime == null){
-                ObjectReflectUtil.setFieldValue(param, CommonConstants.CREATE_TIME, new Date());
+            if (SqlCommandType.UPDATE == ms.getSqlCommandType()){
+                Object updateUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_USER);
+                if (updateUser == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_USER, "");
+                }
+                Object updateTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_TIME);
+                if (updateTime == null){
+                    ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_TIME, new Date());
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("ParamInterceptor exception", e);
         }
-        if (SqlCommandType.UPDATE == ms.getSqlCommandType()){
-            Object updateUser = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_USER);
-            if (updateUser == null){
-                ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_USER, "");
-            }
-            Object updateTime = ObjectReflectUtil.getFieldValue(param, CommonConstants.UPDATE_TIME);
-            if (updateTime == null){
-                ObjectReflectUtil.setFieldValue(param, CommonConstants.UPDATE_TIME, new Date());
-            }
-        }
+
         return invocation.proceed();
     }
 
