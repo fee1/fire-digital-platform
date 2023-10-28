@@ -72,4 +72,8 @@ public class RoleService {
         queryWrapper.lambda().eq(Role::getRoleCode, entAdminCode);
         return this.roleMapper.selectOne(queryWrapper);
     }
+
+    public List<Role> getAllRole() {
+        return this.roleMapper.selectList(new QueryWrapper<>());
+    }
 }
