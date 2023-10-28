@@ -17,6 +17,11 @@ public class FileUploadAppService {
     @Autowired
     private CommonService commonService;
 
+    /**
+     * https://codeleading.com/article/44635417825/
+     *
+     * @return
+     */
     public SignResponseVO getSign() {
         SignModel sign = commonService.getSign();
         SignResponseVO signResponseVO = new SignResponseVO();

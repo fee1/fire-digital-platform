@@ -31,6 +31,27 @@ public class DateUtil {
     }
 
     /**
+     * 当前时间加上几天
+     * @param date
+     * @param days
+     * @return
+     */
+    public static Date addDays(Date date, int days){
+        // 将 Date 转换为 Instant
+        Instant instant = date.toInstant();
+
+        // 将 Instant 转换为 LocalDate
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // 将日期加上一年
+        LocalDate newDate = localDate.plusDays(days);
+
+        // 将 LocalDate 转换为 Instant
+        instant = newDate.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
+    /**
      * 当前时间加上几年
      * @param date
      * @param years

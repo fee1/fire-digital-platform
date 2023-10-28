@@ -21,16 +21,16 @@ public class EnterpriseInfoResponseVO {
     private String enterpriseName;
 
     @ApiModelProperty("省地址")
-    private Integer provinceName;
+    private String provinceName;
 
     @ApiModelProperty("市地址")
-    private Integer cityName;
+    private String cityName;
 
     @ApiModelProperty("区/县地址")
-    private Integer regionName;
+    private String regionName;
 
     @ApiModelProperty("街道地址")
-    private Integer streetName;
+    private String streetName;
 
     @ApiModelProperty("门牌号")
     private String address;
@@ -45,9 +45,9 @@ public class EnterpriseInfoResponseVO {
     private String entFireTypeName;
 
     @ApiModelProperty("企业消防安全责任人")
-    private List<UserAddRequestVO> entAdminList;
+    private List<EnterpriseUserInfoResponseVO> entAdminList;
 
     @ApiModelProperty("企业消防安全管理人")
-    private List<UserAddRequestVO> entOperatorList;
+    private List<EnterpriseUserInfoResponseVO> entOperatorList;
 
 }
