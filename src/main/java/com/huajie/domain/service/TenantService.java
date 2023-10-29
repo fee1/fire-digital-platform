@@ -7,15 +7,13 @@ import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Tenant;
+import com.huajie.domain.entity.User;
 import com.huajie.infrastructure.mapper.TenantMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -99,5 +97,11 @@ public class TenantService {
             queryWrapper.lambda().like(Tenant::getTenantName, enterpriseName);
         }
         return (Page<Tenant>) tenantMapper.selectList(queryWrapper);
+    }
+
+
+    public Map<Integer, String> getTenantNameMap(Collection<Integer> tenantId){
+        List<Tenant> tenants = tenantMapper.selectBatchIds(tenantId);
+        return tenants.stream().collect(Collectors.toMap(Tenant::getId, Tenant::getTenantName));
     }
 }

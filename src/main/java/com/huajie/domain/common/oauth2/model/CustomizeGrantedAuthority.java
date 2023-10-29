@@ -25,6 +25,8 @@ public class CustomizeGrantedAuthority implements GrantedAuthority {
     private String phone;
 
     private String email;
+
+    private String headPic;
     /**
      * 角色信息
      */

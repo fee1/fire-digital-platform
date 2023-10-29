@@ -1,0 +1,35 @@
+package com.huajie.application.api.request;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class ProblemQueryRequestVO {
+
+
+    @ApiModelProperty(name = "企业id",notes = "")
+    private Integer entTenantId ;
+
+    /** 隐患状态 submit;wait_reform */
+    @ApiModelProperty(name = "隐患状态",notes = "SUBMIT, TODO, TIMEOUT, DELAY_APPROVE, REFORM_APPROVE, FINISH")
+    private String state ;
+
+    /** 隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查, system 系统定时巡查 */
+    @ApiModelProperty(name = "隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查, system 系统定时巡查",notes = "")
+    private String problemType ;
+
+    @ApiModelProperty("点位id")
+    Integer placeId;
+
+    @ApiModelProperty("点位名称 模糊查询")
+    String placeName;
+
+    @ApiModelProperty("设备id")
+    Integer deviceId;
+
+    @ApiModelProperty("设备名称 模糊查询")
+    String deviceName;
+
+
+
+}

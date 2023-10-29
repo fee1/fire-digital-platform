@@ -104,6 +104,7 @@ public class UserOauth2ServiceImpl implements UserDetailsService {
         customizeGrantedAuthority.setUserName(user.getUserName());
         customizeGrantedAuthority.setPhone(user.getPhone());
         customizeGrantedAuthority.setEmail(user.getEmail());
+        customizeGrantedAuthority.setHeadPic(user.getHeadPic());
         return customizeGrantedAuthority;
     }
 
