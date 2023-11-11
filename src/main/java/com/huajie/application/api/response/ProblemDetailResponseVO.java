@@ -79,6 +79,9 @@ public class ProblemDetailResponseVO {
     /** 提交人联系方式 */
     @ApiModelProperty(name = "提交人联系方式",notes = "")
     private String submitUserPhone ;
+    /** 提交人头像 */
+    @ApiModelProperty(name = "提交人头像",notes = "")
+    private String submitUserHeadPic ;
     /** 提交时间 */
     @ApiModelProperty(name = "提交时间",notes = "")
     private Date submitTime ;

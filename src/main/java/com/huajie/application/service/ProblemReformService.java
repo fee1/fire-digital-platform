@@ -7,6 +7,8 @@ import com.huajie.application.api.request.ProblemQueryRequestVO;
 import com.huajie.application.api.request.ProblemReformActionVO;
 import com.huajie.application.api.response.ProblemDetailResponseVO;
 import com.huajie.application.api.response.ProblemReformHistoryResponseVO;
+import com.huajie.domain.common.constants.RoleCodeConstants;
+import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.ProblemActionTypeEnum;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
@@ -81,11 +83,16 @@ public class ProblemReformService {
 
         Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
 
+        Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
+
+
         Page<ProblemDetailResponseVO> result = new Page<>();
+        BeanUtils.copyProperties(problemList,result);
         if(!CollectionUtils.isEmpty(problemList)){
             for (ProblemDetail problemDetail: problemList){
                 ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
                 BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
+                problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
                 problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
                 result.add(problemDetailResponseVO);
             }
@@ -125,6 +132,7 @@ public class ProblemReformService {
         }
         queryWrapper.lambda().orderByAsc(ProblemDetail::getReformTimeoutTime).orderByAsc(ProblemDetail::getSubmitTime);
         Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
+        Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
         Page<ProblemDetailResponseVO> result = new Page<>();
         if(!CollectionUtils.isEmpty(problemList)){
             Map<Integer, String> tenantNameMap = tenantService.getTenantNameMap(problemList.stream().map(ProblemDetail::getEntTenantId).collect(Collectors.toList()));
@@ -133,6 +141,7 @@ public class ProblemReformService {
                 BeanUtils.copyProperties(problemDetail,result);
                 problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
                 problemDetailResponseVO.setEntTenantName(tenantNameMap.get(problemDetail.getGovTenantId()));
+                problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
                 result.add(problemDetailResponseVO);
             }
         }
@@ -201,6 +210,16 @@ public class ProblemReformService {
         problemReformHistory.setOldState(currentState.getStateCode());
         problemReformHistory.setNewState(action.getToStates().getStateCode());
         problemReformHistory.setSource(authority.getTenant().getTenantType());
+        if(StringUtils.equals(RoleCodeConstants.GOV_ADMIN_CODE,authority.getRole().getRoleCode())){
+            problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"政府消防安全责任人");
+        }else if(StringUtils.equals(RoleCodeConstants.GOV_OPERATOR_CODE,authority.getRole().getRoleCode())){
+            problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"政府消防安全管理人");
+        }else if(StringUtils.equals(RoleCodeConstants.ENT_ADMIN_CODE,authority.getRole().getRoleCode())){
+            problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"企业消防安全责任人");
+        }else if(StringUtils.equals(RoleCodeConstants.ENT_OPERATOR_CODE,authority.getRole().getRoleCode())){
+            problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"企业消防安全管理人");
+        }
+
         problemReformHistory.setSubmitUserId(authority.getUserId());
         problemReformHistory.setSubmitUserName(authority.getUserName());
         problemReformHistory.setSubmitUserPhone(authority.getPhone());

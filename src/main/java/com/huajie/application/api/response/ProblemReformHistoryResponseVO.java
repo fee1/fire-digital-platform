@@ -35,6 +35,9 @@ public class ProblemReformHistoryResponseVO {
     /** 来源 enterprise; goverment */
     @ApiModelProperty(name = "来源 enterprise",notes = " goverment")
     private String source ;
+    /** 来源 企业：企业责任人/企业管理员，政府：政府机构名称 */
+    @ApiModelProperty(name = "来源租户",notes = "企业：企业责任人/企业管理员，政府：政府机构名称")
+    private String sourceTenant ;
     /** 提交人id */
     @ApiModelProperty(name = "提交人id",notes = "")
     private Integer submitUserId ;
