@@ -13,6 +13,16 @@ public class Notice implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private Integer fromUserId;
+
+    private Integer fromTenantId;
+
+    private Integer sendUserId;
+
+    private String sendUserName;
+
+    private Date sendTime;
+
     private Byte type;
 
     private Byte receiveType;

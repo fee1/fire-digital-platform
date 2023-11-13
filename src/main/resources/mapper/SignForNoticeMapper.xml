@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huajie.infrastructure.mapper.SignForNoticeMapper">
+  <resultMap id="BaseResultMap" type="com.huajie.domain.entity.SignForNotice">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="notice_id" jdbcType="INTEGER" property="noticeId" />
+    <result column="sign_status" jdbcType="TINYINT" property="signStatus" />
+    <result column="sign_time" jdbcType="TIMESTAMP" property="signTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, notice_id, sign_status
+  </sql>
+  <insert id="InsertBatch" parameterType="java.util.List">
+    insert into sign_for_notice (user_id, notice_id, sign_status)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (
+      #{item.user_id},
+      #{item.notice_id},
+      #{item.sign_status}
+      )
+    </foreach>
+  </insert>
+</mapper>

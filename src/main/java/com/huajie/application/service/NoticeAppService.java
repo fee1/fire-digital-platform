@@ -4,13 +4,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.huajie.application.api.request.CreateNoticeRequestVO;
 import com.huajie.application.api.request.EditNoticeRequestVO;
+import com.huajie.application.api.response.EntPcNoticeResponseVO;
+import com.huajie.application.api.response.GovPcNoticeResponseVO;
+import com.huajie.application.api.response.NoticeAppDetailResponseVO;
+import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
 import com.huajie.domain.common.constants.NoticeStatusConstants;
 import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.entity.Notice;
 import com.huajie.domain.entity.Role;
+import com.huajie.domain.entity.Tenant;
+import com.huajie.domain.entity.User;
 import com.huajie.domain.service.NoticeService;
 import com.huajie.domain.service.RoleService;
+import com.huajie.domain.service.SignForNoticeService;
+import com.huajie.domain.service.TenantService;
+import com.huajie.domain.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +43,15 @@ public class NoticeAppService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private SignForNoticeService signForNoticeService;
+
+    @Autowired
+    private TenantService tenantService;
+
+    @Autowired
+    private UserService userService;
 
     public void createNotice(CreateNoticeRequestVO requestVO) {
         Notice notice = new Notice();
@@ -60,8 +78,8 @@ public class NoticeAppService {
             responseVOPage.add(searchNoticeResponseVO);
             Role roleById = id2Role.get(notice.getId());
             searchNoticeResponseVO.setRoleName(roleById.getRoleName());
-            //todo 签收率
-//            searchNoticeResponseVO.setSignInRate();
+            Double signInRate = signForNoticeService.getSignRateByNoticeId(notice.getId());
+            searchNoticeResponseVO.setSignInRate(signInRate);
             searchNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
         }
         return responseVOPage;
@@ -83,5 +101,60 @@ public class NoticeAppService {
         notice.setSaveDays(requestVO.getSaveDays());
 
         noticeService.editNotice(notice);
+    }
+
+    public NoticeDetailResponseVO detailNotice(Integer noticeId) {
+        Notice notice = this.noticeService.detailNotice(noticeId);
+
+        NoticeDetailResponseVO noticeDetailResponseVO = new NoticeDetailResponseVO();
+        BeanUtils.copyProperties(notice, noticeDetailResponseVO);
+        return noticeDetailResponseVO;
+    }
+
+    public Page<GovPcNoticeResponseVO> getGovPcNoticeList(Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        Page<Notice> govPcNoticeList = this.noticeService.getGovPcNoticeList(date, title, sendUserName, pageNum, pageSize);
+        Page<GovPcNoticeResponseVO> responseVOPage = new Page<>();
+        BeanUtils.copyProperties(govPcNoticeList, responseVOPage);
+        List<Integer> tenantIds = govPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());
+        Map<Integer, String> id2TenantNameMap = this.tenantService.getTenantNameMap(tenantIds);
+        for (Notice notice : govPcNoticeList) {
+            GovPcNoticeResponseVO govPcNoticeResponseVO = new GovPcNoticeResponseVO();
+            BeanUtils.copyProperties(notice, govPcNoticeResponseVO);
+            govPcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
+            govPcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
+            responseVOPage.add(govPcNoticeResponseVO);
+        }
+        return responseVOPage;
+    }
+
+    public Page<EntPcNoticeResponseVO> getEntPcNoticeList(Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        Page<Notice> entPcNoticeList = this.noticeService.getEntPcNoticeList(date, title, sendUserName, pageNum, pageSize);
+        Page<EntPcNoticeResponseVO> responseVOPage = new Page<>();
+        BeanUtils.copyProperties(entPcNoticeList, responseVOPage);
+        List<Integer> tenantIds = entPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());
+        Map<Integer, String> id2TenantNameMap = this.tenantService.getTenantNameMap(tenantIds);
+        for (Notice notice : entPcNoticeList) {
+            EntPcNoticeResponseVO entPcNoticeResponseVO = new EntPcNoticeResponseVO();
+            BeanUtils.copyProperties(notice, entPcNoticeResponseVO);
+            entPcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
+            entPcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
+            responseVOPage.add(entPcNoticeResponseVO);
+        }
+        return responseVOPage;
+    }
+
+    public void receive(Integer noticeId) {
+        this.noticeService.receive(noticeId);
+    }
+
+    public NoticeAppDetailResponseVO appDetail(Integer noticeId) {
+        Notice notice = this.noticeService.detailNotice(noticeId);
+        NoticeAppDetailResponseVO noticeAppDetailResponseVO = new NoticeAppDetailResponseVO();
+        BeanUtils.copyProperties(notice, noticeAppDetailResponseVO);
+        Tenant tenant = this.tenantService.getTenantByTenantId(notice.getFromTenantId());
+        noticeAppDetailResponseVO.setFromTenantName(tenant.getTenantName());
+        User user = userService.getUserById(notice.getSendUserId());
+        noticeAppDetailResponseVO.setPhone(user.getPhone());
+        return noticeAppDetailResponseVO;
     }
 }

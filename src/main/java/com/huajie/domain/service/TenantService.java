@@ -104,4 +104,10 @@ public class TenantService {
         List<Tenant> tenants = tenantMapper.selectBatchIds(tenantId);
         return tenants.stream().collect(Collectors.toMap(Tenant::getId, Tenant::getTenantName));
     }
+
+    public List<Tenant> getTenantByTenantIds(List<Integer> tenantIds) {
+        QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(Tenant::getId, tenantIds);
+        return this.tenantMapper.selectList(queryWrapper);
+    }
 }
