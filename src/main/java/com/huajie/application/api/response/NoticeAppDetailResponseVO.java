@@ -30,4 +30,7 @@ public class NoticeAppDetailResponseVO {
     @ApiModelProperty("发送人手机号")
     private String phone;
 
+    @ApiModelProperty("地址")
+    private String address;
+
 }
