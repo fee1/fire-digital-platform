@@ -11,6 +11,7 @@ import com.huajie.application.api.response.*;
 import com.huajie.domain.common.constants.InspectTypeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.DeviceTypeEnum;
+import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.PeriodUtil;
 import com.huajie.domain.common.utils.UserContext;
@@ -94,7 +95,7 @@ public class InspectAppService {
         // 点位对应检查列表Map
         Map<Integer, List<InspectDetail>> placeInspcetMap = inspectList.stream().collect(Collectors.groupingBy(InspectDetail::getPlaceId));
 
-        Map<Integer, Integer> inspectProblemMap = problemDetailService.getInspectProblemMapByInspectIds(inspectList.stream().map(InspectDetail::getId).collect(Collectors.toList()));
+        Map<Integer, Long> inspectProblemMap = problemDetailService.getInspectProblemMapByInspectIds(inspectList.stream().map(InspectDetail::getId).collect(Collectors.toList()));
         // 设置点位信息
         for(Place place: placePage){
             List<Device> devices = placeDeviceMap.get(place.getId());
@@ -332,14 +333,15 @@ public class InspectAppService {
         ProblemDetail problemDetail = new ProblemDetail();
         BeanUtils.copyProperties(inspectRequestVO,problemDetail);
 
-        problemDetail.setTenantId(inspectRequestVO.getEntTenantId());
-        problemDetail.setProblemSource(authority.getTenant().getTenantType());
-        problemDetail.setState("submit");
+        problemDetail.setEntTenantId(inspectRequestVO.getEntTenantId());
+        problemDetail.setGovTenantId(inspectRequestVO.getGovTenantId());
+        problemDetail.setState(ProblemStateEnum.SUBMIT.getStateCode());
         problemDetail.setProblemType(inspectRequestVO.getInspectType());
 
         problemDetail.setSubmitUserId(authority.getUserId());
         problemDetail.setSubmitUserName(authority.getUserName());
         problemDetail.setSubmitUserPhone(authority.getPhone());
+        problemDetail.setSubmitTime(new Date());
 
         return problemDetail;
     }

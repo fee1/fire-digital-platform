@@ -41,6 +41,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/sys/dic/value/add",
                         "/pay/record/select",
                         "/inspect/**",
+                        "/problemReform/**",
                         "/file/upload/**",
                         "/notice/**",
                         "/tenant/**"

@@ -64,6 +64,6 @@ public class InspectDetailResponseVO {
 
     /** 关联隐患id */
     @ApiModelProperty(name = "关联隐患id",notes = "")
-    private Integer relationProblemId ;
+    private Long relationProblemId ;
 
 }
