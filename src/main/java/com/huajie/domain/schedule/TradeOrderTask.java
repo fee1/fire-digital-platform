@@ -55,6 +55,25 @@ public class TradeOrderTask {
                     continue;
                 }
 
+                WechatPayCheckRespModel wechatPayCheckRespModel = wechatPayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
+                if (StringUtils.equals(wechatPayCheckRespModel.getTradeState(), PayRecordStatusConstants.WECHAT_PAY_SUCCESS)){
+                    payRecordIsNotSuccess.setStatus(wechatPayCheckRespModel.getTradeState());
+                    payRecordIsNotSuccess.setTradeNo(wechatPayCheckRespModel.getTransactionId());
+                    payRecordIsNotSuccess.setPayAmount(wechatPayCheckRespModel.getPayer().getOpenId());
+                    payRecordIsNotSuccess.setPayChannel(PayChannelConstants.WECHAT_CHANNEL);
+                    payRecordIsNotSuccess.setDate(wechatPayCheckRespModel.getSuccessTime());
+                    payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
+                    payRecordIsNotSuccess.setUpdateTime(new Date());
+                    //更新交易记录
+                    tenantPayRecordService.updateById(payRecordIsNotSuccess);
+
+                    //更新租户状态为可用状态
+                    Tenant tenantByTenantId = tenantService.getTenantByTenantId(payRecordIsNotSuccess.getTenantId());
+                    tenantByTenantId.setStatus(TenantStatusConstants.ENABLE);
+                    tenantService.updateById(tenantByTenantId);
+                    return;
+                }
+
                 AlipayTradeQueryResponse alipayTradeQueryResponse = null;
 
                 try {
@@ -72,25 +91,6 @@ public class TradeOrderTask {
                     payRecordIsNotSuccess.setPayAmount(alipayTradeQueryResponse.getBuyerLogonId());
                     payRecordIsNotSuccess.setPayChannel(PayChannelConstants.ALIPAY_CHANNEL);
                     payRecordIsNotSuccess.setDate(alipayTradeQueryResponse.getSendPayDate());
-                    payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
-                    payRecordIsNotSuccess.setUpdateTime(new Date());
-                    //更新交易记录
-                    tenantPayRecordService.updateById(payRecordIsNotSuccess);
-
-                    //更新租户状态为可用状态
-                    Tenant tenantByTenantId = tenantService.getTenantByTenantId(payRecordIsNotSuccess.getTenantId());
-                    tenantByTenantId.setStatus(TenantStatusConstants.ENABLE);
-                    tenantService.updateById(tenantByTenantId);
-                    return;
-                }
-
-                WechatPayCheckRespModel wechatPayCheckRespModel = wechatPayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
-                if (StringUtils.equals(wechatPayCheckRespModel.getTradeState(), PayRecordStatusConstants.WECHAT_PAY_SUCCESS)){
-                    payRecordIsNotSuccess.setStatus(wechatPayCheckRespModel.getTradeState());
-                    payRecordIsNotSuccess.setTradeNo(wechatPayCheckRespModel.getTransactionId());
-                    payRecordIsNotSuccess.setPayAmount(wechatPayCheckRespModel.getPayer().getOpenId());
-                    payRecordIsNotSuccess.setPayChannel(PayChannelConstants.WECHAT_CHANNEL);
-                    payRecordIsNotSuccess.setDate(wechatPayCheckRespModel.getSuccessTime());
                     payRecordIsNotSuccess.setUpdateUser(SystemConstants.SYSTEM);
                     payRecordIsNotSuccess.setUpdateTime(new Date());
                     //更新交易记录
