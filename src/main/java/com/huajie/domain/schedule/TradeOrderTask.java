@@ -74,6 +74,7 @@ public class TradeOrderTask {
                     return;
                 }
 
+                // 支付宝订单金额太小会查询不到订单
                 AlipayTradeQueryResponse alipayTradeQueryResponse = null;
 
                 try {
