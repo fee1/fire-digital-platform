@@ -32,7 +32,7 @@ import java.util.List;
  * @date 2023/8/5
  */
 @Configuration
-@MapperScan(basePackages = "com.huajie.infrastructure.mapper", annotationClass = Mapper.class)
+@MapperScan(basePackages = "com.huajie.infrastructure.**", annotationClass = Mapper.class)
 public class MybatisConfig {
 
 //    @Primary

@@ -38,4 +38,14 @@ public class CommonConstants {
 
     public final static String UPDATE_TIME = "updateTime";
 
+    /**
+     * 通用成功标识
+     */
+    public static final String SUCCESS = "0";
+
+    /**
+     * 通用失败标识
+     */
+    public static final String FAIL = "1";
+
 }

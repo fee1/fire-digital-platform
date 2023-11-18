@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public enum ProblemStateEnum {
 
-    SUBMIT("SUBMIT","提交"),
-    TODO("TODO","回复整改意见"),
-    TIMEOUT("TIMEOUT","超时"),
-    DELAY_APPROVE("DELAY_APPROVE","延迟整改审批"),
-    REFORM_APPROVE("REFORM_APPROVE","整改审批"),
+    SUBMIT("SUBMIT","已提交"),
+    TODO("TODO","待整改"),
+    TIMEOUT("TIMEOUT","超时未整改"),
+    DELAY_APPROVE("DELAY_APPROVE","延迟整改审批中"),
+    REFORM_APPROVE("REFORM_APPROVE","整改审批中"),
     FINISH("FINISH","已解决");
 
     ProblemStateEnum(String stateCode, String stateName) {
