@@ -182,6 +182,8 @@ public class ProblemReformService {
                 item.setSubmitUserHeadPic(userHeadPicMap.get(item.getSubmitUserId()));
                 reformHistoryVOS.add(item);
             }
+            result.getGovernmentReformReply().setSubmitUserHeadPic(userHeadPicMap.get(result.getGovernmentReformReply().getSubmitUserId()));
+            result.getEnterpriseReformReply().setSubmitUserHeadPic(userHeadPicMap.get(result.getEnterpriseReformReply().getSubmitUserId()));
         }
         result.setReformHistory(reformHistoryVOS);
 
