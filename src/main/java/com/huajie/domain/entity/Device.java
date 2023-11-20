@@ -60,4 +60,7 @@ public class Device implements Serializable {
     @ApiModelProperty(name = "更新人",notes = "")
     @TableField(value = "update_user", fill = FieldFill.UPDATE)
     private String updateUser ;
+
+    @TableField(exist = false)
+    private String placeName;
 }

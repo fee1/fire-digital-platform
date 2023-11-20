@@ -96,4 +96,12 @@ public class UserApi {
     }
 
 
+    @ApiOperation(value = "修改用户角色")
+    @GetMapping("/changeRole")
+    public ApiResult<Void> changePassword(@RequestParam @ApiParam("1 政府管理员 2 政府安全员 3 企业管理员 4 企业安全员") Integer type){
+        userAppService.changeRole(type);
+        return ApiResult.ok();
+    }
+
+
 }

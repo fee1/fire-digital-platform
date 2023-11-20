@@ -8,6 +8,7 @@ import com.huajie.application.api.request.ProblemQueryRequestVO;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.entity.ProblemDetail;
 import com.huajie.infrastructure.mapper.ProblemDetailMapper;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,7 +27,7 @@ public class ProblemDetailService {
         QueryWrapper<ProblemDetail> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(ProblemDetail::getState, ProblemStateEnum.TODO.getStateCode())
-                .gt(ProblemDetail::getReformTimeoutTime, new Date());
+                .lt(ProblemDetail::getReformTimeoutTime, new Date());
         return problemDetailMapper.selectList(queryWrapper);
     }
 
@@ -39,6 +40,13 @@ public class ProblemDetailService {
     public ProblemDetail insert(ProblemDetail problemDetail){
         problemDetailMapper.insert(problemDetail);
         return problemDetail;
+    }
+
+    public Integer getUnfinishProblemCount(Integer tenantId){
+        QueryWrapper<ProblemDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(ProblemDetail::getEntTenantId,tenantId);
+        queryWrapper.lambda().ne(ProblemDetail::getState,ProblemStateEnum.FINISH);
+        return problemDetailMapper.selectCount(queryWrapper);
     }
 
     public ProblemDetail getById(Long id){

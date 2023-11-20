@@ -113,4 +113,12 @@ public class ProblemReformApi {
         return ApiResult.ok();
     }
 
+    @ApiOperation("催促整改")
+    @PostMapping("/urge")
+    public ApiResult urge(@RequestBody @Valid ProblemReformActionVO actionVO){
+        problemReformService.doAction(ProblemActionTypeEnum.URGE,actionVO);
+        return ApiResult.ok();
+    }
+
+
 }

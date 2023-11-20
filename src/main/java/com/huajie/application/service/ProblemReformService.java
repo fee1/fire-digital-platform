@@ -82,21 +82,22 @@ public class ProblemReformService {
         queryWrapper.lambda().orderByAsc(ProblemDetail::getReformTimeoutTime).orderByAsc(ProblemDetail::getSubmitTime);
 
         Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
-
-        Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
-
-
         Page<ProblemDetailResponseVO> result = new Page<>();
-        BeanUtils.copyProperties(problemList,result);
         if(!CollectionUtils.isEmpty(problemList)){
-            for (ProblemDetail problemDetail: problemList){
-                ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
-                BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
-                problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
-                problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
-                result.add(problemDetailResponseVO);
+            Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
+
+            BeanUtils.copyProperties(problemList,result);
+            if(!CollectionUtils.isEmpty(problemList)){
+                for (ProblemDetail problemDetail: problemList){
+                    ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
+                    BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
+                    problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
+                    problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
+                    result.add(problemDetailResponseVO);
+                }
             }
         }
+
         return result;
     }
 
@@ -132,9 +133,10 @@ public class ProblemReformService {
         }
         queryWrapper.lambda().orderByAsc(ProblemDetail::getReformTimeoutTime).orderByAsc(ProblemDetail::getSubmitTime);
         Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
-        Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
         Page<ProblemDetailResponseVO> result = new Page<>();
         if(!CollectionUtils.isEmpty(problemList)){
+            Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
+
             Map<Integer, String> tenantNameMap = tenantService.getTenantNameMap(problemList.stream().map(ProblemDetail::getEntTenantId).collect(Collectors.toList()));
             for (ProblemDetail problemDetail: problemList){
                 ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
@@ -155,18 +157,18 @@ public class ProblemReformService {
         BeanUtils.copyProperties(problemDetail,result);
         result.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
 
-        ProblemReformHistory lastGovernmentReform = problemReformHistoryService.getLastGovernmentReform(problemId);
-        if(lastGovernmentReform != null){
+        ProblemReformHistory lastGovernmentReply = problemReformHistoryService.getLastGovernmentReform(problemId);
+        if(lastGovernmentReply != null){
             ProblemReformHistoryResponseVO lastGovernmentReformVO  = new ProblemReformHistoryResponseVO();
-            BeanUtils.copyProperties(lastGovernmentReform, lastGovernmentReformVO);
+            BeanUtils.copyProperties(lastGovernmentReply, lastGovernmentReformVO);
             lastGovernmentReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastGovernmentReformVO.getActionType()).getActionName());
             result.setGovernmentReformReply(lastGovernmentReformVO);
         }
 
-        ProblemReformHistory lastEnterpriseReform = problemReformHistoryService.getLastEnterpriseReform(problemId);
-        if(lastEnterpriseReform != null){
+        ProblemReformHistory lastEnterpriseReply = problemReformHistoryService.getLastEnterpriseReform(problemId);
+        if(lastEnterpriseReply != null){
             ProblemReformHistoryResponseVO lastEnterpriseReformVO  = new ProblemReformHistoryResponseVO();
-            BeanUtils.copyProperties(lastEnterpriseReform, lastEnterpriseReformVO);
+            BeanUtils.copyProperties(lastEnterpriseReply, lastEnterpriseReformVO);
             lastEnterpriseReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastEnterpriseReformVO.getActionType()).getActionName());
             result.setEnterpriseReformReply(lastEnterpriseReformVO);
         }
@@ -182,8 +184,12 @@ public class ProblemReformService {
                 item.setSubmitUserHeadPic(userHeadPicMap.get(item.getSubmitUserId()));
                 reformHistoryVOS.add(item);
             }
-            result.getGovernmentReformReply().setSubmitUserHeadPic(userHeadPicMap.get(result.getGovernmentReformReply().getSubmitUserId()));
-            result.getEnterpriseReformReply().setSubmitUserHeadPic(userHeadPicMap.get(result.getEnterpriseReformReply().getSubmitUserId()));
+            if(result.getGovernmentReformReply() != null){
+                result.getGovernmentReformReply().setSubmitUserHeadPic(userHeadPicMap.get(result.getGovernmentReformReply().getSubmitUserId()));
+            }
+            if(result.getEnterpriseReformReply() != null){
+                result.getEnterpriseReformReply().setSubmitUserHeadPic(userHeadPicMap.get(result.getEnterpriseReformReply().getSubmitUserId()));
+            }
         }
         result.setReformHistory(reformHistoryVOS);
 

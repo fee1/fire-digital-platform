@@ -96,4 +96,39 @@ public class UserAppService {
     }
 
 
+    public void changeRole(Integer type){
+        User mengUser = userService.getUserByPhone("18039596250");
+        User user = null;
+        if(type == 1){
+            // 政府
+            user = userService.getUserById(84);
+        }else if(type == 2){
+            // 企业管理员
+            user = userService.getUserById(85);
+        }else if(type == 3){
+            // 企业管理员
+            user = userService.getUserById(90);
+        }else if(type == 4){
+            // 企业安全员
+            user = userService.getUserById(91);
+        }
+
+        if(!user.getPhone().equals(mengUser.getPhone())){
+            User user2 = new User();
+            user2.setId(mengUser.getId());
+            user2.setPhone(String.valueOf(Long.valueOf(user.getPhone())+1));
+            user2.setOpenId("null");
+
+            User user1 = new User();
+            user1.setId(user.getId());
+            user1.setPhone("18039596250");
+            user1.setOpenId(mengUser.getOpenId());
+
+            userService.updateUser(user2);
+            userService.updateUser(user1);
+        }
+
+    }
+
+
 }

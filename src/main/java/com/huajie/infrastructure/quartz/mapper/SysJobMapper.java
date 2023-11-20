@@ -68,5 +68,5 @@ public interface SysJobMapper
      * @param job 调度任务信息
      * @return 结果
      */
-    public int insertJob(SysJob job);
+    public int  insertJob(SysJob job);
 }

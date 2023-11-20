@@ -1,6 +1,7 @@
 package com.huajie.infrastructure.quartz.domain;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -41,5 +42,13 @@ public class SysJobLog implements Serializable {
 
     /** 停止时间 */
     private Date stopTime;
+
+    /** 开始时间 查询条件 */
+    @TableField(exist = false)
+    private Date beginTime;
+
+    /** 截至时间 查询条件*/
+    @TableField(exist = false)
+    private Date endTime;
 
 }

@@ -39,4 +39,6 @@ public class SysJob implements Serializable {
     /** 任务状态（0正常 1暂停） */
     private String status;
 
+    private String remark;
+
 }

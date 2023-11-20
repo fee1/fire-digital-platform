@@ -1,4 +1,4 @@
-package com.huajie.domain.schedule;
+package com.huajie.domain.schedule.task;
 
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.entity.ProblemDetail;
@@ -12,15 +12,14 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Component(value = "problemTimeoutTask")
 @Slf4j
 public class ProblemTimeoutTask {
 
     @Autowired
     private ProblemDetailService problemDetailService;
 
-    @Scheduled(cron = "0 0/10 * * * ?")
-    public void problemTimout(){
+    public void problemTimeout(){
         List<ProblemDetail> timeoutProblemList = problemDetailService.getTimeoutProblemList();
         if(!CollectionUtils.isEmpty(timeoutProblemList)){
             log.info("隐患超时定时任务执行成功，隐患id：{}",timeoutProblemList.stream().map(ProblemDetail::getId).collect(Collectors.toList()));

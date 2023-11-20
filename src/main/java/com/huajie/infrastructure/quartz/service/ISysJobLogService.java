@@ -2,6 +2,7 @@ package com.huajie.infrastructure.quartz.service;
 
 
 
+import com.github.pagehelper.Page;
 import com.huajie.infrastructure.quartz.domain.SysJobLog;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface ISysJobLogService
      * @param jobLog 调度日志信息
      * @return 调度任务日志集合
      */
-    public List<SysJobLog> selectJobLogList(SysJobLog jobLog);
+    public Page<SysJobLog> selectJobLogList(SysJobLog jobLog, Integer pageNum, Integer pageSize);
 
     /**
      * 通过调度任务日志ID查询调度信息

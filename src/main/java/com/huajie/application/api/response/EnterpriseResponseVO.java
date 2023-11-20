@@ -64,5 +64,7 @@ public class EnterpriseResponseVO {
     @ApiModelProperty("已采集设备数量")
     private Integer deviceCount;
 
+    @ApiModelProperty("隐患数量")
+    private Integer problemCount;
 
 }

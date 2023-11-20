@@ -35,11 +35,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="invokeTarget != null and invokeTarget != ''">
 				AND invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
-			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+			<if test="beginTime != null and beginTime != ''"><!-- 开始时间检索 -->
+				and date_format(create_time,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
 			</if>
-			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+			<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+				and date_format(create_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
 			</if>
 		</where>
 	</select>
@@ -70,21 +70,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	
  	<insert id="insertJobLog" parameterType="com.huajie.infrastructure.quartz.domain.SysJobLog">
  		insert into sys_job_log(
- 			<if test="jobLogId != null and jobLogId != 0">job_log_id,</if>
- 			<if test="jobName != null and jobName != ''">job_name,</if>
- 			<if test="jobGroup != null and jobGroup != ''">job_group,</if>
- 			<if test="invokeTarget != null and invokeTarget != ''">invoke_target,</if>
- 			<if test="jobMessage != null and jobMessage != ''">job_message,</if>
- 			<if test="status != null and status != ''">status,</if>
- 			<if test="exceptionInfo != null and exceptionInfo != ''">exception_info</if>
+ 			<if test="jobName != null and jobName != ''">job_name</if>
+ 			<if test="jobGroup != null and jobGroup != ''">,job_group</if>
+ 			<if test="invokeTarget != null and invokeTarget != ''">,invoke_target</if>
+ 			<if test="jobMessage != null and jobMessage != ''">,job_message</if>
+ 			<if test="status != null and status != ''">,status</if>
+ 			<if test="exceptionInfo != null and exceptionInfo != ''">,exception_info</if>
  		)values(
- 			<if test="jobLogId != null and jobLogId != 0">#{jobLogId},</if>
- 			<if test="jobName != null and jobName != ''">#{jobName},</if>
- 			<if test="jobGroup != null and jobGroup != ''">#{jobGroup},</if>
- 			<if test="invokeTarget != null and invokeTarget != ''">#{invokeTarget},</if>
- 			<if test="jobMessage != null and jobMessage != ''">#{jobMessage},</if>
- 			<if test="status != null and status != ''">#{status},</if>
- 			<if test="exceptionInfo != null and exceptionInfo != ''">#{exceptionInfo}</if>
+ 			<if test="jobName != null and jobName != ''">#{jobName}</if>
+ 			<if test="jobGroup != null and jobGroup != ''">,#{jobGroup}</if>
+ 			<if test="invokeTarget != null and invokeTarget != ''">,#{invokeTarget}</if>
+ 			<if test="jobMessage != null and jobMessage != ''">,#{jobMessage}</if>
+ 			<if test="status != null and status != ''">,#{status}</if>
+ 			<if test="exceptionInfo != null and exceptionInfo != ''">,#{exceptionInfo}</if>
  		)
 	</insert>
 

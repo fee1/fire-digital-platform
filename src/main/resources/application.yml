@@ -8,18 +8,24 @@ server:
     key-store: classpath:lanlingfire.hj-ai.cn.jks
     key-store-password: k1bs30in
     key-store-type: JKS
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 400 #最大工作线程数量
+    min-spare-threads: 20 #最小工作线程数量
+    #max-connections: 10000 #一瞬间最大支持的并发的连接数
+    accept-count: 200 #等待队列长度
 spring:
   application:
     name: fire-digital-platform
   datasource:
     druid:
-      url: jdbc:mysql://localhost:3306/fire_digital_platform?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+      url: jdbc:mysql://82.156.14.43:3306/fire_digital_platform?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
       username: root
       password: Z2FvcWlhbnhpYW9kdWkxMjM=
       driver-class-name: com.mysql.jdbc.Driver
-      initial-size: 15
-      max-active: 30
-      min-idle: 5
+      initial-size: 20
+      max-active: 100
+      min-idle: 10
       max-wait: 60000
       # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
       filters: stat,wall
@@ -44,12 +50,11 @@ logging:
 aliyunoos:
   config:
     endpoint: http://oss-rg-china-mainland.aliyuncs.com
-    accessKeyId:
-    accessKeySecret:
+    accessKeyId: LTAI5t8Wkr4B6gkasFHDprMZ
+    accessKeySecret: 62d5DpPoLqdfaxH6N7nlaoL7Erzuaa
     bucketName: lanpukeji
     objectName: qrcode/
     url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/qrcode/
-    url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/
 
 # 注册人数单价
 unit:
@@ -61,7 +66,7 @@ alipay:
   app-id: 9021000126655234
   private-key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDl5OFFWeFEuwulyows30xlNZGD1/hv+LXF+aDxttX/wsYVeU+5J4H546MLkR/CnYcUxg4AQtiioZ1NGEHFRClU+3FY7k2X2AXteZnl3Gq51xN/oXvdTySp5Tx09k6IdWp9KtCKmS7EgESsz61N8DPqaHGRjzGOXGtXYF3ozgXwHr6XjlgBGhmyKRUo8hV//PkLfiUYymAsMufCR3VQtT9wwg3JUq07DIUoW6mJFSzJG5z8JOwK2scMtbAUti8TRzO1tISIbJsU0J8LaU2q1Zwl15uFuOWpZZJVzC5qmWuJq2LyJca4mluC9sYVoQbTcisl7DXICCA8r9mhchCVa9PRAgMBAAECggEAeOM4Sh2PRXMOFupBd78cDwRyNmA09bxU6Xvw0+oO8eTcAKK/9179DAhVzllL2Cy5wYS8DAsam7pcWxPsUe0bxuJJojf9eWFRDKUq9iJHxN2CFVU3KxLY9rXiaqayeTM1AginjJosa4v/kNfMC/XJdvPg9GfV6URT9aho+WiM2sxwtiDAl/BaW9n4b1TlKgWhgsNOQR/Vy3WfRy5Q+e5dDGuxXzStxccuB8mhrZmu4DbNHTRTQ0zg9szpbf6OpWewYNmRZUuuPOsI0AHrnHwjOyaM4Rtgsq/TnLQAd5eRqehSg4VDPYlc+s2o+JUatHgzazKo+MLEJRNqxNHKt9SAIQKBgQD5JUI56LPHkDlUcrCRD0oXoljP7MY0ZFyuQOY6p0d9CwPrZxOXMz6chwtVgt50NB173+ZrdG5OpR8PcwnhHfG72q0KezG1sWiWnBcZkjrA5CTgCSsd3BctW1sWNXai7fDAHnwjMqTyKbq+rGUjziGcnUWX3WRV+HbErbuL7B+hNQKBgQDsOAhKTe/k1+blWrZg3askvU3qEKYt3aaxGQrhIc37Aux1ta7CKN5qjALtcVoXhMV0gJeUwFG50nhctrXphpKmk6CLyNIZP9vvGJSw753Qqz5XxO9Y9C7WCSNeg326f4QMapD4eCbtBkDywhPxF+x3ZCHDyoz+KbiwdTd+qXO3rQKBgQCAM47nc3mG+Ay4CqgWjLKIhM6Ed4bqELasJ9MQXWFo05E5wXmQNRtDui2327aSPvro8iaEJo5YQ5k+/ugXgawRCQ4/tXK31slFrp4oV1mKRhs/eRhJriXy/e5Z+DrKzfszMLyZ9AZyYcypLtaAXSJoj3jvE0n8/vRGcktuTZtc/QKBgHFWzTuBu6nsob/IT5uYoGZHYlv9Uw7MvA9bOaodwyw+EeDEpK5KV7V9qmXtLlH8hZVJofFgeZYUU2YA0LXUuQat7KlFWPF+f3NwMt/WiL03fPk157Whq9tMlSjjJG9Yga5Hb3mYhOzTRFR2JIVYekAqzjyYMiA9On2IMHFYssodAoGAIH8IWWHKRWXvOrLx/7elxTgBzVKw1npzx2vsF4NWwc1SR9M/gC0rQLNeuHILQQNxVtqoPYOBCxLFVvDke+WaSi1IeVTFtWsA5WOK1AD25kMqi6+5z2wHsxDbVBulqjyD7PP8YXoO3KTiGrTO+8m97xaKpxP0ND7YS6JK5xXurPg=
   sign-type: RSA2
-  notify-url: http://localhost:8080/pay/callback
+  notify-url: http://82.156.14.43:8080/pay/callback
 # 证书模式使用
 #  app-cert-path:
 #  public-cert-path:
@@ -71,15 +76,15 @@ alipay:
 wechat:
   pay:
     # 公众号APPID
-    appId:
-    appSecret:
-    mchId:
-    mchSerialNo:
-    apiV3Key:
-    notify-url:
+    appId: wx857a855479f492ab
+    appSecret: 65f08652a498b2e208ea6f0f1687edfe
+    mchId: 1651245161
+    mchSerialNo: 24D46ACF1CFDF15E584EA4D209C74F22729EE7C0
+    apiV3Key: YMIB54Dr8QvzrmTbw9nhCBL9dmRf4iPY
+    notify-url: http://82.156.14.43:8080/pay/callback
   app:
-    id:
-    secret:
+    id: wxef5a1fc0799bd79d
+    secret: f8d7d4b85f5c33387041c228e556f126
 
 
 swagger:

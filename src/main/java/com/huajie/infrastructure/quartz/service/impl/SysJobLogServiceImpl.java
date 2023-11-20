@@ -1,5 +1,7 @@
 package com.huajie.infrastructure.quartz.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.huajie.infrastructure.quartz.domain.SysJobLog;
 import com.huajie.infrastructure.quartz.mapper.SysJobLogMapper;
 import com.huajie.infrastructure.quartz.service.ISysJobLogService;
@@ -26,9 +28,9 @@ public class SysJobLogServiceImpl implements ISysJobLogService
      * @return 调度任务日志集合
      */
     @Override
-    public List<SysJobLog> selectJobLogList(SysJobLog jobLog)
-    {
-        return jobLogMapper.selectJobLogList(jobLog);
+    public Page<SysJobLog> selectJobLogList(SysJobLog jobLog, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return (Page<SysJobLog>) jobLogMapper.selectJobLogList(jobLog);
     }
 
     /**

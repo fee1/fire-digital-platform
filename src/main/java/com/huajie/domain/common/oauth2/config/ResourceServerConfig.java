@@ -44,7 +44,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/problemReform/**",
                         "/file/upload/**",
                         "/notice/**",
-                        "/tenant/**"
+                        "/tenant/**",
+                        "/monitor/**"
                 ).and().addFilterAfter(chargeFilter, FilterSecurityInterceptor.class);
     }
 

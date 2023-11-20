@@ -3,6 +3,7 @@ package com.huajie.infrastructure.quartz.mapper;
 
 import com.huajie.infrastructure.quartz.domain.SysJobLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

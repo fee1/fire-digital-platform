@@ -1,7 +1,9 @@
 package com.huajie.infrastructure.quartz.controller;
 
 
+import com.huajie.application.api.common.ApiPage;
 import com.huajie.application.api.common.ApiResult;
+import com.huajie.application.api.response.PlaceResponseVO;
 import com.huajie.infrastructure.quartz.domain.SysJobLog;
 import com.huajie.infrastructure.quartz.service.ISysJobLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,11 @@ public class SysJobLogController
      * 查询定时任务调度日志列表
      */
     @GetMapping("/list")
-    public ApiResult<List<SysJobLog>> list(SysJobLog sysJobLog)
+    public ApiResult<ApiPage<SysJobLog>> list( @RequestParam(required = false, defaultValue = "1")Integer pageNum,
+                                             @RequestParam(required = false, defaultValue = "10")Integer pageSize,
+                                             SysJobLog sysJobLog)
     {
-        return ApiResult.ok(jobLogService.selectJobLogList(sysJobLog));
+        return ApiResult.ok(ApiPage.restPage(jobLogService.selectJobLogList(sysJobLog,pageNum,pageSize)));
     }
     
     /**

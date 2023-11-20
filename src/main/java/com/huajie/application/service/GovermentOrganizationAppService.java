@@ -68,6 +68,9 @@ public class GovermentOrganizationAppService {
     @Autowired
     private PlaceService placeService;
 
+    @Autowired
+    private ProblemDetailService problemDetailService;
+
     public void editGovermentInfo(EditGovermentInfoRequestVO requestVO) {
         Tenant tenant = new Tenant();
         BeanUtils.copyProperties(requestVO, tenant);
@@ -230,6 +233,9 @@ public class GovermentOrganizationAppService {
 
             Integer placeCount = placeService.getPlaceCountByTenantId(tenant.getId());
             enterpriseResponseVO.setPlaceCount(placeCount);
+
+            Integer unfinishProblemCount = problemDetailService.getUnfinishProblemCount(tenant.getId());
+            enterpriseResponseVO.setProblemCount(unfinishProblemCount);
 
             enterpriseResponseVOList.add(enterpriseResponseVO);
         }
