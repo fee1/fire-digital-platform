@@ -39,6 +39,9 @@
         <alipay-sdk.version>4.34.0.ALL</alipay-sdk.version>
         <wechatpay.version>0.2.11</wechatpay.version>
         <wechatpay-apache-httpclient.version>0.4.9</wechatpay-apache-httpclient.version>
+
+        <mybatis-generator-core.version>1.4.0</mybatis-generator-core.version>
+        <mybatis-generator-maven-plugin.version>1.3.7</mybatis-generator-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -353,8 +356,9 @@
     </dependencies>
 
 
-    <!--将应用打包成可执行jar包-->
+
     <build>
+        <!--将应用打包成可执行jar包-->
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -386,6 +390,27 @@
                 </executions>
             </plugin>
 
+            <!-- generator 生成数据库表对象+mapper+xml -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>${mybatis-generator-maven-plugin.version}</version>
+                <configuration>
+                    <!--mybatis的代码生成器的配置文件-->
+                    <configurationFile>src/main/resources/generatorConfig-mysql.xml</configurationFile>
+                    <!--允许覆盖生成的文件-->
+                    <overwrite>true</overwrite>
+                    <!--将当前pom的依赖项添加到生成器的类路径中-->
+                    <includeCompileDependencies>true</includeCompileDependencies>
+                </configuration>
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>mysql</groupId>-->
+<!--                        <artifactId>mysql-connector-java</artifactId>-->
+<!--                        <version>${mysql-jdbc.version}</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+            </plugin>
         </plugins>
     </build>
 

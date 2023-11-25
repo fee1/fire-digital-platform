@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<!--MyBatis3Simple-->
+<generatorConfiguration>
+
+    <!-- 引入配置文件 -->
+<!--    <yml resource="application.yml"/>-->
+
+    <context id="MysqlContext" targetRuntime="MyBatis3" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+        <property name="javaFileEncoding" value="UTF-8"/>
+<!--        &lt;!&ndash;修改Mapper文件名&ndash;&gt;-->
+<!--        <plugin type="org.mybatis.generator.plugins.rename.RenameJavaMapperPlugin">-->
+<!--            <property name="searchString" value="Mapper$" />-->
+<!--            <property name="replaceString" value="Dao" />-->
+<!--        </plugin>-->
+<!--        &lt;!&ndash;修改xml文件名&ndash;&gt;-->
+<!--        <plugin type="org.mybatis.generator.plugins.rename.RenameSqlMapperPlugin">-->
+<!--            <property name="searchString" value="Mapper" />-->
+<!--            <property name="replaceString" value="Dao" />-->
+<!--        </plugin>-->
+
+        <!-- 为模型生成序列化方法-->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <!-- 为生成的Java模型创建一个toString方法 -->
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+<!--        &lt;!&ndash; 使用lombok &ndash;&gt;-->
+<!--        <plugin type="org.mybatis.generator.plugins.LombokPlugin">-->
+<!--        </plugin>-->
+
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="false"/>
+            <!-- 添加生成时间注释 -->
+            <property name="suppressDate" value="true"/>
+            <!-- 添加表的注释 -->
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+
+
+        <!--数据库链接地址账号密码-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://82.156.14.43:3306/fire_digital_platform?characterEncoding=UTF-8&amp;useUnicode=true&amp;useSSL=false&amp;tinyInt1isBit=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Shanghai"
+                        userId="root"
+                        password="gaoqianxiaodui123">
+        </jdbcConnection>
+
+        <!-- 对应生成的pojo所在包 -->
+        <javaModelGenerator targetPackage="com.huajie.domain.entity" targetProject="src/main/java"/>
+
+        <!-- 对应生成的mapper所在目录 -->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
+
+        <!-- 配置mapper对应的java映射 -->
+        <javaClientGenerator targetPackage="com.huajie.infrastructure.mapper" targetProject="src/main/java"
+                             type="XMLMAPPER"/>
+
+        <!-- 配置 数据库逆向生成配置的表-->
+        <!--所有的表-->
+<!--        <table tableName="%"></table>-->
+        <table tableName="sign_for_notice"/>
+    </context>
+</generatorConfiguration>
