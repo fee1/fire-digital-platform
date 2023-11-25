@@ -86,8 +86,9 @@ public class NoticeService {
         Date date = DateUtil.addDays(new Date(), notice.getSaveDays());
         updateNotice.setExpireTime(date);
         updateNotice.setSendTime(date);
-        CustomizeGrantedAuthority customizeGrantedAuthority = UserContext.getCustomizeGrantedAuthority();
-        updateNotice.setSendUserName(customizeGrantedAuthority.getUserName());
+        //可能涉及到用户修改,最好不用这个字段
+//        CustomizeGrantedAuthority customizeGrantedAuthority = UserContext.getCustomizeGrantedAuthority();
+//        updateNotice.setSendUserName(customizeGrantedAuthority.getUserName());
 
         QueryWrapper<Notice> updateWrapper = new QueryWrapper<>();
         updateWrapper.lambda().eq(Notice::getId, id);
@@ -156,34 +157,18 @@ public class NoticeService {
         return notice;
     }
 
-    public Page<Notice> getGovPcNoticeList(Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
-        if (date != null){
-            queryWrapper.lambda().eq(Notice::getSendTime, date);
-        }
-        if (StringUtils.isNotBlank(title)){
-            queryWrapper.lambda().like(Notice::getTitle, title);
-        }
-        if (StringUtils.isNotBlank(sendUserName)){
-            queryWrapper.lambda().like(Notice::getSendUserName, sendUserName);
-        }
+    public Page<Notice> getGovPcNoticeList(Integer noticeType, Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
+        Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
         PageHelper.startPage(pageNum, pageSize);
-        return (Page<Notice>) this.noticeMapper.selectList(queryWrapper);
+        return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, date, title, sendUserName, noticeIds);
     }
 
-    public Page<Notice> getEntPcNoticeList(Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
-        if (date != null){
-            queryWrapper.lambda().eq(Notice::getSendTime, date);
-        }
-        if (StringUtils.isNotBlank(title)){
-            queryWrapper.lambda().like(Notice::getTitle, title);
-        }
-        if (StringUtils.isNotBlank(sendUserName)){
-            queryWrapper.lambda().like(Notice::getSendUserName, sendUserName);
-        }
+    public Page<Notice> getEntPcNoticeList(Integer noticeType, Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
+        Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
         PageHelper.startPage(pageNum, pageSize);
-        return (Page<Notice>) this.noticeMapper.selectList(queryWrapper);
+        return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, date, title, sendUserName, noticeIds);
     }
 
     public void receive(Integer noticeId) {
