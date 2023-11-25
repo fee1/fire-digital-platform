@@ -111,8 +111,8 @@ public class NoticeAppService {
         return noticeDetailResponseVO;
     }
 
-    public Page<GovPcNoticeResponseVO> getGovPcNoticeList(Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        Page<Notice> govPcNoticeList = this.noticeService.getGovPcNoticeList(date, title, sendUserName, pageNum, pageSize);
+    public Page<GovPcNoticeResponseVO> getGovPcNoticeList(Integer noticeType, Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        Page<Notice> govPcNoticeList = this.noticeService.getGovPcNoticeList(noticeType, date, title, sendUserName, pageNum, pageSize);
         Page<GovPcNoticeResponseVO> responseVOPage = new Page<>();
         BeanUtils.copyProperties(govPcNoticeList, responseVOPage);
         List<Integer> tenantIds = govPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());
@@ -127,8 +127,8 @@ public class NoticeAppService {
         return responseVOPage;
     }
 
-    public Page<EntPcNoticeResponseVO> getEntPcNoticeList(Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        Page<Notice> entPcNoticeList = this.noticeService.getEntPcNoticeList(date, title, sendUserName, pageNum, pageSize);
+    public Page<EntPcNoticeResponseVO> getEntPcNoticeList(Integer noticeType, Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        Page<Notice> entPcNoticeList = this.noticeService.getEntPcNoticeList(noticeType, date, title, sendUserName, pageNum, pageSize);
         Page<EntPcNoticeResponseVO> responseVOPage = new Page<>();
         BeanUtils.copyProperties(entPcNoticeList, responseVOPage);
         List<Integer> tenantIds = entPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());

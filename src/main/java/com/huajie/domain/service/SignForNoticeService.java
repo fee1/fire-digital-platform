@@ -47,4 +47,11 @@ public class SignForNoticeService {
                 .eq(SignForNotice::getUserId, userId);
         this.signForNoticeMapper.update(signForNotice, queryWrapper);
     }
+
+    public List<SignForNotice> getSignForNoticeByUserId(Integer currentUserId) {
+        QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(SignForNotice::getUserId, currentUserId);
+        return this.signForNoticeMapper.selectList(queryWrapper);
+    }
 }

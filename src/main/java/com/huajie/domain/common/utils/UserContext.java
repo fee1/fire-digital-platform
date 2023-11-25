@@ -1,11 +1,14 @@
 package com.huajie.domain.common.utils;
 
+import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.entity.Tenant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+
+import java.util.Objects;
 
 /**
  * @author zhuxiaofeng
@@ -32,6 +35,15 @@ public class UserContext {
             return (CustomizeGrantedAuthority) authority;
         }
         return null;
+    }
+
+    public static Integer getCurrentUserId(){
+        CustomizeGrantedAuthority customizeGrantedAuthority = getCustomizeGrantedAuthority();
+        if (!Objects.isNull(customizeGrantedAuthority)) {
+            return customizeGrantedAuthority.getUserId();
+        }else {
+            throw new ServerException("没有登陆态");
+        }
     }
 
     public static Tenant getCurrentTenant(){

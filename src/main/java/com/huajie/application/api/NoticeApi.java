@@ -76,25 +76,29 @@ public class NoticeApi {
         return ApiResult.ok(noticeDetailResponseVO);
     }
 
+    //查询应该查看的通知通告
     @ApiOperation("政府PC 通知/通告 列表")
     @GetMapping("gov/list")
-    public ApiResult<ApiPage<GovPcNoticeResponseVO>> getGovPcNoticeList(@RequestParam(required = false)@ApiParam("日期") Date date,
+    public ApiResult<ApiPage<GovPcNoticeResponseVO>> getGovPcNoticeList(@RequestParam(required = true)@ApiParam("类型  0: 通知 / 1:通告") Integer noticeType,
+                                                                        @RequestParam(required = false)@ApiParam("日期") Date date,
                                                                         @RequestParam(required = false)@ApiParam("标题") String title,
                                                                         @RequestParam(required = false)@ApiParam("发送人") String sendUserName,
                                                                         @RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                                                         @RequestParam(required = false, defaultValue = "10") Integer pageSize){
-        Page<GovPcNoticeResponseVO> responseVOPage = this.noticeAppService.getGovPcNoticeList(date, title, sendUserName, pageNum, pageSize);
+        Page<GovPcNoticeResponseVO> responseVOPage = this.noticeAppService.getGovPcNoticeList(noticeType, date, title, sendUserName, pageNum, pageSize);
         return ApiResult.ok(ApiPage.restPage(responseVOPage));
     }
 
+    //查询应该查看的通知通告
     @ApiOperation("企业PC 通知/通告 列表")
     @GetMapping("ent/list")
-    public ApiResult<ApiPage<EntPcNoticeResponseVO>> getEntPcNoticeList(@RequestParam(required = false)@ApiParam("日期") Date date,
+    public ApiResult<ApiPage<EntPcNoticeResponseVO>> getEntPcNoticeList(@RequestParam(required = true)@ApiParam("类型  0: 通知 / 1:通告") Integer noticeType,
+                                                                        @RequestParam(required = false)@ApiParam("日期") Date date,
                                                                         @RequestParam(required = false)@ApiParam("标题") String title,
                                                                         @RequestParam(required = false)@ApiParam("发送人") String sendUserName,
                                                                         @RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                                                         @RequestParam(required = false, defaultValue = "10") Integer pageSize){
-        Page<EntPcNoticeResponseVO> responseVOPage = this.noticeAppService.getEntPcNoticeList(date, title, sendUserName, pageNum, pageSize);
+        Page<EntPcNoticeResponseVO> responseVOPage = this.noticeAppService.getEntPcNoticeList(noticeType ,date, title, sendUserName, pageNum, pageSize);
         return ApiResult.ok(ApiPage.restPage(responseVOPage));
     }
 
@@ -104,6 +108,9 @@ public class NoticeApi {
         this.noticeAppService.receive(noticeId);
         return ApiResult.ok();
     }
+
+//    @ApiOperation("小程序通知通告列表")
+//    @
 
     @ApiOperation("小程序通知通知通告详情")
     @GetMapping("app/detail")
