@@ -16,6 +16,14 @@ mvn clean install -Dmaven.test.skip=true
 nohup.out 文件需要定期清理
 nohup java -javaagent:aspectjweaver-1.8.13.jar -javaagent:trace-agent.jar -jar fire-digital-platform.jar &
 ```
+# generator 生成实体与mapper
+```text
+1.修改配置文件(generatorConfig-mysal.xml)中的table标签配置，tableName换成自己要用的表名。
+
+2.maven管理中的fire-digital-platform插件中选择mybatis-generator，点击generator
+
+注意: 多次生成同一个表的实体与mapper，xml文件的内容是追加的方式，不是覆盖的方式
+```
 # 领域模型说明
 ```text
 整个项目往大的方面说就是只有三种模块
