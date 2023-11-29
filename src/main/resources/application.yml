@@ -56,6 +56,16 @@ aliyunoos:
     objectName: qrcode/
     url: https://lanpukeji.oss-rg-china-mainland.aliyuncs.com/qrcode/
 
+# 阿里云短信配置
+aliyun:
+  sms:
+    accessKeyId:
+    accessKeySecret:
+    # 短信服务下的模板管理处创建
+    templateCode:
+    # 短信服务下的签名管理处创建
+    signName:
+
 # 注册人数单价
 unit:
   price: 0.01
