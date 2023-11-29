@@ -1,10 +1,12 @@
 package com.huajie.domain.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.infrastructure.external.oss.AliyunFileClient;
 import com.huajie.infrastructure.external.oss.model.SignModel;
+import com.huajie.infrastructure.external.sms.SmsClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,9 @@ public class CommonService {
 
     @Autowired
     private AliyunFileClient aliyunFileClient;
+
+    @Autowired
+    private SmsClient smsClient;
 
     @Value("${aliyunoos.config.url}")
     private String url;
@@ -74,4 +79,15 @@ public class CommonService {
         SignModel sign = aliyunFileClient.getSign();
         return sign;
     }
+
+    public void sendSms(String phone, JSONObject param){
+        try {
+            smsClient.sendSms(phone, param.toJSONString());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("短信发送失败: ", e);
+            throw new ServerException(e.getMessage());
+        }
+    }
+
 }

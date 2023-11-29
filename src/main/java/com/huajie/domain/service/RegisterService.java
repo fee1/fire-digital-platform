@@ -241,4 +241,28 @@ public class RegisterService {
         }
     }
 
+    public void sendVerificationCode(String phone) {
+        //生成六位数字验证码
+        String checkCode = RandomStringUtils.randomNumeric(6);
+        VerifyCodeCacheModel verifyCodeCacheModel = new VerifyCodeCacheModel();
+        verifyCodeCacheModel.setCode(checkCode);
+        verifyCodeCacheModel.setVerifyStatus(false);
+        GuavaUtil.set(CacheKeyPrefixConstants.REGISTER_VERIFICATION + phone, verifyCodeCacheModel, 600);
+
+        JSONObject param = new JSONObject();
+        param.put("code", checkCode);
+        this.commonService.sendSms(phone, param);
+    }
+
+    public void verify(String phone, String code) {
+        VerifyCodeCacheModel verifyCodeCacheModel = GuavaUtil.get(CacheKeyPrefixConstants.REGISTER_VERIFICATION + phone);
+        if (verifyCodeCacheModel == null){
+            throw new ServerException("验证码已经过期");
+        }
+        if (StringUtils.equals(code, verifyCodeCacheModel.getCode())){
+            verifyCodeCacheModel.setVerifyStatus(true);
+        }else {
+            throw new ServerException("验证码不正确");
+        }
+    }
 }

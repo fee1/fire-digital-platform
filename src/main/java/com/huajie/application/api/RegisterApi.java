@@ -3,12 +3,13 @@ package com.huajie.application.api;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.EnterpriseRegiestRequestVO;
 import com.huajie.application.api.request.GovermentRegiestRequestVO;
+import com.huajie.application.api.request.PhoneVerifyRequestVO;
+import com.huajie.application.api.request.SendVerificationCodeRequestVO;
 import com.huajie.application.api.response.EnterpriseRegiestResponseVO;
 import com.huajie.application.service.RegisterAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,20 @@ public class RegisterApi {
     @PostMapping(value = "goverment")
     public ApiResult<Void> regiestGoverment(@Valid@RequestBody GovermentRegiestRequestVO regiestRequestVO){
         registerAppService.regiestGoverment(regiestRequestVO);
+        return ApiResult.ok();
+    }
+
+    @ApiOperation("验证码发送")
+    @PostMapping(value = "")
+    public ApiResult<Void> sendVerificationCode(@Valid@RequestBody SendVerificationCodeRequestVO requestVO){
+        registerAppService.sendVerificationCode(requestVO);
+        return ApiResult.ok();
+    }
+
+    @ApiOperation("手机号验证")
+    @PostMapping(value = "")
+    public ApiResult<Void> verify(@Valid@RequestBody PhoneVerifyRequestVO requestVO){
+        registerAppService.verify(requestVO);
         return ApiResult.ok();
     }
 

@@ -3,6 +3,8 @@ package com.huajie.application.service;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.EnterpriseRegiestRequestVO;
 import com.huajie.application.api.request.GovermentRegiestRequestVO;
+import com.huajie.application.api.request.PhoneVerifyRequestVO;
+import com.huajie.application.api.request.SendVerificationCodeRequestVO;
 import com.huajie.application.api.response.EnterpriseRegiestResponseVO;
 import com.huajie.domain.common.constants.TenantStatusConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
@@ -27,7 +29,6 @@ public class RegisterAppService {
 
     @Autowired
     private RegisterService registerService;
-
 
     public EnterpriseRegiestResponseVO regiestEnterprise(EnterpriseRegiestRequestVO regiestRequestVO) {
         Tenant tenant = new Tenant();
@@ -83,5 +84,13 @@ public class RegisterAppService {
 //        tenant.setEntFireType(regiestRequestVO.getEntFireType());
         this.registerService.regiestGoverment(tenant, regiestRequestVO.getGovAdminList(),
                 regiestRequestVO.getGovOperatorList(), regiestRequestVO.getEntIndustryClassification());
+    }
+
+    public void sendVerificationCode(SendVerificationCodeRequestVO requestVO) {
+        this.registerService.sendVerificationCode(requestVO.getPhone());
+    }
+
+    public void verify(PhoneVerifyRequestVO requestVO) {
+        this.registerService.verify(requestVO.getPhone(), requestVO.getCode());
     }
 }
