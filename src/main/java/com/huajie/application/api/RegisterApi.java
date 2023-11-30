@@ -44,14 +44,14 @@ public class RegisterApi {
     }
 
     @ApiOperation("验证码发送")
-    @PostMapping(value = "")
+    @PostMapping(value = "send/verify/code")
     public ApiResult<Void> sendVerificationCode(@Valid@RequestBody SendVerificationCodeRequestVO requestVO){
         registerAppService.sendVerificationCode(requestVO);
         return ApiResult.ok();
     }
 
     @ApiOperation("手机号验证")
-    @PostMapping(value = "")
+    @PostMapping(value = "verify")
     public ApiResult<Void> verify(@Valid@RequestBody PhoneVerifyRequestVO requestVO){
         registerAppService.verify(requestVO);
         return ApiResult.ok();
