@@ -378,6 +378,13 @@
             <version>${guava.version}</version>
         </dependency>
 
+        <!-- 各种VO DTO MODEL 对象转换 -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.2.0.Final</version>
+        </dependency>
+
     </dependencies>
 
 
