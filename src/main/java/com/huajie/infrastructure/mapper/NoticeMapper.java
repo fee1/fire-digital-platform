@@ -16,15 +16,8 @@ import java.util.Set;
 public interface NoticeMapper extends BaseMapper<Notice> {
 
 
-    @Select("<script>"+
-            "SELECT t0.* FROM notice t0 LEFT JOIN user t1 ON t0.from_user_id = t1.id " +
-            "WHERE t0.type = #{noticeType,jdbcType=INTEGER} AND t0.send_time = #{date, jdbcType=TIMESTAMP} AND t0.id IN "+
-            "<foreach item='item' collection='noticeIds' open='(' separator=',' close=')'>"+
-            "#{item}"+
-            "</foreach>"+
-            "AND t0.title LIKE concat('%',#{title, jdbcType=VARCHAR},'%') AND t1.user_name LIKE concat('%',#{sendUserName, jdbcType=VARCHAR},'%')"+
-            "</script>")
-    List<Notice> searchNotices(@Param("noticeType") Integer noticeType, @Param("date") Date date,@Param("title") String title,
+    List<Notice> searchNotices(@Param("noticeType") Integer noticeType, @Param("startDate") Date startDate,
+                               @Param("endDate") Date endDate,@Param("title") String title,
                                @Param("sendUserName") String sendUserName,@Param("noticeIds") Set<Integer> noticeIds);
 
 }

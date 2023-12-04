@@ -15,6 +15,8 @@
         <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
         <!--spring-cloud相关依赖的版本-->
         <spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
+        <!-- 编译插件 -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <!--将springboot项目打包成可执行jar包的版本-->
         <spring-boot-package.version>2.2.13.RELEASE</spring-boot-package.version>
         <mybatis-plus.version>3.1.2</mybatis-plus.version>
@@ -379,27 +381,37 @@
         </dependency>
 
         <!-- 各种VO DTO MODEL 对象转换 -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.2.0.Final</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.mapstruct</groupId>-->
+<!--            <artifactId>mapstruct</artifactId>-->
+<!--            <version>1.4.2.Final</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
 
 
     <build>
-        <!--将应用打包成可执行jar包-->
         <plugins>
+            <!--编译期，做各种事-->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
+<!--                    <annotationProcessorPaths>-->
+<!--                        <path>-->
+<!--                            <groupId>org.mapstruct</groupId>-->
+<!--                            <artifactId>mapstruct-processor</artifactId>-->
+<!--                            <version>1.4.2.Final</version>-->
+<!--                        </path>-->
+<!--                    </annotationProcessorPaths>-->
                 </configuration>
             </plugin>
+            <!--将应用打包成可执行jar包-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

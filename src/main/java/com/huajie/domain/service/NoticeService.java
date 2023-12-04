@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -157,18 +158,26 @@ public class NoticeService {
         return notice;
     }
 
-    public Page<Notice> getGovPcNoticeList(Integer noticeType, Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+    public Page<Notice> getGovPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
         List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
         Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
-        PageHelper.startPage(pageNum, pageSize);
-        return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, date, title, sendUserName, noticeIds);
+        if (!CollectionUtils.isEmpty(noticeIds)) {
+            PageHelper.startPage(pageNum, pageSize);
+            return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
+        }else {
+            return new Page<>();
+        }
     }
 
-    public Page<Notice> getEntPcNoticeList(Integer noticeType, Date date, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+    public Page<Notice> getEntPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
         List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
         Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
-        PageHelper.startPage(pageNum, pageSize);
-        return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, date, title, sendUserName, noticeIds);
+        if (!CollectionUtils.isEmpty(noticeIds)) {
+            PageHelper.startPage(pageNum, pageSize);
+            return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
+        }else {
+            return new Page<>();
+        }
     }
 
     public void receive(Integer noticeId) {
