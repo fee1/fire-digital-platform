@@ -21,6 +21,8 @@ public class JSONObjecTest {
         jsonObject.putAll(map);
         AlipayNotifyCallbackInfo alipayNotifyCallbackInfo = jsonObject.toJavaObject(AlipayNotifyCallbackInfo.class);
         System.out.println(alipayNotifyCallbackInfo);
+
+        //test
     }
 
 }
