@@ -29,7 +29,7 @@ public class Notice implements Serializable {
 
     private Byte status;
 
-    private Integer roleId;
+    private String roleName;
 
     private Byte specifyRange;
 

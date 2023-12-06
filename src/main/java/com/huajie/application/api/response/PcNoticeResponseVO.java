@@ -12,7 +12,7 @@ import java.util.Date;
  * @date 2023/11/13
  */
 @Data
-public class GovPcNoticeResponseVO {
+public class PcNoticeResponseVO {
 
     private Integer id;
 
@@ -33,5 +33,8 @@ public class GovPcNoticeResponseVO {
 
     @ApiModelProperty("有无附件, true: 存在")
     private Boolean existAppendix;
+
+    @ApiModelProperty("签收状态 0: 未签收， 1：已签收")
+    private Integer status;
 
 }

@@ -3,6 +3,7 @@ package com.huajie.domain.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.huajie.application.api.request.TenantSearchRequestVO;
 import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.utils.UserContext;
@@ -25,6 +26,9 @@ public class TenantService {
 
     @Autowired
     private TenantMapper tenantMapper;
+
+    @Autowired
+    private GovermentOrganizationService govermentOrganizationService;
 
     public Tenant getTenantByTenantId(Integer tenantId) {
         return tenantMapper.selectById(tenantId);
@@ -109,5 +113,31 @@ public class TenantService {
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().in(Tenant::getId, tenantIds);
         return this.tenantMapper.selectList(queryWrapper);
+    }
+
+    public List<Tenant> searchTenant(TenantSearchRequestVO requestVO) {
+        List<Tenant> tenants = new ArrayList<>();
+        if (requestVO.getSearchType() == 1){
+            Page<Tenant> adminEnterpriseList = this.govermentOrganizationService.getAdminEnterpriseList(1, Integer.MAX_VALUE, requestVO.getEnterpriseType(), requestVO.getTenantName(), 1);
+
+            for (Tenant tenant : adminEnterpriseList) {
+                if (requestVO.getRegionId().equals(tenant.getRegion())){
+                    if (requestVO.getStreetId().equals(tenant.getStreet())){
+                        tenants.add(tenant);
+                    }
+                }
+            }
+            return tenants;
+        }else {
+            Page<Tenant> adminEnterpriseList = this.govermentOrganizationService.getAdminGovernmentList(1, Integer.MAX_VALUE, requestVO.getTenantName());
+            for (Tenant tenant : adminEnterpriseList) {
+                if (requestVO.getRegionId().equals(tenant.getRegion())){
+                    if (requestVO.getStreetId().equals(tenant.getStreet())){
+                        tenants.add(tenant);
+                    }
+                }
+            }
+            return tenants;
+        }
     }
 }

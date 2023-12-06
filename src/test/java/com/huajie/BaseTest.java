@@ -3,6 +3,7 @@ package com.huajie;
 
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @author zxf
  */
+//@ActiveProfiles("dev")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootStarterTest.class)
 public abstract class BaseTest {

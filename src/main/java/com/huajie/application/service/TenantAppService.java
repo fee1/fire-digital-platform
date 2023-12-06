@@ -1,13 +1,16 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.request.TenantSearchRequestVO;
 import com.huajie.application.api.response.EnterpriseInfoResponseVO;
 import com.huajie.application.api.response.EnterpriseUserInfoResponseVO;
+import com.huajie.application.api.response.TenantResponseVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.*;
 import com.huajie.domain.service.RegionService;
 import com.huajie.domain.service.RoleService;
 import com.huajie.domain.service.SysDicService;
+import com.huajie.domain.service.TenantService;
 import com.huajie.domain.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,9 @@ public class TenantAppService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private TenantService tenantService;
 
     public EnterpriseInfoResponseVO getEnterpriseInfo() {
         Tenant currentTenant = UserContext.getCurrentTenant();
@@ -96,4 +102,14 @@ public class TenantAppService {
         return responseVO;
     }
 
+    public List<TenantResponseVO> searchTenant(TenantSearchRequestVO requestVO) {
+        List<Tenant> tenants = this.tenantService.searchTenant(requestVO);
+        List<TenantResponseVO> responseVOS = new ArrayList<>();
+        for (Tenant tenant : tenants) {
+            TenantResponseVO tenantResponseVO = new TenantResponseVO();
+            BeanUtils.copyProperties(tenant, tenantResponseVO);
+            responseVOS.add(tenantResponseVO);
+        }
+        return responseVOS;
+    }
 }

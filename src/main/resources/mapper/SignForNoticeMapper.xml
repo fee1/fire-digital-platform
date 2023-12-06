@@ -16,9 +16,9 @@
     values
     <foreach collection="list" item="item" separator=",">
       (
-      #{item.user_id},
-      #{item.notice_id},
-      #{item.sign_status}
+      #{item.userId},
+      #{item.noticeId},
+      #{item.signStatus}
       )
     </foreach>
   </insert>

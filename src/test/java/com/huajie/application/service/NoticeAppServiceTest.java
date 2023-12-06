@@ -24,7 +24,7 @@ class NoticeAppServiceTest extends BaseTest {
         CreateNoticeRequestVO createNoticeRequestVO = new CreateNoticeRequestVO();
         createNoticeRequestVO.setType(NoticeTypeConstants.NOTIFY);
         createNoticeRequestVO.setReceiveType(NoticeReceiveTypeConstants.ENTERPRISE);
-        createNoticeRequestVO.setRoleId(1);
+        createNoticeRequestVO.setRoleName("all");
         createNoticeRequestVO.setSpecifyRange(SpecifyRangeConstants.ALL);
         createNoticeRequestVO.setTenantIds(Arrays.asList(1));
         createNoticeRequestVO.setTitle("test");

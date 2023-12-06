@@ -30,12 +30,24 @@
 
   <select id="searchNotices" resultMap="BaseResultMap">
     SELECT t0.* FROM fire_digital_platform.notice t0 LEFT JOIN fire_digital_platform.`user` t1 ON t0.from_user_id = t1.id
-    WHERE t0.type = #{noticeType,jdbcType=INTEGER} AND t0.send_time <![CDATA[ >= ]]> #{startDate, jdbcType=TIMESTAMP}
-    AND t0.send_time <![CDATA[ < ]]> #{endDate, jdbcType=TIMESTAMP} AND t0.id IN
+    WHERE t0.type = #{noticeType,jdbcType=INTEGER}
+    <if test="startDate != null">
+      AND t0.send_time <![CDATA[ >= ]]> #{startDate, jdbcType=TIMESTAMP}
+    </if>
+    <if test="endDate != null">
+      AND t0.send_time <![CDATA[ < ]]> #{endDate, jdbcType=TIMESTAMP}
+    </if>
+    AND t0.id IN
     <foreach item='item' collection='noticeIds' open='(' separator=',' close=')'>
     #{item}
     </foreach>
-    AND t0.title LIKE concat('%',#{title, jdbcType=VARCHAR},'%') AND t1.user_name LIKE concat('%',#{sendUserName, jdbcType=VARCHAR},'%')
+    <if test="title != null">
+      AND t0.title LIKE concat('%',#{title, jdbcType=VARCHAR},'%')
+    </if>
+    <if test="sendUserName != null">
+      AND t1.user_name LIKE concat('%',#{sendUserName, jdbcType=VARCHAR},'%')
+    </if>
+
   </select>
 
 </mapper>

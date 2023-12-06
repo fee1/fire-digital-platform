@@ -24,17 +24,17 @@ public class CreateNoticeRequestVO {
     @NotNull(message = "receiveType: 收件人类型不能为空")
     private Integer receiveType;
 
-    @ApiModelProperty("指定角色，0：表示全部")
+    @ApiModelProperty("指定角色，all：表示全部")
     @NotNull(message = "roleId: 指定角色不能为空")
-    private Integer roleId;
+    private String roleName;
 
     @ApiModelProperty("0: 管理的所有政府与企业 / 1：指定的政府或者企业")
     @NotNull(message = "specifyRange: 指定范围不能为空")
     private Integer specifyRange;
 
     @ApiModelProperty("指定的企业/政府 ids")
-    @NotNull(message = "tenantIds:单位列表不能为空")
-    @Size(min = 1, message = "tenantIds:单位列表不能为空")
+//    @NotNull(message = "tenantIds:单位列表不能为空")
+//    @Size(min = 1, message = "tenantIds:单位列表不能为空")
     private List<Integer> tenantIds;
 
     @ApiModelProperty("标题")

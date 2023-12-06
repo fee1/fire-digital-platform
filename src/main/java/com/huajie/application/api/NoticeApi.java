@@ -6,8 +6,7 @@ import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.CreateNoticeRequestVO;
 import com.huajie.application.api.request.EditNoticeRequestVO;
 import com.huajie.application.api.request.PublicNoticeRequestVO;
-import com.huajie.application.api.response.EntPcNoticeResponseVO;
-import com.huajie.application.api.response.GovPcNoticeResponseVO;
+import com.huajie.application.api.response.PcNoticeResponseVO;
 import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
@@ -78,32 +77,32 @@ public class NoticeApi {
     }
 
     //查询应该查看的通知通告
-    @ApiOperation("政府PC 通知/通告 列表")
-    @GetMapping("gov/list")
-    public ApiResult<ApiPage<GovPcNoticeResponseVO>> getGovPcNoticeList(@RequestParam(required = true)@ApiParam("类型  0: 通知 / 1:通告") Integer noticeType,
-                                                                        @RequestParam(required = false)@ApiParam("起始时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
-                                                                        @RequestParam(required = false)@ApiParam("结束时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
-                                                                        @RequestParam(required = false)@ApiParam("标题") String title,
-                                                                        @RequestParam(required = false)@ApiParam("发送人") String sendUserName,
-                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                                        @RequestParam(required = false, defaultValue = "10") Integer pageSize){
-        Page<GovPcNoticeResponseVO> responseVOPage = this.noticeAppService.getGovPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
+    @ApiOperation("PC 通知/通告 列表")
+    @GetMapping("list")
+    public ApiResult<ApiPage<PcNoticeResponseVO>> getNoticeList(@RequestParam(required = true)@ApiParam("类型  0: 通知 / 1:通告") Integer noticeType,
+                                                                @RequestParam(required = false)@ApiParam("起始时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+                                                                @RequestParam(required = false)@ApiParam("结束时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
+                                                                @RequestParam(required = false)@ApiParam("标题") String title,
+                                                                @RequestParam(required = false)@ApiParam("发送人") String sendUserName,
+                                                                @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                                @RequestParam(required = false, defaultValue = "10") Integer pageSize){
+        Page<PcNoticeResponseVO> responseVOPage = this.noticeAppService.getNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
         return ApiResult.ok(ApiPage.restPage(responseVOPage));
     }
 
     //查询应该查看的通知通告
-    @ApiOperation("企业PC 通知/通告 列表")
-    @GetMapping("ent/list")
-    public ApiResult<ApiPage<EntPcNoticeResponseVO>> getEntPcNoticeList(@RequestParam(required = true)@ApiParam("类型  0: 通知 / 1:通告") Integer noticeType,
-                                                                        @RequestParam(required = false)@ApiParam("起始时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
-                                                                        @RequestParam(required = false)@ApiParam("结束时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
-                                                                        @RequestParam(required = false)@ApiParam("标题") String title,
-                                                                        @RequestParam(required = false)@ApiParam("发送人") String sendUserName,
-                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                                        @RequestParam(required = false, defaultValue = "10") Integer pageSize){
-        Page<EntPcNoticeResponseVO> responseVOPage = this.noticeAppService.getEntPcNoticeList(noticeType ,startDate, endDate, title, sendUserName, pageNum, pageSize);
-        return ApiResult.ok(ApiPage.restPage(responseVOPage));
-    }
+//    @ApiOperation("企业PC 通知/通告 列表")
+//    @GetMapping("ent/list")
+//    public ApiResult<ApiPage<EntPcNoticeResponseVO>> getEntPcNoticeList(@RequestParam(required = true)@ApiParam("类型  0: 通知 / 1:通告") Integer noticeType,
+//                                                                        @RequestParam(required = false)@ApiParam("起始时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+//                                                                        @RequestParam(required = false)@ApiParam("结束时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
+//                                                                        @RequestParam(required = false)@ApiParam("标题") String title,
+//                                                                        @RequestParam(required = false)@ApiParam("发送人") String sendUserName,
+//                                                                        @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+//                                                                        @RequestParam(required = false, defaultValue = "10") Integer pageSize){
+//        Page<EntPcNoticeResponseVO> responseVOPage = this.noticeAppService.getEntPcNoticeList(noticeType ,startDate, endDate, title, sendUserName, pageNum, pageSize);
+//        return ApiResult.ok(ApiPage.restPage(responseVOPage));
+//    }
 
     @ApiOperation("签收")
     @PutMapping("receive")

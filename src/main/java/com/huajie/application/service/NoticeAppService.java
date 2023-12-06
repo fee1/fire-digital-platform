@@ -5,16 +5,14 @@ import com.github.pagehelper.Page;
 import com.huajie.application.api.request.CreateNoticeRequestVO;
 import com.huajie.application.api.request.EditNoticeRequestVO;
 import com.huajie.application.api.response.EntPcNoticeResponseVO;
-import com.huajie.application.api.response.GovPcNoticeResponseVO;
+import com.huajie.application.api.response.PcNoticeResponseVO;
 import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
-import com.huajie.domain.common.constants.NoticeStatusConstants;
-import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.entity.Notice;
-import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
+import com.huajie.domain.model.NoticeModel;
 import com.huajie.domain.service.NoticeService;
 import com.huajie.domain.service.RoleService;
 import com.huajie.domain.service.SignForNoticeService;
@@ -24,8 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.time.Period;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +58,9 @@ public class NoticeAppService {
         notice.setReceiveType(requestVO.getReceiveType().byteValue());
         notice.setSpecifyRange(requestVO.getSpecifyRange().byteValue());
         notice.setTenantIds(JSONObject.toJSONString(requestVO.getTenantIds()));
-        notice.setAppendix(JSONObject.toJSONString(requestVO.getAppendix()));
+        if (requestVO.getAppendix().size() != 0){
+            notice.setAppendix(JSONObject.toJSONString(requestVO.getAppendix()));
+        }
 
         notice.setSaveDays(requestVO.getSaveDays());
         noticeService.createNotice(notice);
@@ -70,14 +70,18 @@ public class NoticeAppService {
         Page<Notice> page = noticeService.searchNotice(title, pageNum, pageSize);
         Page<SearchNoticeResponseVO> responseVOPage = new Page<>();
         BeanUtils.copyProperties(page, responseVOPage);
-        List<Role> allRole = roleService.getAllRole();
-        Map<Integer, Role> id2Role = allRole.stream().collect(Collectors.toMap(Role::getId, item -> item));
+//        List<Role> allRole = roleService.getAllRole();
+//        Map<Integer, Role> id2Role = allRole.stream().collect(Collectors.toMap(Role::getId, item -> item));
         for (Notice notice : page) {
             SearchNoticeResponseVO searchNoticeResponseVO = new SearchNoticeResponseVO();
             BeanUtils.copyProperties(notice, searchNoticeResponseVO);
+            searchNoticeResponseVO.setStatus(notice.getStatus().intValue());
+            searchNoticeResponseVO.setReceiveType(notice.getReceiveType().intValue());
+            searchNoticeResponseVO.setSpecifyRange(notice.getSpecifyRange().intValue());
+            searchNoticeResponseVO.setType(notice.getType().intValue());
             responseVOPage.add(searchNoticeResponseVO);
-            Role roleById = id2Role.get(notice.getId());
-            searchNoticeResponseVO.setRoleName(roleById.getRoleName());
+//            Role roleById = id2Role.get(notice.getId());
+//            searchNoticeResponseVO.setRoleName(roleById.getRoleName());
             Double signInRate = signForNoticeService.getSignRateByNoticeId(notice.getId());
             searchNoticeResponseVO.setSignInRate(signInRate);
             searchNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
@@ -111,18 +115,24 @@ public class NoticeAppService {
         return noticeDetailResponseVO;
     }
 
-    public Page<GovPcNoticeResponseVO> getGovPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        Page<Notice> govPcNoticeList = this.noticeService.getGovPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
-        Page<GovPcNoticeResponseVO> responseVOPage = new Page<>();
+    public Page<PcNoticeResponseVO> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        Page<NoticeModel> govPcNoticeList = this.noticeService.getGovPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
+        if (CollectionUtils.isEmpty(govPcNoticeList)){
+            return new Page<>();
+        }
+        Page<PcNoticeResponseVO> responseVOPage = new Page<>();
         BeanUtils.copyProperties(govPcNoticeList, responseVOPage);
         List<Integer> tenantIds = govPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());
         Map<Integer, String> id2TenantNameMap = this.tenantService.getTenantNameMap(tenantIds);
-        for (Notice notice : govPcNoticeList) {
-            GovPcNoticeResponseVO govPcNoticeResponseVO = new GovPcNoticeResponseVO();
-            BeanUtils.copyProperties(notice, govPcNoticeResponseVO);
-            govPcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
-            govPcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
-            responseVOPage.add(govPcNoticeResponseVO);
+        for (NoticeModel notice : govPcNoticeList) {
+            PcNoticeResponseVO pcNoticeResponseVO = new PcNoticeResponseVO();
+            BeanUtils.copyProperties(notice, pcNoticeResponseVO);
+            pcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
+            pcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
+            User userById = this.userService.getUserById(notice.getSendUserId());
+            pcNoticeResponseVO.setSendUserName(userById.getUserName());
+            pcNoticeResponseVO.setStatus(notice.getSignStatus());
+            responseVOPage.add(pcNoticeResponseVO);
         }
         return responseVOPage;
     }

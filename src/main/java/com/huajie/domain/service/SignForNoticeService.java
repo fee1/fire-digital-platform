@@ -32,6 +32,9 @@ public class SignForNoticeService {
         queryWrapper.lambda().eq(SignForNotice::getSignStatus, SignStatusEnum.Sign.getCode());
         Integer sign = signForNoticeMapper.selectCount(queryWrapper);
 
+        if (all == 0){
+            return 0.0;
+        }
         return sign.doubleValue() / all.doubleValue();
     }
 
