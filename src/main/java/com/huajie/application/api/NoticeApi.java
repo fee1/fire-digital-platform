@@ -71,7 +71,7 @@ public class NoticeApi {
 
     @ApiOperation("政府PC 通知通告管理-详情")
     @GetMapping("detail")
-    public ApiResult<NoticeDetailResponseVO> detailNotice(@RequestParam(required = true)@ApiParam("公告通知id") Integer noticeId){
+    public ApiResult<NoticeDetailResponseVO> detailNotice(@RequestParam(required = true, value = "id")@ApiParam("公告通知id") Integer noticeId){
         NoticeDetailResponseVO noticeDetailResponseVO = noticeAppService.detailNotice(noticeId);
         return ApiResult.ok(noticeDetailResponseVO);
     }

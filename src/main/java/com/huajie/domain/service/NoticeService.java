@@ -27,6 +27,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -84,6 +85,10 @@ public class NoticeService {
     @Transactional(rollbackFor = Exception.class)
     public void publicNotice(Integer id) {
         Notice notice = noticeMapper.selectById(id);
+        if (!UserContext.getCurrentTenant().getId().equals(notice.getFromTenantId())){
+            throw new ServerException("不可发布其他租户下的通知通告");
+        }
+
         if (notice.getStatus() == NoticeStatusConstants.PUBLIC.byteValue()
                 || notice.getStatus() == NoticeStatusConstants.EXPIRED.byteValue()){
             throw new ServerException("已发布，请勿重复发布");
@@ -103,7 +108,7 @@ public class NoticeService {
         noticeMapper.update(updateNotice, updateWrapper);
 
         //通知相关的 签收表数据生成
-        if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY) {
+//        if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY) {
             Byte receiveType = notice.getReceiveType();
             if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
                 if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
@@ -129,10 +134,10 @@ public class NoticeService {
                                 .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
                     List<SignForNotice> signForNotices = new ArrayList<>();
                     if (StringUtils.equals("all", notice.getRoleName())) {
-                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
+                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
                         signForNotices.addAll(generateSignData(adminGovernmentList, id, roleByCode.getId()));
 
-                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
+                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
                         signForNotices.addAll(generateSignData(adminGovernmentList, id, roleByCode.getId()));
                     }else {
                         Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
@@ -151,7 +156,8 @@ public class NoticeService {
                 List<SignForNotice> signForNotices = generateSignData(tenants, id, roleByCode.getId());
                 signForNoticeService.InsertBatch(signForNotices);
             }
-        }
+//        }
+
     }
 
 
@@ -186,7 +192,7 @@ public class NoticeService {
         return notice;
     }
 
-    public Page<NoticeModel> getGovPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+    public Page<NoticeModel> getPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
         List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
         Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
         if (!CollectionUtils.isEmpty(noticeIds)) {

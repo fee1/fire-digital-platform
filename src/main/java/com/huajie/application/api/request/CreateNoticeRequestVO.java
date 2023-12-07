@@ -25,7 +25,7 @@ public class CreateNoticeRequestVO {
     private Integer receiveType;
 
     @ApiModelProperty("指定角色，all：表示全部")
-    @NotNull(message = "roleId: 指定角色不能为空")
+    @NotNull(message = "指定角色不能为空")
     private String roleName;
 
     @ApiModelProperty("0: 管理的所有政府与企业 / 1：指定的政府或者企业")

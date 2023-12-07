@@ -116,7 +116,7 @@ public class NoticeAppService {
     }
 
     public Page<PcNoticeResponseVO> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        Page<NoticeModel> govPcNoticeList = this.noticeService.getGovPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
+        Page<NoticeModel> govPcNoticeList = this.noticeService.getPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
         if (CollectionUtils.isEmpty(govPcNoticeList)){
             return new Page<>();
         }
