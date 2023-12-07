@@ -134,7 +134,9 @@ public class RegisterService {
             throw new ApiException("企业消防安全管理人 必须有一个以上");
         }
         //用户信息保存
-        //todo 校验验证码是否已经验证过了
+        // 校验验证码是否已经验证过了
+        this.checkUserPhoneIsVerify(userList);
+
         userService.addUsers(userList);
 
         //支付宝预下单，生成付款二维码
@@ -191,6 +193,18 @@ public class RegisterService {
         return enterpriseRegiestDTO;
     }
 
+    private void checkUserPhoneIsVerify(List<User> userList){
+        for (User user : userList) {
+            VerifyCodeCacheModel verifyCodeCacheModel = GuavaUtil.get(CacheKeyPrefixConstants.REGISTER_VERIFICATION + user.getPhone());
+            if (verifyCodeCacheModel == null){
+                throw new ServerException(user.getPhone() + "该用户手机号验证已过期，请重新验证");
+            }
+            if (!verifyCodeCacheModel.getVerifyStatus()){
+                throw new ServerException(user.getPhone() + "该用户手机号未验证，请重新输入正确的验证码进行验证");
+            }
+        }
+    }
+
     /**
      * 政府注册
      *
@@ -237,7 +251,9 @@ public class RegisterService {
         }else {
             throw new ApiException("政府消防安全管理人 必须有一个以上");
         }
-        //todo 校验验证码是否已经验证过了
+        // 校验验证码是否已经验证过了
+        this.checkUserPhoneIsVerify(userList);
+
         userService.addUsers(userList);
         if (!CollectionUtils.isEmpty(entIndustryClassification)){
             for (String code : entIndustryClassification) {
