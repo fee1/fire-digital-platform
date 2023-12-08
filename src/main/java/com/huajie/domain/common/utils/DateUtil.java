@@ -100,4 +100,18 @@ public class DateUtil {
         return Math.abs(minutesDifference);
     }
 
+    public static Date getCurrentMonthStartDate(){
+        LocalDate now = LocalDate.now();
+        LocalDate start = LocalDate.of(now.getYear(), now.getMonth(), 1);
+        Instant instant = start.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
+    public static Date getLastWeekDate(){
+        LocalDate now = LocalDate.now();
+        LocalDate lastWeekDate = now.minusDays(7);
+        Instant instant = lastWeekDate.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
 }

@@ -3,11 +3,13 @@ package com.huajie.domain.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.huajie.application.api.request.EditEnterpriseRequestVO;
+import com.huajie.domain.common.constants.EnterpriseApproveStateConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.EnterpriseFireTypeEnum;
 import com.huajie.domain.common.enums.GovernmentTypeEnum;
 import com.huajie.domain.common.exception.ServerException;
+import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.GovIndustryMap;
 import com.huajie.domain.entity.Role;
@@ -116,8 +118,38 @@ public class GovermentOrganizationService {
      * @return
      */
     public Page<Tenant> getAdminEnterpriseList(Integer pageNum, Integer pageSize, String enterpriseType, String enterpriseName,int enterpriseState) {
-        Tenant currentTenant = UserContext.getCurrentTenant();
+        return tenantService.pageTenantByQueryWrapper(pageNum,pageSize,getAdminEnterpriseQueryWrapper(enterpriseType,enterpriseName,enterpriseState));
+    }
 
+    /**
+     * 分页获取管理企业列表
+     * @return
+     */
+    public List<Tenant> getAdminEnterpriseList() {
+        return tenantService.getListByQueryWrapper(getAdminEnterpriseQueryWrapper(null,null,1));
+    }
+
+    /**
+     * 获取管理企业列表
+     * @param enterpriseState 企业状态, 0 待审核, 1已审核
+     * @return
+     */
+    public Integer getAdminEnterpriseCount( int enterpriseState) {
+        return tenantService.getCountByQueryWrapper(getAdminEnterpriseQueryWrapper(null,null,enterpriseState));
+    }
+
+    /**
+     * 获取一周内新增企业集合
+     * @return
+     */
+    public List<Tenant> getLastWeekNewAdminEnterprise(){
+        QueryWrapper<Tenant> adminEnterpriseQueryWrapper = getAdminEnterpriseQueryWrapper(null, null, EnterpriseApproveStateConstants.APPROVE);
+        adminEnterpriseQueryWrapper.lambda().gt(Tenant::getCreateTime,DateUtil.getLastWeekDate());
+        return tenantService.getListByQueryWrapper(adminEnterpriseQueryWrapper);
+    }
+
+    private QueryWrapper<Tenant> getAdminEnterpriseQueryWrapper(String enterpriseType, String enterpriseName,int enterpriseState){
+        Tenant currentTenant = UserContext.getCurrentTenant();
         QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(Tenant::getTenantType, TenantTypeConstants.ENTERPRISE)
@@ -154,8 +186,9 @@ public class GovermentOrganizationService {
         if (StringUtils.isNotBlank(enterpriseName)){
             queryWrapper.lambda().like(Tenant::getTenantName, enterpriseName);
         }
-        return tenantService.pageTenantByQueryWrapper(pageNum,pageSize,queryWrapper);
+        return queryWrapper;
     }
+
 
 
 

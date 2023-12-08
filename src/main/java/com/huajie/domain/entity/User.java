@@ -36,7 +36,7 @@ public class User implements Serializable {
 
     private String updateUser;
 
-    private String HeadPic;
+    private String headPic;
 
     private static final long serialVersionUID = 1L;
 }

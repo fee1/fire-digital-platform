@@ -39,6 +39,12 @@ public class Device implements Serializable {
 
     private String remark;
 
+    /**
+     * 设备状态  NORMAL ABNORMAL EXPIRED
+     */
+
+    private String state;
+
     @TableLogic(value = "0",delval = "1")
     private Integer deleted;
 

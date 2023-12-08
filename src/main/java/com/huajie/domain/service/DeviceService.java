@@ -2,8 +2,8 @@ package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.huajie.application.api.common.exception.ApiException;
-import com.huajie.domain.common.exception.ServerException;
+import com.huajie.application.api.response.statistic.DeviceStateCountResponseVO;
+import com.huajie.domain.common.enums.DeviceStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Device;
@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +24,20 @@ public class DeviceService {
     public Integer getDeviceCountByTenantId(Integer tenantId){
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getTenantId,tenantId);
+        return deviceMapper.selectCount(queryWrapper);
+    }
+
+    public Integer getNewDeviceCountByTenantId(Integer tenantId, Date startDate){
+        QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Device::getTenantId,tenantId);
+        queryWrapper.lambda().gt(Device::getCreateTime,startDate);
+        return deviceMapper.selectCount(queryWrapper);
+    }
+
+    public Integer getEffectiveCountByTenantId(Integer tenantId){
+        QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Device::getTenantId,tenantId);
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         return deviceMapper.selectCount(queryWrapper);
     }
 
@@ -64,7 +75,7 @@ public class DeviceService {
         CustomizeGrantedAuthority customizeGrantedAuthority = UserContext.getCustomizeGrantedAuthority();
         device.setOperatorId(customizeGrantedAuthority.getUserId());
         device.setTenantId(customizeGrantedAuthority.getTenant().getId());
-
+        device.setState(DeviceStateEnum.NORMAL.getCode());
         deviceMapper.insert(device);
         return device;
     }
@@ -78,6 +89,7 @@ public class DeviceService {
         updateDevice.setLastReplaceDate(device.getLastReplaceDate());
         updateDevice.setLastUseDate(device.getLastUseDate());
         updateDevice.setRemark(device.getRemark());
+        updateDevice.setState(device.getState());
         return deviceMapper.updateById(updateDevice);
     }
 
@@ -87,6 +99,16 @@ public class DeviceService {
 
     public Device getDeviceById(Integer deviceId){
         return deviceMapper.selectById(deviceId);
+    }
+
+    public List<DeviceStateCountResponseVO> getDeviceStateCount(Integer tenantId){
+        return deviceMapper.getDeviceStateCount(tenantId);
+    }
+
+    public List<Device> getDeviceListByEnterpriseIds(List<Integer> enterpriseIds){
+        LambdaQueryWrapper<Device> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Device::getTenantId,enterpriseIds);
+        return deviceMapper.selectList(lambdaQueryWrapper);
     }
 
 

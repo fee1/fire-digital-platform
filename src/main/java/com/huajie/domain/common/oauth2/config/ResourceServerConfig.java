@@ -17,7 +17,7 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
  */
 @Configuration
 @EnableResourceServer
-public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+    public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
     private ChargeFilter chargeFilter;

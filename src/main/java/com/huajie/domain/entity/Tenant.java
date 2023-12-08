@@ -55,6 +55,8 @@ public class Tenant implements Serializable {
 
     private String updateUser;
 
+    private String securityLevel;
+
     private static final long serialVersionUID = 1L;
 
 }

@@ -9,17 +9,16 @@ import com.huajie.application.api.response.ProblemDetailResponseVO;
 import com.huajie.application.api.response.ProblemReformHistoryResponseVO;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
+import com.huajie.domain.common.enums.DeviceStateEnum;
 import com.huajie.domain.common.enums.ProblemActionTypeEnum;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.entity.Device;
 import com.huajie.domain.entity.ProblemDetail;
 import com.huajie.domain.entity.ProblemReformHistory;
 import com.huajie.domain.entity.Tenant;
-import com.huajie.domain.service.ProblemDetailService;
-import com.huajie.domain.service.ProblemReformHistoryService;
-import com.huajie.domain.service.TenantService;
-import com.huajie.domain.service.UserService;
+import com.huajie.domain.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,9 @@ public class ProblemReformService {
 
     @Autowired
     private TenantService tenantService;
+
+    @Autowired
+    private DeviceService deviceService;
 
     public Page<ProblemDetailResponseVO> pageEnterpriseProblemList(ProblemQueryRequestVO requestVO,Integer pageNum,Integer pageSize){
         Tenant currentTenant = UserContext.getCurrentTenant();
@@ -254,12 +256,22 @@ public class ProblemReformService {
                 case URGE:
                     // TODO 发送通知
                     break;
+                case REFORM_APPROVE_PASS:
+                    // 整改审核通过 更新设备状态
+                    if(problemDetail.getDeviceId() != null && problemDetailService.getDeviceUnfinishedProblemCount(problemDetail.getDeviceId()) < 1){
+                        Device updateDevice = new Device();
+                        updateDevice.setId(problemDetail.getDeviceId());
+                        updateDevice.setState(DeviceStateEnum.NORMAL.getCode());
+                        deviceService.editDevice(updateDevice);
+                    }
             }
             problemDetail.setState(action.getToStates().getStateCode());
             if(problemDetailService.updateById(problemDetail) < 1){
                 throw new ApiException("系统繁忙，请稍后重试");
             }
         }
+
+
     }
 
 

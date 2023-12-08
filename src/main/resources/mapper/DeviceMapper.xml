@@ -2,4 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huajie.infrastructure.mapper.DeviceMapper">
 
+    <select id="getDeviceStateCount"
+            resultType="com.huajie.application.api.response.statistic.DeviceStateCountResponseVO">
+
+        select t.device_type,
+               sum(case when t.state = 'NORMAL' then t.value end) normalCount,
+               sum(case when t.state = 'ABNORMAL' then t.value end) abnormalCount,
+               sum(case when t.state = 'EXPIRED' then t.value end) expiredCount
+        from (
+                 select d.device_type, d.state, COUNT(1) value
+                 from device d
+                 where d.tenant_id = #{tenantId}
+                 group by d.device_type, d.state
+             ) t
+        group by t.device_type
+
+
+    </select>
 </mapper>

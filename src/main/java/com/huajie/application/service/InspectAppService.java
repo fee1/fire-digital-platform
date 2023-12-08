@@ -10,6 +10,7 @@ import com.huajie.application.api.request.SelfCheckQueryRequestVO;
 import com.huajie.application.api.response.*;
 import com.huajie.domain.common.constants.InspectTypeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
+import com.huajie.domain.common.enums.DeviceStateEnum;
 import com.huajie.domain.common.enums.DeviceTypeEnum;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
@@ -251,6 +252,14 @@ public class InspectAppService {
             ProblemDetail problemDetail = createProblemDetail(inspectRequestVO);
             problemDetail.setRelationId(inspectDetail.getId());
             problemDetailService.insert(problemDetail);
+
+            // 更新设备状态
+            if(inspectDetail.getDeviceId() != null){
+                Device device = new Device();
+                device.setId(inspectDetail.getId());
+                device.setState(DeviceStateEnum.ABNORMAL.getCode());
+                deviceService.editDevice(device);
+            }
         }
     }
 

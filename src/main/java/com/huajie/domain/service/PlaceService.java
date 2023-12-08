@@ -7,6 +7,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
+import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Place;
 import com.huajie.domain.entity.Tenant;
@@ -15,6 +16,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,6 +35,12 @@ public class PlaceService {
         return placeMapper.selectCount(queryWrapper);
     }
 
+    public Integer getNewPlaceCountByTenantId(Integer tenantId, Date startDate){
+        QueryWrapper<Place> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Place::getTenantId,tenantId);
+        queryWrapper.lambda().gt(Place::getCreateTime, startDate);
+        return placeMapper.selectCount(queryWrapper);
+    }
 
     public Page<Place> getPagePlaceList(Integer pageNum, Integer pageSize, Integer placeId, String placeName, String placeAddress,Integer tenantId){
         QueryWrapper<Place> queryWrapper = new QueryWrapper<>();

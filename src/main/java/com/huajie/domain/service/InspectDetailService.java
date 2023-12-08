@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.huajie.domain.common.constants.InspectTypeConstants;
+import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.PeriodUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.DeviceInspectInfo;
@@ -35,6 +36,13 @@ public class InspectDetailService {
         return inspectDetail;
     }
 
+    /**
+     * 获取某企业下的企业检查记录
+     * @param enterpriseId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     public List<InspectDetail> getEnterpriseInspectList(Integer enterpriseId, LocalDate startTime, LocalDate endTime){
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
@@ -47,6 +55,14 @@ public class InspectDetailService {
         return inspectDetailMapper.selectList(queryWrapper);
     }
 
+    /**
+     * 获取某企业下的政府检查记录
+     * @param enterpriseId
+     * @param adminGovernmentIds
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     public List<InspectDetail> getGovernmentInspectList(Integer enterpriseId, List<Integer> adminGovernmentIds,
                                                         LocalDate startDate, LocalDate endDate ){
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
@@ -59,6 +75,16 @@ public class InspectDetailService {
         queryWrapper.lambda().ge(InspectDetail::getCreateTime,startDate);
         queryWrapper.lambda().le(InspectDetail::getCreateTime,endDate.plusDays(1));
         queryWrapper.lambda().orderByDesc(InspectDetail::getCreateTime);
+
+        return inspectDetailMapper.selectList(queryWrapper);
+    }
+
+    public List<InspectDetail> getCurrentMonthInspectListByGovernment(Integer govTenantId){
+        QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(InspectDetail::getGovTenantId,govTenantId)
+                .eq(InspectDetail::getInspectType,InspectTypeConstants.INSPECT);
+        queryWrapper.lambda().gt(InspectDetail::getCreateTime, DateUtil.getCurrentMonthStartDate());
 
         return inspectDetailMapper.selectList(queryWrapper);
     }

@@ -49,6 +49,14 @@ public class TenantService {
         return (Page<Tenant>)tenantMapper.selectList(queryWrapper);
     }
 
+    public Integer getCountByQueryWrapper(QueryWrapper<Tenant> queryWrapper){
+        return tenantMapper.selectCount(queryWrapper);
+    }
+
+    public List<Tenant> getListByQueryWrapper(QueryWrapper<Tenant> queryWrapper){
+        return tenantMapper.selectList(queryWrapper);
+    }
+
     public Page<Tenant> getEnterpriseVerifyList(Integer pageNum, Integer pageSize, String enterpriseName, Collection<String> industryClassifications) {
         PageHelper.startPage(pageNum, pageSize);
         Tenant tenant = UserContext.getCurrentTenant();

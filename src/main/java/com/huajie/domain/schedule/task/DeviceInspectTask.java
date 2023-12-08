@@ -1,13 +1,11 @@
 package com.huajie.domain.schedule.task;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.huajie.domain.common.enums.DeviceTypeEnum;
-import com.huajie.domain.common.enums.ExtinguisherTypeEnum;
-import com.huajie.domain.common.enums.PowerTypeEnum;
-import com.huajie.domain.common.enums.ProblemStateEnum;
+import com.huajie.domain.common.enums.*;
 import com.huajie.domain.entity.Device;
 import com.huajie.domain.entity.ProblemDetail;
 import com.huajie.domain.entity.User;
+import com.huajie.domain.service.DeviceService;
 import com.huajie.infrastructure.mapper.DeviceMapper;
 import com.huajie.infrastructure.mapper.ProblemDetailMapper;
 import com.huajie.infrastructure.mapper.UserMapper;
@@ -34,6 +32,9 @@ public class DeviceInspectTask {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private DeviceService deviceService;
+
     public void deviceInspect(){
         this.replaceMieHuoQiList();
         this.replaceXiaoFangShuiDaiList();
@@ -48,8 +49,9 @@ public class DeviceInspectTask {
         Calendar instance1 = Calendar.getInstance();
         instance1.add(Calendar.MONTH,-59);
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType03.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance1.getTime());
+        queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType03.getCode())
+                .gt(Device::getProductionDate,instance1.getTime());
+
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         if(!CollectionUtils.isEmpty(deviceList)){
@@ -172,13 +174,17 @@ public class DeviceInspectTask {
         problemDetail.setCreateTime(new Date());
         problemDetail.setCreateUser("system");
 
+        Device updateDevice = new Device();
+        updateDevice.setId(device.getId());
+        updateDevice.setState(DeviceStateEnum.ABNORMAL.getCode());
+
         try {
+            deviceService.editDevice(updateDevice);
             problemDetailMapper.insert(problemDetail);
             log.info("设备自动检查隐患创建成功，设备id:{},隐患描述:{}",device.getId(),preReformDesc);
         }catch (Exception e){
             log.error("设备自动检查隐患创建失败，失败原因:{}, {}",e.getMessage(), e.getStackTrace());
         }
-
 
     }
 
