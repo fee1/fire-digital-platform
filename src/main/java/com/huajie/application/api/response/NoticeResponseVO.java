@@ -12,7 +12,7 @@ import java.util.Date;
  * @date 2023/11/13
  */
 @Data
-public class PcNoticeResponseVO {
+public class NoticeResponseVO {
 
     private Integer id;
 
@@ -24,6 +24,9 @@ public class PcNoticeResponseVO {
 
     @ApiModelProperty("发送人")
     private String sendUserName;
+
+    @ApiModelProperty("发送人头像")
+    private String headPic;
 
     @ApiModelProperty("发送人来源单位")
     private String fromTenantName;
