@@ -12,6 +12,9 @@ import java.util.Date;
 @Data
 public class NoticeAppDetailResponseVO {
 
+    @ApiModelProperty("签收状态")
+    private Integer status;
+
     @ApiModelProperty("发送日期")
     private Date sendTime;
 

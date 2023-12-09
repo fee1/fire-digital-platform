@@ -10,6 +10,7 @@ import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
 import com.huajie.domain.entity.Notice;
+import com.huajie.domain.entity.SignForNotice;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.NoticeModel;
@@ -169,6 +170,8 @@ public class NoticeAppService {
         noticeAppDetailResponseVO.setSendUserName(user.getUserName());
         noticeAppDetailResponseVO.setHeadPic(user.getHeadPic());
         noticeAppDetailResponseVO.setAddress(tenant.getAddress());
+        SignForNotice signForNotice = this.signForNoticeService.getSignForNoticeIdAndUserId(notice.getId(), user.getId());
+        noticeAppDetailResponseVO.setStatus(signForNotice.getSignStatus().intValue());
         return noticeAppDetailResponseVO;
     }
 }

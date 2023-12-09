@@ -51,7 +51,7 @@ public class CreateNoticeRequestVO {
     private List<String> appendix;
 
     @ApiModelProperty("通知保留时间 1个月，3个月，6个月，1年, 单位天")
-    @NotNull(message = "通知保留时间 不能为空")
+//    @NotNull(message = "通知保留时间 不能为空")
     private Integer saveDays;
 
 }
