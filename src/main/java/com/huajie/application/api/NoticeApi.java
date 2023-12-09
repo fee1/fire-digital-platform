@@ -105,7 +105,7 @@ public class NoticeApi {
 //    }
 
     @ApiOperation("签收")
-    @PutMapping("receive")
+    @PostMapping("receive")
     public ApiResult<Void> receive(@RequestParam(required = true)@ApiParam("公告通知id") Integer noticeId){
         this.noticeAppService.receive(noticeId);
         return ApiResult.ok();
