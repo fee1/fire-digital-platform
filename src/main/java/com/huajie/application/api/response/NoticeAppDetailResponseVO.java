@@ -21,6 +21,9 @@ public class NoticeAppDetailResponseVO {
     @ApiModelProperty("发送人")
     private String sendUserName;
 
+    @ApiModelProperty("发送人头像")
+    private String headPic;
+
     @ApiModelProperty("发送人来源单位")
     private String fromTenantName;
 

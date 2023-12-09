@@ -197,10 +197,10 @@ public class RegisterService {
         for (User user : userList) {
             VerifyCodeCacheModel verifyCodeCacheModel = GuavaUtil.get(CacheKeyPrefixConstants.REGISTER_VERIFICATION + user.getPhone());
             if (verifyCodeCacheModel == null){
-                throw new ServerException(user.getPhone() + "该用户手机号验证已过期，请重新验证");
+                throw new ServerException(user.getPhone() + ":该手机号验证已过期，请重新验证");
             }
             if (!verifyCodeCacheModel.getVerifyStatus()){
-                throw new ServerException(user.getPhone() + "该用户手机号未验证，请重新输入正确的验证码进行验证");
+                throw new ServerException(user.getPhone() + ":该手机号未验证，请重新输入正确的验证码进行验证");
             }
         }
     }

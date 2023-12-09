@@ -5,7 +5,7 @@ import com.github.pagehelper.Page;
 import com.huajie.application.api.request.CreateNoticeRequestVO;
 import com.huajie.application.api.request.EditNoticeRequestVO;
 import com.huajie.application.api.response.EntPcNoticeResponseVO;
-import com.huajie.application.api.response.PcNoticeResponseVO;
+import com.huajie.application.api.response.NoticeResponseVO;
 import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
@@ -115,22 +115,23 @@ public class NoticeAppService {
         return noticeDetailResponseVO;
     }
 
-    public Page<PcNoticeResponseVO> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+    public Page<NoticeResponseVO> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
         Page<NoticeModel> govPcNoticeList = this.noticeService.getPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
         if (CollectionUtils.isEmpty(govPcNoticeList)){
             return new Page<>();
         }
-        Page<PcNoticeResponseVO> responseVOPage = new Page<>();
+        Page<NoticeResponseVO> responseVOPage = new Page<>();
         BeanUtils.copyProperties(govPcNoticeList, responseVOPage);
         List<Integer> tenantIds = govPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());
         Map<Integer, String> id2TenantNameMap = this.tenantService.getTenantNameMap(tenantIds);
         for (NoticeModel notice : govPcNoticeList) {
-            PcNoticeResponseVO pcNoticeResponseVO = new PcNoticeResponseVO();
+            NoticeResponseVO pcNoticeResponseVO = new NoticeResponseVO();
             BeanUtils.copyProperties(notice, pcNoticeResponseVO);
             pcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
             pcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
             User userById = this.userService.getUserById(notice.getSendUserId());
             pcNoticeResponseVO.setSendUserName(userById.getUserName());
+            pcNoticeResponseVO.setHeadPic(userById.getHeadPic());
             pcNoticeResponseVO.setStatus(notice.getSignStatus());
             responseVOPage.add(pcNoticeResponseVO);
         }
@@ -165,6 +166,8 @@ public class NoticeAppService {
         noticeAppDetailResponseVO.setFromTenantName(tenant.getTenantName());
         User user = userService.getUserById(notice.getSendUserId());
         noticeAppDetailResponseVO.setPhone(user.getPhone());
+        noticeAppDetailResponseVO.setSendUserName(user.getUserName());
+        noticeAppDetailResponseVO.setHeadPic(user.getHeadPic());
         noticeAppDetailResponseVO.setAddress(tenant.getAddress());
         return noticeAppDetailResponseVO;
     }
