@@ -6,6 +6,7 @@ import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.CreateNoticeRequestVO;
 import com.huajie.application.api.request.EditNoticeRequestVO;
 import com.huajie.application.api.request.PublicNoticeRequestVO;
+import com.huajie.application.api.request.ReceiveRequestVO;
 import com.huajie.application.api.response.NoticeResponseVO;
 import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
@@ -105,9 +106,9 @@ public class NoticeApi {
 //    }
 
     @ApiOperation("签收")
-    @PutMapping("receive")
-    public ApiResult<Void> receive(@RequestParam(required = true)@ApiParam("公告通知id") Integer noticeId){
-        this.noticeAppService.receive(noticeId);
+    @PostMapping("receive")
+    public ApiResult<Void> receive(@RequestBody ReceiveRequestVO requestVO){
+        this.noticeAppService.receive(requestVO.getNoticeId());
         return ApiResult.ok();
     }
 
