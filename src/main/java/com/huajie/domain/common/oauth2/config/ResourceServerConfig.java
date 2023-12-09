@@ -45,7 +45,8 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
                         "/file/upload/**",
                         "/notice/**",
                         "/tenant/**",
-                        "/monitor/**"
+                        "/monitor/**",
+                            "/index/statistic/**"
                 ).and().addFilterAfter(chargeFilter, FilterSecurityInterceptor.class);
     }
 
