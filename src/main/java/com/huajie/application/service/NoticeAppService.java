@@ -166,6 +166,8 @@ public class NoticeAppService {
         noticeAppDetailResponseVO.setFromTenantName(tenant.getTenantName());
         User user = userService.getUserById(notice.getSendUserId());
         noticeAppDetailResponseVO.setPhone(user.getPhone());
+        noticeAppDetailResponseVO.setSendUserName(user.getUserName());
+        noticeAppDetailResponseVO.setHeadPic(user.getHeadPic());
         noticeAppDetailResponseVO.setAddress(tenant.getAddress());
         return noticeAppDetailResponseVO;
     }
