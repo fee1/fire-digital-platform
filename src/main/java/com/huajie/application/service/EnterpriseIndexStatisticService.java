@@ -94,6 +94,9 @@ public class EnterpriseIndexStatisticService {
         responseVO.setTimeoutProblemCount(timeoutProblemCount);
         responseVO.setNewTimeoutProblemCount(newTimeoutProblemCount);
 
+        // 安全等级
+        responseVO.setSecurityLevel(currentTenant.getSecurityLevel());
+
         return responseVO;
     }
 

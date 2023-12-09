@@ -9,6 +9,7 @@ import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.*;
 import com.huajie.domain.service.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -61,7 +62,20 @@ public class GovernmentIndexStatisticService {
         BigDecimal reformRate = new BigDecimal(String.valueOf(unFinishProblemCount/problemCount));
 
         // 管辖企业数量
-        Integer adminEnterpriseCount = govermentOrganizationService.getAdminEnterpriseCount(EnterpriseApproveStateConstants.APPROVE);
+        Integer adminEnterpriseCount = 0;
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        if(!CollectionUtils.isEmpty(adminEnterpriseList)){
+            adminEnterpriseCount = adminEnterpriseList.size();
+            BeanUtils.copyProperties(this.getEnterpriseTypeCountStatistic(adminEnterpriseList),responseVO);
+
+            Calendar instance = Calendar.getInstance();
+            instance.add(Calendar.DATE,-30);
+            Date before30DaysDate = instance.getTime();
+
+            int before30DaysNewCount = (int)adminEnterpriseList.stream().filter(item -> item.getCreateTime().after(before30DaysDate)).count();
+            responseVO.setBefore30DaysNewEnterpriseCount(before30DaysNewCount);
+
+        }
         // 待审核企业数量
         Integer adminUnApproveEnterpriseCount = govermentOrganizationService.getAdminEnterpriseCount(EnterpriseApproveStateConstants.UN_APPROVE);
 
