@@ -51,4 +51,10 @@ public class EntIndexResponseVO {
     @ApiModelProperty("设备有效率")
     private BigDecimal deviceEffectiveRate;
 
+    @ApiModelProperty("待上传文件数")
+    private int waitUploadFileCount;
+
+    @ApiModelProperty("安全等级")
+    private String securityLevel;
+
 }

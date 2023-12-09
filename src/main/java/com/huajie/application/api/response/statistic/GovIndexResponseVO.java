@@ -37,7 +37,23 @@ public class GovIndexResponseVO {
     @ApiModelProperty("政府消防安全管理人检查统计list")
     private List<GovUserInspectCountResponseVO> govUserInspectCountList;
 
-    @ApiModelProperty("近7日新增用户数")
-    private List<StatisticResponseVO> newEnterpriseListInLastWeek;
+    @ApiModelProperty("近30日新增用户")
+    private int before30DaysNewEnterpriseCount;
+
+    @ApiModelProperty("总用户")
+    private int totalCount;
+
+    @ApiModelProperty("机关团体事业单位数量")
+    private int companyCount;
+
+    @ApiModelProperty("企业、场所数量")
+    private int enterpriseCount;
+
+    @ApiModelProperty("商户")
+    private int merchantCount;
+
+    @ApiModelProperty("出租屋")
+    private int rentalHouseCount;
+
 
 }
