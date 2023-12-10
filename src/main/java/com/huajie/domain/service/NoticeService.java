@@ -10,12 +10,12 @@ import com.huajie.domain.common.constants.NoticeStatusConstants;
 import com.huajie.domain.common.constants.NoticeTypeConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SpecifyRangeConstants;
-import com.huajie.domain.common.enums.SignStatusEnum;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Notice;
+import com.huajie.domain.entity.NotifyForNotice;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.SignForNotice;
 import com.huajie.domain.entity.Tenant;
@@ -27,7 +27,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -61,6 +60,9 @@ public class NoticeService {
 
     @Autowired
     private TenantService tenantService;
+
+    @Autowired
+    private NotifyForNoticeService notifyForNoticeService;
 
     public void createNotice(Notice notice) {
         notice.setStatus(NoticeStatusConstants.NOT_PUBLIC.byteValue());
@@ -97,54 +99,45 @@ public class NoticeService {
         updateNotice.setStatus(NoticeStatusConstants.PUBLIC.byteValue());
         Date date = DateUtil.addDays(new Date(), notice.getSaveDays());
         updateNotice.setExpireTime(date);
-        updateNotice.setSendTime(date);
-        updateNotice.setSendUserId(UserContext.getCurrentUserId());
-        //可能涉及到用户修改,最好不用这个字段
-//        CustomizeGrantedAuthority customizeGrantedAuthority = UserContext.getCustomizeGrantedAuthority();
-//        updateNotice.setSendUserName(customizeGrantedAuthority.getUserName());
 
         QueryWrapper<Notice> updateWrapper = new QueryWrapper<>();
         updateWrapper.lambda().eq(Notice::getId, id);
         noticeMapper.update(updateNotice, updateWrapper);
 
         //通知相关的 签收表数据生成
-//        if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY) {
+        if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY) {
             Byte receiveType = notice.getReceiveType();
             if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
                 if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
-//                    if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
                         List<Tenant> adminEnterpriseList = govermentOrganizationService
                                 .getAdminEnterpriseList(1, Integer.MAX_VALUE, "", "", 1);
                     List<SignForNotice> signForNotices = new ArrayList<>();
                         if (StringUtils.equals("all", notice.getRoleName())) {
                             Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
-                            signForNotices.addAll(generateSignData(adminEnterpriseList, id, roleByCode.getId()));
+                            signForNotices.addAll(generateSignDataForSignNotice(adminEnterpriseList, id, roleByCode.getId()));
 
                             roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
-                            signForNotices.addAll(generateSignData(adminEnterpriseList, id, roleByCode.getId()));
+                            signForNotices.addAll(generateSignDataForSignNotice(adminEnterpriseList, id, roleByCode.getId()));
                         }else {
                             Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                            signForNotices.addAll(generateSignData(adminEnterpriseList, id, roleByCode.getId()));
+                            signForNotices.addAll(generateSignDataForSignNotice(adminEnterpriseList, id, roleByCode.getId()));
                         }
-                        signForNoticeService.InsertBatch(signForNotices);
-//                    }
+                        signForNoticeService.insertBatch(signForNotices);
                 } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
-//                    if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
                         List<Tenant> adminGovernmentList = govermentOrganizationService
                                 .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
                     List<SignForNotice> signForNotices = new ArrayList<>();
                     if (StringUtils.equals("all", notice.getRoleName())) {
                         Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
-                        signForNotices.addAll(generateSignData(adminGovernmentList, id, roleByCode.getId()));
+                        signForNotices.addAll(generateSignDataForSignNotice(adminGovernmentList, id, roleByCode.getId()));
 
                         roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
-                        signForNotices.addAll(generateSignData(adminGovernmentList, id, roleByCode.getId()));
+                        signForNotices.addAll(generateSignDataForSignNotice(adminGovernmentList, id, roleByCode.getId()));
                     }else {
                         Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                        signForNotices.addAll(generateSignData(adminGovernmentList, id, roleByCode.getId()));
+                        signForNotices.addAll(generateSignDataForSignNotice(adminGovernmentList, id, roleByCode.getId()));
                     }
-                        signForNoticeService.InsertBatch(signForNotices);
-//                    }
+                        signForNoticeService.insertBatch(signForNotices);
                 } else {
                     throw new ServerException("数据异常");
                 }
@@ -153,24 +146,88 @@ public class NoticeService {
                 });
                 List<Tenant> tenants = this.tenantService.getTenantByTenantIds(tenantIds);
                 Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                List<SignForNotice> signForNotices = generateSignData(tenants, id, roleByCode.getId());
-                signForNoticeService.InsertBatch(signForNotices);
+                List<SignForNotice> signForNotices = generateSignDataForSignNotice(tenants, id, roleByCode.getId());
+                signForNoticeService.insertBatch(signForNotices);
             }
-//        }
+        }else if (notice.getType().intValue() == NoticeTypeConstants.NOTICE){
+            //通告数据表生成
+            Byte receiveType = notice.getReceiveType();
+            if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
+                if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
+                    List<Tenant> adminEnterpriseList = govermentOrganizationService
+                            .getAdminEnterpriseList(1, Integer.MAX_VALUE, "", "", 1);
+                    List<NotifyForNotice> notifyForNotices = new ArrayList<>();
+                    if (StringUtils.equals("all", notice.getRoleName())) {
+                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
+                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminEnterpriseList, id, roleByCode.getId()));
+
+                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
+                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminEnterpriseList, id, roleByCode.getId()));
+                    }else {
+                        Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminEnterpriseList, id, roleByCode.getId()));
+                    }
+                    notifyForNoticeService.insertBatch(notifyForNotices);
+                } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
+                    List<Tenant> adminGovernmentList = govermentOrganizationService
+                            .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
+                    List<NotifyForNotice> notifyForNotices = new ArrayList<>();
+                    if (StringUtils.equals("all", notice.getRoleName())) {
+                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
+                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminGovernmentList, id, roleByCode.getId()));
+
+                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
+                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminGovernmentList, id, roleByCode.getId()));
+                    }else {
+                        Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminGovernmentList, id, roleByCode.getId()));
+                    }
+                    notifyForNoticeService.insertBatch(notifyForNotices);
+                } else {
+                    throw new ServerException("数据异常");
+                }
+            } else {
+                List<Integer> tenantIds = JSONObject.parseObject(notice.getTenantIds(), new TypeReference<List<Integer>>() {
+                });
+                List<Tenant> tenants = this.tenantService.getTenantByTenantIds(tenantIds);
+                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                List<SignForNotice> signForNotices = generateSignDataForSignNotice(tenants, id, roleByCode.getId());
+                signForNoticeService.insertBatch(signForNotices);
+            }
+        }
 
     }
 
+    private List<NotifyForNotice> generateSignDataForNotifyNotice(List<Tenant> signTenants, Integer noticeId, Integer roleId){
+        List<NotifyForNotice> notifyForNotices = new ArrayList<>();
+        for (Tenant signTenant : signTenants) {
+            List<User> usersByTenantId = userService.getUsersByTenantId(signTenant.getId());
+            for (User user : usersByTenantId) {
+                NotifyForNotice notifyForNotice = new NotifyForNotice();
+                notifyForNotice.setNoticeId(noticeId);
+                notifyForNotice.setUserId(user.getId());
+                notifyForNotice.setSendTime(new Date());
+                notifyForNotice.setSendUserId(UserContext.getCurrentUserId());
+                if (roleId == 0) {
+                    notifyForNotices.add(notifyForNotice);
+                }else if (roleId.equals(user.getRoleId())){
+                    notifyForNotices.add(notifyForNotice);
+                }
+            }
+        }
+        return notifyForNotices;
+    }
 
-
-    private List<SignForNotice> generateSignData(List<Tenant> signTenants, Integer noticeId, Integer roleId){
+    private List<SignForNotice> generateSignDataForSignNotice(List<Tenant> signTenants, Integer noticeId, Integer roleId){
         List<SignForNotice> signForNotices = new ArrayList<>();
         for (Tenant signTenant : signTenants) {
             List<User> usersByTenantId = userService.getUsersByTenantId(signTenant.getId());
             for (User user : usersByTenantId) {
                 SignForNotice signForNotice = new SignForNotice();
                 signForNotice.setNoticeId(noticeId);
-                signForNotice.setSignStatus(SignStatusEnum.NotSign.getCode());
                 signForNotice.setUserId(user.getId());
+                signForNotice.setSendTime(new Date());
+                signForNotice.setSendUserId(UserContext.getCurrentUserId());
                 if (roleId == 0) {
                     signForNotices.add(signForNotice);
                 }else if (roleId.equals(user.getRoleId())){
@@ -182,36 +239,104 @@ public class NoticeService {
     }
 
     public void editNotice(Notice notice) {
+
         QueryWrapper<Notice> updateWrapper = new QueryWrapper<>();
         updateWrapper.lambda().eq(Notice::getId, notice.getId());
+        Notice oldNotice = noticeMapper.selectById(notice.getId());
+        if (oldNotice.getStatus() == NoticeStatusConstants.PUBLIC.byteValue()
+                || notice.getStatus() == NoticeStatusConstants.EXPIRED.byteValue()){
+            throw new ServerException("已发布，无法编辑");
+        }
         noticeMapper.update(notice, updateWrapper);
     }
 
-    public Notice detailNotice(Integer noticeId) {
+    public NoticeModel detailNotice(Integer noticeId) {
         Notice notice = this.noticeMapper.selectById(noticeId);
-        return notice;
+        if (notice.getType().intValue() == NoticeTypeConstants.NOTICE) {
+            List<SignForNotice> signForNotices = this.signForNoticeService.getSignForNoticeByNoticeId(noticeId);
+            SignForNotice signForNotice = signForNotices.get(0);
+            NoticeModel noticeModel = new NoticeModel();
+            BeanUtils.copyProperties(notice, noticeModel);
+            if (signForNotice != null) {
+                User user = userService.getUserById(signForNotice.getSendUserId());
+                noticeModel.setPhone(user.getPhone());
+                noticeModel.setSendUserName(user.getUserName());
+                noticeModel.setHeadPic(user.getHeadPic());
+            }
+            return noticeModel;
+        }else {
+            List<NotifyForNotice> notifyForNotices = this.notifyForNoticeService.getNotifyForNoticeByNoticeId(noticeId);
+            NotifyForNotice notifyForNotice = notifyForNotices.get(0);
+            NoticeModel noticeModel = new NoticeModel();
+            BeanUtils.copyProperties(notice, noticeModel);
+            if (notifyForNotice != null) {
+                User user = userService.getUserById(notifyForNotice.getSendUserId());
+                noticeModel.setPhone(user.getPhone());
+                noticeModel.setSendUserName(user.getUserName());
+                noticeModel.setHeadPic(user.getHeadPic());
+            }
+            return noticeModel;
+        }
     }
 
-    public Page<NoticeModel> getPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
-        Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
-        if (!CollectionUtils.isEmpty(noticeIds)) {
-            PageHelper.startPage(pageNum, pageSize);
-            List<Notice> notices = this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
+    public Page<NoticeModel> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
+        if (noticeType.equals(NoticeTypeConstants.NOTICE)) {
+            List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
+            Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
+            Map<Integer, SignForNotice> noticeId2SignForNotice = signForNoticeList.stream().collect(Collectors.toMap(SignForNotice::getNoticeId, item -> item));
+            if (!CollectionUtils.isEmpty(noticeIds)) {
+                PageHelper.startPage(pageNum, pageSize);
+                List<Notice> notices = this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
 
-            Page<NoticeModel> page = new Page<>();
-            BeanUtils.copyProperties(notices, page);
+                Page<NoticeModel> page = new Page<>();
+                BeanUtils.copyProperties(notices, page);
 
-            Map<Integer, Byte> noticeId2SignStatus = signForNoticeList.stream().collect(Collectors.toMap(SignForNotice::getNoticeId, SignForNotice::getSignStatus));
-            for (Notice notice : notices) {
-                NoticeModel noticeModel = new NoticeModel();
-                BeanUtils.copyProperties(notice, noticeModel);
-                noticeModel.setSignStatus(noticeId2SignStatus.get(notice.getId()).intValue());
-                page.add(noticeModel);
+                Map<Integer, Byte> noticeId2SignStatus = signForNoticeList.stream().collect(Collectors.toMap(SignForNotice::getNoticeId, SignForNotice::getSignStatus));
+                for (Notice notice : notices) {
+                    NoticeModel noticeModel = new NoticeModel();
+                    BeanUtils.copyProperties(notice, noticeModel);
+                    noticeModel.setSignStatus(noticeId2SignStatus.get(notice.getId()).intValue());
+
+                    SignForNotice signForNotice = noticeId2SignForNotice.get(notice.getId());
+                    if (signForNotice != null) {
+                        User userById = this.userService.getUserById(signForNotice.getSendUserId());
+                        noticeModel.setSendUserName(userById.getUserName());
+                        noticeModel.setHeadPic(userById.getHeadPic());
+                    }
+                    page.add(noticeModel);
+                }
+                return page;
+            } else {
+                return new Page<>();
             }
-            return page;
         }else {
-            return new Page<>();
+            List<NotifyForNotice> notifyForNotices = this.notifyForNoticeService.getNotifyForNoticeByUserId(UserContext.getCurrentUserId());
+            Set<Integer> noticeIds = notifyForNotices.stream().map(NotifyForNotice::getNoticeId).collect(Collectors.toSet());
+            Map<Integer, NotifyForNotice> noticeId2NotifyForNotice = notifyForNotices.stream().collect(Collectors.toMap(NotifyForNotice::getNoticeId, item -> item));
+            if (!CollectionUtils.isEmpty(noticeIds)) {
+                PageHelper.startPage(pageNum, pageSize);
+                List<Notice> notices = this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
+
+                Page<NoticeModel> page = new Page<>();
+                BeanUtils.copyProperties(notices, page);
+
+                for (Notice notice : notices) {
+                    NoticeModel noticeModel = new NoticeModel();
+                    BeanUtils.copyProperties(notice, noticeModel);
+                    noticeModel.setSignStatus(0);
+
+                    NotifyForNotice notifyForNotice = noticeId2NotifyForNotice.get(notice.getId());
+                    if (notifyForNotice != null) {
+                        User userById = this.userService.getUserById(notifyForNotice.getSendUserId());
+                        noticeModel.setSendUserName(userById.getUserName());
+                        noticeModel.setHeadPic(userById.getHeadPic());
+                    }
+                    page.add(noticeModel);
+                }
+                return page;
+            } else {
+                return new Page<>();
+            }
         }
     }
 

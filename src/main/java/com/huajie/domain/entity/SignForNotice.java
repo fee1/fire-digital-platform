@@ -17,4 +17,10 @@ public class SignForNotice implements Serializable {
 
     private Date signTime;
 
+    private Integer sendUserId;
+
+    private Date sendTime;
+
+    private Integer isDelete;
+
 }

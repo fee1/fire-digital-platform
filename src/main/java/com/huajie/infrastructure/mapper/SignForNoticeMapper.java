@@ -13,5 +13,5 @@ import java.util.List;
 @Repository
 public interface SignForNoticeMapper extends BaseMapper<SignForNotice> {
 
-    void InsertBatch(List<SignForNotice> signForNotices);
+    void insertBatch(List<SignForNotice> signForNotices);
 }

@@ -9,6 +9,7 @@ import com.huajie.infrastructure.mapper.SignForNoticeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,8 +22,8 @@ public class SignForNoticeService {
     @Autowired
     private SignForNoticeMapper signForNoticeMapper;
 
-    public void InsertBatch(List<SignForNotice> signForNotices) {
-        signForNoticeMapper.InsertBatch(signForNotices);
+    public void insertBatch(List<SignForNotice> signForNotices) {
+        signForNoticeMapper.insertBatch(signForNotices);
     }
 
     public Double getSignRateByNoticeId(Integer noticeId) {
@@ -43,6 +44,7 @@ public class SignForNoticeService {
         Integer userId = customizeGrantedAuthority.getUserId();
         SignForNotice signForNotice = new SignForNotice();
         signForNotice.setSignStatus(SignStatusEnum.Sign.getCode());
+        signForNotice.setSendTime(new Date());
 
         QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
@@ -64,5 +66,11 @@ public class SignForNoticeService {
                 .eq(SignForNotice::getUserId, userId);
         SignForNotice signForNotice = this.signForNoticeMapper.selectOne(queryWrapper);
         return signForNotice;
+    }
+
+    public List<SignForNotice> getSignForNoticeByNoticeId(Integer noticeId) {
+        QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SignForNotice::getNoticeId, noticeId);
+        return this.signForNoticeMapper.selectList(queryWrapper);
     }
 }

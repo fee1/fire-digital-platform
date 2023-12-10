@@ -11,14 +11,15 @@
   <sql id="Base_Column_List">
     id, user_id, notice_id, sign_status
   </sql>
-  <insert id="InsertBatch" parameterType="java.util.List">
-    insert into sign_for_notice (user_id, notice_id, sign_status)
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into sign_for_notice (user_id, notice_id, send_user_id, send_time)
     values
     <foreach collection="list" item="item" separator=",">
       (
       #{item.userId},
       #{item.noticeId},
-      #{item.signStatus}
+      #{item.sendUserId},
+      #{item.sendTime, jdbcType=TIMESTAMP}
       )
     </foreach>
   </insert>

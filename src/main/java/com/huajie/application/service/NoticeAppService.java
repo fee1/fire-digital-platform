@@ -9,6 +9,7 @@ import com.huajie.application.api.response.NoticeResponseVO;
 import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
+import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Notice;
 import com.huajie.domain.entity.SignForNotice;
 import com.huajie.domain.entity.Tenant;
@@ -117,7 +118,7 @@ public class NoticeAppService {
     }
 
     public Page<NoticeResponseVO> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        Page<NoticeModel> govPcNoticeList = this.noticeService.getPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
+        Page<NoticeModel> govPcNoticeList = this.noticeService.getNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
         if (CollectionUtils.isEmpty(govPcNoticeList)){
             return new Page<>();
         }
@@ -130,9 +131,6 @@ public class NoticeAppService {
             BeanUtils.copyProperties(notice, pcNoticeResponseVO);
             pcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
             pcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
-            User userById = this.userService.getUserById(notice.getSendUserId());
-            pcNoticeResponseVO.setSendUserName(userById.getUserName());
-            pcNoticeResponseVO.setHeadPic(userById.getHeadPic());
             pcNoticeResponseVO.setStatus(notice.getSignStatus());
             responseVOPage.add(pcNoticeResponseVO);
         }
@@ -165,12 +163,8 @@ public class NoticeAppService {
         BeanUtils.copyProperties(notice, noticeAppDetailResponseVO);
         Tenant tenant = this.tenantService.getTenantByTenantId(notice.getFromTenantId());
         noticeAppDetailResponseVO.setFromTenantName(tenant.getTenantName());
-        User user = userService.getUserById(notice.getSendUserId());
-        noticeAppDetailResponseVO.setPhone(user.getPhone());
-        noticeAppDetailResponseVO.setSendUserName(user.getUserName());
-        noticeAppDetailResponseVO.setHeadPic(user.getHeadPic());
         noticeAppDetailResponseVO.setAddress(tenant.getAddress());
-        SignForNotice signForNotice = this.signForNoticeService.getSignForNoticeIdAndUserId(notice.getId(), user.getId());
+        SignForNotice signForNotice = this.signForNoticeService.getSignForNoticeIdAndUserId(notice.getId(), UserContext.getCurrentUserId());
         noticeAppDetailResponseVO.setStatus(signForNotice.getSignStatus().intValue());
         return noticeAppDetailResponseVO;
     }

@@ -17,12 +17,6 @@ public class Notice implements Serializable {
 
     private Integer fromTenantId;
 
-    private Integer sendUserId;
-
-//    private String sendUserName;
-
-    private Date sendTime;
-
     private Byte type;
 
     private Byte receiveType;

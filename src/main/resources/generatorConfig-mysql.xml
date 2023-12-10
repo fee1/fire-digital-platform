@@ -61,6 +61,6 @@
         <!-- 配置 数据库逆向生成配置的表-->
         <!--所有的表-->
 <!--        <table tableName="%"></table>-->
-        <table tableName="sign_for_notice"/>
+        <table tableName="notify_for_notice"/>
     </context>
 </generatorConfiguration>
