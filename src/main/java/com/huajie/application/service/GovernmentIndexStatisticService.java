@@ -59,7 +59,7 @@ public class GovernmentIndexStatisticService {
         List<ProblemDetail> unFinishProblem = problemDetailService.getUnFinishProblemByGovernmentId(currentTenant.getId());
         int unFinishProblemCount = unFinishProblem.size();
         int newUnFinishProblemCount = (int)unFinishProblem.stream().filter(item -> item.getCreateTime().after(today)).count();
-        BigDecimal reformRate = new BigDecimal(String.valueOf(unFinishProblemCount/problemCount));
+        BigDecimal reformRate = problemCount.equals(0) ? new BigDecimal(100) : new BigDecimal(String.valueOf(unFinishProblemCount/problemCount));
 
         // 管辖企业数量
         Integer adminEnterpriseCount = 0;
@@ -238,10 +238,14 @@ public class GovernmentIndexStatisticService {
 
         Map<String, List<Tenant>> typeEnterpriseMap = enterpriseList.stream().collect(Collectors.groupingBy(Tenant::getEnterpriseType));
         responseVO.setTotalCount(enterpriseList.size());
-        responseVO.setCompanyCount(typeEnterpriseMap.get(EnterpriseTypeEnum.Company.getCode()).size());
-        responseVO.setEnterpriseCount(typeEnterpriseMap.get(EnterpriseTypeEnum.Enterprise.getCode()).size());
-        responseVO.setMerchantCount(typeEnterpriseMap.get(EnterpriseTypeEnum.Merchant.getCode()).size());
-        responseVO.setRentalHouseCount(typeEnterpriseMap.get(EnterpriseTypeEnum.RentalHouse.getCode()).size());
+        List<Tenant> companys = typeEnterpriseMap.get(EnterpriseTypeEnum.Company.getCode());
+        responseVO.setCompanyCount(CollectionUtils.isEmpty(companys) ? 0 : companys.size());
+        List<Tenant> enterprise = typeEnterpriseMap.get(EnterpriseTypeEnum.Enterprise.getCode());
+        responseVO.setEnterpriseCount(CollectionUtils.isEmpty(enterprise)? 0 : enterprise.size());
+        List<Tenant> merchants = typeEnterpriseMap.get(EnterpriseTypeEnum.Merchant.getCode());
+        responseVO.setMerchantCount(CollectionUtils.isEmpty(merchants)? 0 :merchants.size());
+        List<Tenant> rentalHouses = typeEnterpriseMap.get(EnterpriseTypeEnum.RentalHouse.getCode());
+        responseVO.setRentalHouseCount(CollectionUtils.isEmpty(rentalHouses) ? 0 : rentalHouses.size());
         return responseVO;
     }
 
