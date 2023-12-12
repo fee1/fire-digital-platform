@@ -81,6 +81,7 @@ public class NoticeService {
         if (StringUtils.isNotBlank(title)) {
             queryWrapper.lambda().like(Notice::getTitle, title);
         }
+        queryWrapper.lambda().orderByDesc(Notice::getCreateTime);
         return (Page<Notice>)noticeMapper.selectList(queryWrapper);
     }
 
@@ -97,8 +98,6 @@ public class NoticeService {
         }
         Notice updateNotice = new Notice();
         updateNotice.setStatus(NoticeStatusConstants.PUBLIC.byteValue());
-        Date date = DateUtil.addDays(new Date(), notice.getSaveDays());
-        updateNotice.setExpireTime(date);
 
         QueryWrapper<Notice> updateWrapper = new QueryWrapper<>();
         updateWrapper.lambda().eq(Notice::getId, id);
@@ -244,7 +243,7 @@ public class NoticeService {
         updateWrapper.lambda().eq(Notice::getId, notice.getId());
         Notice oldNotice = noticeMapper.selectById(notice.getId());
         if (oldNotice.getStatus() == NoticeStatusConstants.PUBLIC.byteValue()
-                || notice.getStatus() == NoticeStatusConstants.EXPIRED.byteValue()){
+                || oldNotice.getStatus() == NoticeStatusConstants.EXPIRED.byteValue()){
             throw new ServerException("已发布，无法编辑");
         }
         noticeMapper.update(notice, updateWrapper);
@@ -265,22 +264,25 @@ public class NoticeService {
             }
             return noticeModel;
         }else {
-            List<NotifyForNotice> notifyForNotices = this.notifyForNoticeService.getNotifyForNoticeByNoticeId(noticeId);
-            NotifyForNotice notifyForNotice = notifyForNotices.get(0);
             NoticeModel noticeModel = new NoticeModel();
             BeanUtils.copyProperties(notice, noticeModel);
-            if (notifyForNotice != null) {
-                User user = userService.getUserById(notifyForNotice.getSendUserId());
-                noticeModel.setPhone(user.getPhone());
-                noticeModel.setSendUserName(user.getUserName());
-                noticeModel.setHeadPic(user.getHeadPic());
+
+            List<NotifyForNotice> notifyForNotices = this.notifyForNoticeService.getNotifyForNoticeByNoticeId(noticeId);
+            if (!CollectionUtils.isEmpty(notifyForNotices)) {
+                NotifyForNotice notifyForNotice = notifyForNotices.get(0);
+                if (notifyForNotice != null) {
+                    User user = userService.getUserById(notifyForNotice.getSendUserId());
+                    noticeModel.setPhone(user.getPhone());
+                    noticeModel.setSendUserName(user.getUserName());
+                    noticeModel.setHeadPic(user.getHeadPic());
+                }
             }
             return noticeModel;
         }
     }
 
     public Page<NoticeModel> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        if (noticeType.equals(NoticeTypeConstants.NOTICE)) {
+        if (noticeType.equals(NoticeTypeConstants.NOTIFY)) {
             List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
             Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
             Map<Integer, SignForNotice> noticeId2SignForNotice = signForNoticeList.stream().collect(Collectors.toMap(SignForNotice::getNoticeId, item -> item));

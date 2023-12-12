@@ -37,8 +37,6 @@ public class Notice implements Serializable {
 
     private Integer saveDays;
 
-    private Date expireTime;
-
     private Date createTime;
 
     private String createUser;
