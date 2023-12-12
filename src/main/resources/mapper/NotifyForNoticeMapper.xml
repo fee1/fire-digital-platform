@@ -276,7 +276,7 @@
       (
       #{item.userId},
       #{item.noticeId},
-      #{item.sendUserId}
+      #{item.sendUserId},
       #{item.sendTime, jdbcType=TIMESTAMP}
       )
     </foreach>
