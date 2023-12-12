@@ -3,6 +3,7 @@ package com.huajie.application.api.request;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -36,6 +37,7 @@ public class UserAddRequestVO {
     @ApiModelProperty("用户邮箱")
     @NotNull(message = "用户邮箱不能为空")
     @NotBlank(message = "用户邮箱不能为空")
+    @Email(message = "邮箱不正确")
     private String email;
 
     @ApiModelProperty("分配的角色id")
