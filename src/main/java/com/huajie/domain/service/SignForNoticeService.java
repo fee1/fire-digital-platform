@@ -1,6 +1,7 @@
 package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.huajie.domain.common.enums.IsDeleteEnum;
 import com.huajie.domain.common.enums.SignStatusEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.UserContext;
@@ -56,7 +57,8 @@ public class SignForNoticeService {
     public List<SignForNotice> getSignForNoticeByUserId(Integer currentUserId) {
         QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(SignForNotice::getUserId, currentUserId);
+                .eq(SignForNotice::getUserId, currentUserId)
+                .eq(SignForNotice::getIsDelete, IsDeleteEnum.UN_DELETE.getCode());
         return this.signForNoticeMapper.selectList(queryWrapper);
     }
 
