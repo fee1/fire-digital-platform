@@ -252,18 +252,6 @@ public class NoticeService {
     public NoticeModel detailNotice(Integer noticeId) {
         Notice notice = this.noticeMapper.selectById(noticeId);
         if (notice.getType().intValue() == NoticeTypeConstants.NOTICE) {
-            List<SignForNotice> signForNotices = this.signForNoticeService.getSignForNoticeByNoticeId(noticeId);
-            SignForNotice signForNotice = signForNotices.get(0);
-            NoticeModel noticeModel = new NoticeModel();
-            BeanUtils.copyProperties(notice, noticeModel);
-            if (signForNotice != null) {
-                User user = userService.getUserById(signForNotice.getSendUserId());
-                noticeModel.setPhone(user.getPhone());
-                noticeModel.setSendUserName(user.getUserName());
-                noticeModel.setHeadPic(user.getHeadPic());
-            }
-            return noticeModel;
-        }else {
             NoticeModel noticeModel = new NoticeModel();
             BeanUtils.copyProperties(notice, noticeModel);
 
@@ -276,6 +264,18 @@ public class NoticeService {
                     noticeModel.setSendUserName(user.getUserName());
                     noticeModel.setHeadPic(user.getHeadPic());
                 }
+            }
+            return noticeModel;
+        }else {
+            List<SignForNotice> signForNotices = this.signForNoticeService.getSignForNoticeByNoticeId(noticeId);
+            SignForNotice signForNotice = signForNotices.get(0);
+            NoticeModel noticeModel = new NoticeModel();
+            BeanUtils.copyProperties(notice, noticeModel);
+            if (signForNotice != null) {
+                User user = userService.getUserById(signForNotice.getSendUserId());
+                noticeModel.setPhone(user.getPhone());
+                noticeModel.setSendUserName(user.getUserName());
+                noticeModel.setHeadPic(user.getHeadPic());
             }
             return noticeModel;
         }

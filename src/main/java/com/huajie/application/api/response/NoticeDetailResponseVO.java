@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zhuxiaofeng
@@ -33,7 +34,7 @@ public class NoticeDetailResponseVO {
     @ApiModelProperty("0: 全部 / 1: 指定单位（单选框）")
     private Byte specifyRange;
 
-    private String tenantIds;
+    private List<Integer> tenantIds;
 
     @ApiModelProperty("标题")
     private String title;
