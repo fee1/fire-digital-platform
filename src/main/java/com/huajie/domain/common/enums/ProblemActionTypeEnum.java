@@ -12,7 +12,7 @@ public enum ProblemActionTypeEnum {
             Arrays.asList(ProblemStateEnum.SUBMIT),
             ProblemStateEnum.TODO),
     REPLY("REPLY","回复整改意见",
-            Arrays.asList(ProblemStateEnum.SUBMIT,ProblemStateEnum.TODO),
+            Arrays.asList(ProblemStateEnum.SUBMIT,ProblemStateEnum.TODO,ProblemStateEnum.TIMEOUT),
             ProblemStateEnum.TODO),
     TIMEOUT("TIMEOUT","超时",
             Arrays.asList(ProblemStateEnum.TODO),
