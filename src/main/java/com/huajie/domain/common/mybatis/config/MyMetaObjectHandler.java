@@ -46,9 +46,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
             if (principal != null){
                 return principal.getUsername();
             }
-            return "";
+            return "SYSTEM";
         }catch (Exception e){
-            return "";
+            return "SYSTEM";
         }
     }
 

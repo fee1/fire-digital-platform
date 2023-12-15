@@ -68,7 +68,7 @@ public class MybatisConfig {
         List<Interceptor> interceptors = Lists.newArrayList();
         interceptors.add(getOptimisticLockerInterceptor());
         interceptors.add(pageInterceptor());
-        interceptors.add(paramInterceptor());
+//        interceptors.add(paramInterceptor());
         return interceptors.toArray(new Interceptor[0]);
 
     }
