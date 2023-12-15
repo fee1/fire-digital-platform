@@ -3,6 +3,8 @@ package com.huajie.application.api.request;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ProblemQueryRequestVO {
 
@@ -13,6 +15,10 @@ public class ProblemQueryRequestVO {
     /** 隐患状态 submit;wait_reform */
     @ApiModelProperty(value = "state",name = "隐患状态",notes = "SUBMIT, TODO, TIMEOUT, DELAY_APPROVE, REFORM_APPROVE, FINISH")
     private String state ;
+
+    /** 隐患状态 submit;wait_reform */
+    @ApiModelProperty(value = "state",name = "隐患状态",notes = "SUBMIT, TODO, TIMEOUT, DELAY_APPROVE, REFORM_APPROVE, FINISH")
+    private List<String> stateList ;
 
     /** 隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查, system 系统定时巡查 */
     @ApiModelProperty(value = "problemType  ", name = "隐患类型 patrol 巡查，inspect 检查，selfcheck 综合自查, system 系统定时巡查",notes = "")

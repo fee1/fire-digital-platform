@@ -9,6 +9,7 @@ import com.huajie.application.api.response.EnterpriseRegiestResponseVO;
 import com.huajie.domain.common.constants.TenantStatusConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.GovernmentTypeEnum;
+import com.huajie.domain.common.enums.SecurityLevelEnum;
 import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
@@ -44,6 +45,8 @@ public class RegisterAppService {
         tenant.setEnterpriseType(regiestRequestVO.getEnterpriseType());
         tenant.setEntIndustryClassification(regiestRequestVO.getEntIndustryClassification());
         tenant.setEntFireType(regiestRequestVO.getEntFireType());
+        tenant.setSecurityLevel(SecurityLevelEnum.LOW.getCode());
+
 
         EnterpriseRegiestDTO regiestDTO = registerService.regiestEnterprise(tenant, regiestRequestVO.getEntAdminList(), regiestRequestVO.getEntOperatorList());
 

@@ -81,6 +81,9 @@ public class ProblemReformService {
         if(StringUtils.isNotBlank(requestVO.getDeviceName())){
             queryWrapper.lambda().like(ProblemDetail::getDeviceName,requestVO.getDeviceName());
         }
+        if(!CollectionUtils.isEmpty(requestVO.getStateList())){
+            queryWrapper.lambda().in(ProblemDetail::getState,requestVO.getStateList());
+        }
         queryWrapper.lambda().orderByAsc(ProblemDetail::getReformTimeoutTime).orderByAsc(ProblemDetail::getSubmitTime);
 
         Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
