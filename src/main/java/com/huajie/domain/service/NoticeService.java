@@ -267,15 +267,18 @@ public class NoticeService {
             }
             return noticeModel;
         }else {
-            List<SignForNotice> signForNotices = this.signForNoticeService.getSignForNoticeByNoticeId(noticeId);
-            SignForNotice signForNotice = signForNotices.get(0);
             NoticeModel noticeModel = new NoticeModel();
             BeanUtils.copyProperties(notice, noticeModel);
-            if (signForNotice != null) {
-                User user = userService.getUserById(signForNotice.getSendUserId());
-                noticeModel.setPhone(user.getPhone());
-                noticeModel.setSendUserName(user.getUserName());
-                noticeModel.setHeadPic(user.getHeadPic());
+
+            List<SignForNotice> signForNotices = this.signForNoticeService.getSignForNoticeByNoticeId(noticeId);
+            if (!CollectionUtils.isEmpty(signForNotices)) {
+                SignForNotice signForNotice = signForNotices.get(0);
+                if (signForNotice != null) {
+                    User user = userService.getUserById(signForNotice.getSendUserId());
+                    noticeModel.setPhone(user.getPhone());
+                    noticeModel.setSendUserName(user.getUserName());
+                    noticeModel.setHeadPic(user.getHeadPic());
+                }
             }
             return noticeModel;
         }
