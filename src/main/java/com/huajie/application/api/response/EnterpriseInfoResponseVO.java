@@ -23,11 +23,17 @@ public class EnterpriseInfoResponseVO {
     @ApiModelProperty("省地址")
     private String provinceName;
 
+    private Integer cityCode;
+
     @ApiModelProperty("市地址")
     private String cityName;
 
+    private Integer regionCode;
+
     @ApiModelProperty("区/县地址")
     private String regionName;
+
+    private Integer streetCode;
 
     @ApiModelProperty("街道地址")
     private String streetName;

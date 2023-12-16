@@ -50,14 +50,17 @@ public class TenantAppService {
         responseVO.setProvinceName(province.getRegionName());
         Region city = regionService.getRegionById(currentTenant.getCity());
         if (city != null) {
+            responseVO.setCityCode(currentTenant.getCity());
             responseVO.setCityName(city.getRegionName());
         }
         Region region = regionService.getRegionById(currentTenant.getRegion());
         if (region != null ) {
+            responseVO.setRegionCode(currentTenant.getRegion());
             responseVO.setRegionName(region.getRegionName());
         }
         Region street = regionService.getRegionById(currentTenant.getStreet());
         if (street != null) {
+            responseVO.setStreetCode(currentTenant.getStreet());
             responseVO.setStreetName(street.getRegionName());
         }
         responseVO.setAddress(currentTenant.getAddress());
