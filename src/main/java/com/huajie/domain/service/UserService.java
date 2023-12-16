@@ -117,6 +117,9 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getOpenId())) {
             updateUserInfo.setOpenId(user.getOpenId());
         }
+        if (StringUtils.isNotBlank(user.getHeadPic())){
+            updateUserInfo.setHeadPic(user.getHeadPic());
+        }
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getId, user.getId());

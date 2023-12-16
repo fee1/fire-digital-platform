@@ -165,6 +165,7 @@ public class WechatService {
         User user = new User();
         user.setId(UserContext.getCurrentUserId());
         user.setUserName(requestVO.getUsername());
+        user.setHeadPic(requestVO.getHeadPic());
         this.userService.updateUser(user);
     }
 }
