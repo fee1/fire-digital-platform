@@ -4,6 +4,7 @@ import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.common.ResultCode;
 import com.huajie.application.api.request.AppRequestVO;
 import com.huajie.application.api.request.PhoneBindingRequestVO;
+import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatGetPhoneResponseVO;
 import com.huajie.application.service.WechatAppService;
@@ -45,6 +46,13 @@ public class WechatAppApi {
     public ApiResult<WechatGetPhoneResponseVO> userPhoneBinding(@Valid @RequestBody PhoneBindingRequestVO requestVO){
         WechatGetPhoneResponseVO wechatGetPhoneResponseVO = wechatAppService.userPhoneBinding(requestVO.getJsCode(), requestVO.getOpenId());
         return ApiResult.ok(wechatGetPhoneResponseVO);
+    }
+
+    @ApiOperation("编辑资料")
+    @PostMapping("edit/user/info")
+    public ApiResult<Void> editUserInfo(@Valid@RequestBody WechatEditUserInfoRequestVO requestVO){
+        wechatAppService.editUserInfo(requestVO);
+        return ApiResult.ok();
     }
 
 }

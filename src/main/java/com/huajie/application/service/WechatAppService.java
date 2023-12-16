@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatGetPhoneResponseVO;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
@@ -36,5 +37,9 @@ public class WechatAppService {
         WechatGetPhoneResponseVO wechatGetPhoneResponseVO = new WechatGetPhoneResponseVO();
         wechatGetPhoneResponseVO.setPhone(userPhoneNumber);
         return wechatGetPhoneResponseVO;
+    }
+
+    public void editUserInfo(WechatEditUserInfoRequestVO requestVO) {
+        wechatService.editUserInfo(requestVO);
     }
 }

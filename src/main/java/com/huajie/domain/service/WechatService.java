@@ -3,11 +3,13 @@ package com.huajie.domain.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.token.WechatAuthenticationToken;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
 import com.huajie.domain.common.utils.OkHttpUtil;
+import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.AccessTokenResponseDTO;
 import com.huajie.domain.model.WechatAppLoginResponseDTO;
@@ -159,4 +161,10 @@ public class WechatService {
         }
     }
 
+    public void editUserInfo(WechatEditUserInfoRequestVO requestVO) {
+        User user = new User();
+        user.setId(UserContext.getCurrentUserId());
+        user.setUserName(requestVO.getUsername());
+        this.userService.updateUser(user);
+    }
 }
