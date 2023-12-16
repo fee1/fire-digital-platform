@@ -1,5 +1,7 @@
 package com.huajie.application.api.response;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -34,12 +36,16 @@ public class PlaceResponseVO {
     @ApiModelProperty("版本号")
     private Integer version;
 
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
     private Date createTime;
 
+    @TableField(value = "create_user",fill = FieldFill.INSERT)
     private String createUser;
 
-    private Date updateTime;
+    @TableField(value = "update_time",fill = FieldFill.UPDATE)
+    private Date updateTime;;
 
+    @TableField(value = "update_user",fill = FieldFill.UPDATE)
     private String updateUser;
 
 }

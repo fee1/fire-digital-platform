@@ -1,5 +1,7 @@
 package com.huajie.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,8 +15,10 @@ public class RoleMenuRelation implements Serializable {
 
     private Integer menuId;
 
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
     private Date createTime;
 
+    @TableField(value = "create_user",fill = FieldFill.INSERT)
     private String createUser;
 
     private static final long serialVersionUID = 1L;

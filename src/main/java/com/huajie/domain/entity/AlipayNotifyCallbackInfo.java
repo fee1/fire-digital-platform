@@ -1,5 +1,7 @@
 package com.huajie.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -60,9 +62,11 @@ public class AlipayNotifyCallbackInfo implements Serializable {
 
     private String version;
 
+    @TableField(value = "create_time",fill = FieldFill.INSERT)
     private Date createTime;
 
-    private Date updateTime;
+    @TableField(value = "update_time",fill = FieldFill.UPDATE)
+    private Date updateTime;;
 
     private String requestOriginal;
 
