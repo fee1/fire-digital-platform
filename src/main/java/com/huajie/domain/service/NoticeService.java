@@ -263,6 +263,7 @@ public class NoticeService {
                     noticeModel.setPhone(user.getPhone());
                     noticeModel.setSendUserName(user.getUserName());
                     noticeModel.setHeadPic(user.getHeadPic());
+                    noticeModel.setSendTime(notifyForNotice.getSendTime());
                 }
             }
             return noticeModel;
@@ -278,6 +279,7 @@ public class NoticeService {
                     noticeModel.setPhone(user.getPhone());
                     noticeModel.setSendUserName(user.getUserName());
                     noticeModel.setHeadPic(user.getHeadPic());
+                    noticeModel.setSendTime(signForNotice.getSendTime());
                 }
             }
             return noticeModel;
@@ -307,6 +309,7 @@ public class NoticeService {
                         User userById = this.userService.getUserById(signForNotice.getSendUserId());
                         noticeModel.setSendUserName(userById.getUserName());
                         noticeModel.setHeadPic(userById.getHeadPic());
+                        noticeModel.setSendTime(signForNotice.getSendTime());
                     }
                     page.add(noticeModel);
                 }
@@ -335,6 +338,7 @@ public class NoticeService {
                         User userById = this.userService.getUserById(notifyForNotice.getSendUserId());
                         noticeModel.setSendUserName(userById.getUserName());
                         noticeModel.setHeadPic(userById.getHeadPic());
+                        noticeModel.setSendTime(notifyForNotice.getSendTime());
                     }
                     page.add(noticeModel);
                 }

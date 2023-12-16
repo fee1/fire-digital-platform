@@ -4,6 +4,8 @@ import com.huajie.domain.entity.Notice;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author zhuxiaofeng
  * @date 2023/12/5
@@ -21,5 +23,6 @@ public class NoticeModel extends Notice {
 
     private String phone;
 
+    private Date sendTime;
 
 }
