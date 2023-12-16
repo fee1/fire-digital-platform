@@ -25,7 +25,7 @@ import java.util.List;
  * @author zhuxiaofeng
  * @date 2023/9/16
  */
-@Api(tags = "微信登录相关")
+@Api(tags = "微信相关")
 @RestController
 @RequestMapping("wechat")
 public class WechatAppApi {
