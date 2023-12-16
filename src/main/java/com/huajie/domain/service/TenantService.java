@@ -129,8 +129,8 @@ public class TenantService {
             Page<Tenant> adminEnterpriseList = this.govermentOrganizationService.getAdminEnterpriseList(1, Integer.MAX_VALUE, requestVO.getEnterpriseType(), requestVO.getTenantName(), 1);
 
             for (Tenant tenant : adminEnterpriseList) {
-                if (requestVO.getRegionId().equals(tenant.getRegion())){
-                    if (requestVO.getStreetId().equals(tenant.getStreet())){
+                if (requestVO.getRegionId() != null && requestVO.getRegionId().equals(tenant.getRegion())){
+                    if (requestVO.getStreetId() != null && requestVO.getStreetId().equals(tenant.getStreet())){
                         tenants.add(tenant);
                     }
                 }
@@ -139,8 +139,8 @@ public class TenantService {
         }else {
             Page<Tenant> adminEnterpriseList = this.govermentOrganizationService.getAdminGovernmentList(1, Integer.MAX_VALUE, requestVO.getTenantName());
             for (Tenant tenant : adminEnterpriseList) {
-                if (requestVO.getRegionId().equals(tenant.getRegion())){
-                    if (requestVO.getStreetId().equals(tenant.getStreet())){
+                if (requestVO.getRegionId() != null && requestVO.getRegionId().equals(tenant.getRegion())){
+                    if (requestVO.getStreetId() != null && requestVO.getStreetId().equals(tenant.getStreet())){
                         tenants.add(tenant);
                     }
                 }
