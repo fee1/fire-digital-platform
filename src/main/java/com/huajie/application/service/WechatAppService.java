@@ -3,12 +3,18 @@ package com.huajie.application.service;
 import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatGetPhoneResponseVO;
+import com.huajie.application.api.response.WechatUserManagementResponseVO;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
+import com.huajie.domain.entity.User;
 import com.huajie.domain.model.WechatAppLoginResponseDTO;
 import com.huajie.domain.service.WechatService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zhuxiaofeng
@@ -41,5 +47,10 @@ public class WechatAppService {
 
     public void editUserInfo(WechatEditUserInfoRequestVO requestVO) {
         wechatService.editUserInfo(requestVO);
+    }
+
+    public List<WechatUserManagementResponseVO> userManagement() {
+        List<WechatUserManagementResponseVO> responseVOList = this.wechatService.userManagement();
+        return responseVOList;
     }
 }

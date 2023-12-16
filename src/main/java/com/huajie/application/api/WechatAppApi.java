@@ -7,6 +7,7 @@ import com.huajie.application.api.request.PhoneBindingRequestVO;
 import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatGetPhoneResponseVO;
+import com.huajie.application.api.response.WechatUserManagementResponseVO;
 import com.huajie.application.service.WechatAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author zhuxiaofeng
@@ -53,6 +55,13 @@ public class WechatAppApi {
     public ApiResult<Void> editUserInfo(@Valid@RequestBody WechatEditUserInfoRequestVO requestVO){
         wechatAppService.editUserInfo(requestVO);
         return ApiResult.ok();
+    }
+
+    @ApiOperation("用户管理")
+    @PostMapping("user/management")
+    public ApiResult<List<WechatUserManagementResponseVO>> userManagement(){
+        List<WechatUserManagementResponseVO> responseVOList = this.wechatAppService.userManagement();
+        return ApiResult.ok(responseVOList);
     }
 
 }

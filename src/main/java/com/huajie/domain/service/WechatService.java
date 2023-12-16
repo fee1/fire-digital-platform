@@ -4,17 +4,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
+import com.huajie.application.api.response.WechatUserManagementResponseVO;
 import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.token.WechatAuthenticationToken;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
 import com.huajie.domain.common.utils.OkHttpUtil;
 import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.AccessTokenResponseDTO;
 import com.huajie.domain.model.WechatAppLoginResponseDTO;
 import com.huajie.domain.model.WechatPhoneResponseDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +32,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +51,9 @@ public class WechatService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private TokenEndpoint tokenEndpoint;
@@ -167,5 +174,19 @@ public class WechatService {
         user.setUserName(requestVO.getUsername());
         user.setHeadPic(requestVO.getHeadPic());
         this.userService.updateUser(user);
+    }
+
+    public List<WechatUserManagementResponseVO> userManagement() {
+        Integer tenantId = UserContext.getCurrentTenant().getId();
+        List<User> usersByTenantId = this.userService.getUsersByTenantId(tenantId);
+        List<WechatUserManagementResponseVO> wechatUserManagementResponseVOList = new ArrayList<>();
+        for (User user : usersByTenantId) {
+            WechatUserManagementResponseVO wechatUserManagementResponseVO = new WechatUserManagementResponseVO();
+            BeanUtils.copyProperties(user, wechatUserManagementResponseVO);
+            Role role = this.roleService.getRoleById(user.getRoleId());
+            wechatUserManagementResponseVO.setRoleCode(role.getRoleCode());
+            wechatUserManagementResponseVOList.add(wechatUserManagementResponseVO);
+        }
+        return wechatUserManagementResponseVOList;
     }
 }
