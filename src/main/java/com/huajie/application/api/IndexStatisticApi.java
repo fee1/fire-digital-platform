@@ -4,11 +4,16 @@ import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.response.statistic.*;
 import com.huajie.application.service.EnterpriseIndexStatisticService;
 import com.huajie.application.service.GovernmentIndexStatisticService;
+import com.huajie.application.service.NoticeAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Api(tags = "首页统计")
@@ -21,6 +26,9 @@ public class IndexStatisticApi {
 
     @Autowired
     private EnterpriseIndexStatisticService enterpriseIndexStatisticService;
+
+    @Autowired
+    private NoticeAppService noticeAppService;
 
     @ApiOperation("企业设备类型数量统计")
     @GetMapping(value = "/ent/deviceTypeList")
@@ -68,6 +76,12 @@ public class IndexStatisticApi {
                                                    @RequestParam(value = "street",required = false)Integer street
     ){
         return ApiResult.ok(governmentIndexStatisticService.getEnterpriseCountBySecurityLevel(city,region,street));
+    }
+
+    @ApiOperation("用户工作日历")
+    @GetMapping(value = "/user/workCalender")
+    public ApiResult<List<WorkMessageResponseVO>> getWorkCalender(@RequestParam(required = false)@ApiParam("结束时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date){
+        return ApiResult.ok(noticeAppService.getWorkCalender(date));
     }
 
 
