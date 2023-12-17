@@ -1,5 +1,6 @@
 package com.huajie.application.api.response;
 
+import com.huajie.application.api.common.FileModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -43,7 +44,7 @@ public class NoticeDetailResponseVO {
     private String text;
 
     @ApiModelProperty("附件")
-    private String appendix;
+    private List<FileModel> appendix;
 
     @ApiModelProperty("通知保留时间(天)")
     private Integer saveDays;

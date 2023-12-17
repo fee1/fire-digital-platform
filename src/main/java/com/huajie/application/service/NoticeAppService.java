@@ -1,8 +1,10 @@
 package com.huajie.application.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.Page;
+import com.huajie.application.api.common.FileModel;
 import com.huajie.application.api.request.CreateNoticeRequestVO;
 import com.huajie.application.api.request.EditNoticeRequestVO;
 import com.huajie.application.api.response.EntPcNoticeResponseVO;
@@ -117,6 +119,7 @@ public class NoticeAppService {
         NoticeDetailResponseVO noticeDetailResponseVO = new NoticeDetailResponseVO();
         BeanUtils.copyProperties(notice, noticeDetailResponseVO);
         noticeDetailResponseVO.setTenantIds(JSONObject.parseArray(notice.getTenantIds(), Integer.class));
+        noticeDetailResponseVO.setAppendix(JSONArray.parseArray(notice.getAppendix(), FileModel.class));
         return noticeDetailResponseVO;
     }
 

@@ -1,5 +1,6 @@
 package com.huajie.application.api.request;
 
+import com.huajie.application.api.common.FileModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -48,7 +49,7 @@ public class CreateNoticeRequestVO {
     private String text;
 
     @ApiModelProperty("附件")
-    private List<String> appendix;
+    private List<FileModel> appendix;
 
     @ApiModelProperty("通知保留时间 1个月，3个月，6个月，1年, 单位天")
 //    @NotNull(message = "通知保留时间 不能为空")
