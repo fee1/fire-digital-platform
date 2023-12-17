@@ -110,7 +110,7 @@ public class GovernmentIndexStatisticService {
         Map<Integer, List<ProblemDetail>> userProblemMap = currentMonthProblems.stream().collect(Collectors.groupingBy(ProblemDetail::getSubmitUserId));
 
         Role govOperatorCodeRole = roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
-        List<User> userList = userService.getUsersByTenantIdAndRoleId(govOperatorCodeRole.getTenantId(), govOperatorCodeRole.getId());
+        List<User> userList = userService.getUsersByTenantIdAndRoleId(currentTenant.getId(), govOperatorCodeRole.getId());
         List<GovUserInspectCountResponseVO> govUserInspectCountList = userList.stream().map(item -> {
             GovUserInspectCountResponseVO userInspectCount = new GovUserInspectCountResponseVO();
             userInspectCount.setUserId(item.getId());

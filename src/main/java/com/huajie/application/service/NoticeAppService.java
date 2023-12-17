@@ -10,6 +10,9 @@ import com.huajie.application.api.response.NoticeResponseVO;
 import com.huajie.application.api.response.NoticeAppDetailResponseVO;
 import com.huajie.application.api.response.NoticeDetailResponseVO;
 import com.huajie.application.api.response.SearchNoticeResponseVO;
+import com.huajie.application.api.response.statistic.WorkMessageResponseVO;
+import com.huajie.domain.common.constants.NoticeTypeConstants;
+import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Notice;
 import com.huajie.domain.entity.SignForNotice;
@@ -27,9 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -169,5 +170,28 @@ public class NoticeAppService {
         SignForNotice signForNotice = this.signForNoticeService.getSignForNoticeIdAndUserId(notice.getId(), UserContext.getCurrentUserId());
         noticeAppDetailResponseVO.setStatus(signForNotice.getSignStatus().intValue());
         return noticeAppDetailResponseVO;
+    }
+
+    /**
+     * 获取工作日历
+     * @param date
+     * @return
+     */
+    public List<WorkMessageResponseVO> getWorkCalender(Date date){
+        if(date == null){
+            date = new Date();
+        }
+        List<WorkMessageResponseVO> responseVOS = new ArrayList<>();
+        Date endDate = DateUtil.addDays(date, 1);
+        Page<NoticeModel> noticeList = noticeService.getNoticeList(NoticeTypeConstants.NOTIFY, date, endDate, null, null, 1, 10);
+        if(!CollectionUtils.isEmpty(noticeList)){
+            noticeList.stream().forEach(item ->{
+                WorkMessageResponseVO workMessageResponseVO = new WorkMessageResponseVO();
+                workMessageResponseVO.setMessageType("notice");
+                workMessageResponseVO.setMessage(item.getTitle());
+                responseVOS.add(workMessageResponseVO);
+            });
+        }
+        return responseVOS;
     }
 }
