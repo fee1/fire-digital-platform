@@ -363,4 +363,10 @@ public class NoticeService {
     public void receive(Integer noticeId) {
         signForNoticeService.receive(noticeId);
     }
+
+    public List<Notice> getNoticeByIds(Set<Integer> noticeIds) {
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(Notice::getId, noticeIds);
+        return this.noticeMapper.selectList(queryWrapper);
+    }
 }

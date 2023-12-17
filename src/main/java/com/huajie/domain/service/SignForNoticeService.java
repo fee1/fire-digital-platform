@@ -75,4 +75,19 @@ public class SignForNoticeService {
         queryWrapper.lambda().eq(SignForNotice::getNoticeId, noticeId);
         return this.signForNoticeMapper.selectList(queryWrapper);
     }
+
+    public List<SignForNotice> getNotifyForNoticeIsNotDelete() {
+        QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(SignForNotice::getIsDelete, IsDeleteEnum.UN_DELETE.getCode());
+        return this.signForNoticeMapper.selectList(queryWrapper);
+    }
+
+    public void deleteSignForNoticeByNoticeId(Integer noticeId) {
+        QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SignForNotice::getNoticeId, noticeId);
+        SignForNotice signForNotice = new SignForNotice();
+        signForNotice.setIsDelete(IsDeleteEnum.DELETE.getCode());
+        this.signForNoticeMapper.update(signForNotice, queryWrapper);
+    }
 }

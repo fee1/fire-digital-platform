@@ -20,7 +20,7 @@ public class WechatAccessTokenTask {
     private WechatService wechatService;
 
     /**
-     * 每两小时运行一次
+     * 每小时运行一次
      */
     @Scheduled(cron = "0 */59 * * * ?")
     public void refresh(){
