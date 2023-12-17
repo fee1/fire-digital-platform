@@ -62,7 +62,7 @@ public class EnterpriseIndexStatisticService {
 
         // 设备有效率
         Integer effectiveCount = deviceService.getEffectiveCountByTenantId(currentTenant.getId());
-        BigDecimal effectiveRate = new BigDecimal(String.valueOf(effectiveCount/deviceCount));
+        BigDecimal effectiveRate = effectiveCount.equals(0) ? new BigDecimal("1") : new BigDecimal(String.valueOf(effectiveCount/deviceCount));
         responseVO.setDeviceEffectiveRate(effectiveRate);
 
 

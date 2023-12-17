@@ -59,7 +59,7 @@ public class GovernmentIndexStatisticService {
         List<ProblemDetail> unFinishProblem = problemDetailService.getUnFinishProblemByGovernmentId(currentTenant.getId());
         int unFinishProblemCount = unFinishProblem.size();
         int newUnFinishProblemCount = (int)unFinishProblem.stream().filter(item -> item.getCreateTime().after(today)).count();
-        BigDecimal reformRate = problemCount.equals(0) ? new BigDecimal(100) : new BigDecimal(String.valueOf(unFinishProblemCount/problemCount));
+        BigDecimal reformRate = problemCount.equals(0) ? new BigDecimal("1") : new BigDecimal(String.valueOf(unFinishProblemCount/problemCount));
 
         // 管辖企业数量
         Integer adminEnterpriseCount = 0;

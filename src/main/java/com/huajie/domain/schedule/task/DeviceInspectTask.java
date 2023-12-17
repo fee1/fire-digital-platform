@@ -3,9 +3,11 @@ package com.huajie.domain.schedule.task;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.huajie.domain.common.enums.*;
 import com.huajie.domain.entity.Device;
+import com.huajie.domain.entity.Place;
 import com.huajie.domain.entity.ProblemDetail;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.service.DeviceService;
+import com.huajie.domain.service.PlaceService;
 import com.huajie.infrastructure.mapper.DeviceMapper;
 import com.huajie.infrastructure.mapper.ProblemDetailMapper;
 import com.huajie.infrastructure.mapper.UserMapper;
@@ -34,6 +36,9 @@ public class DeviceInspectTask {
 
     @Autowired
     private DeviceService deviceService;
+
+    @Autowired
+    private PlaceService placeService;
 
     public void deviceInspect(){
         this.replaceMieHuoQiList();
@@ -157,12 +162,15 @@ public class DeviceInspectTask {
             return;
         }
 
+        Place placeById = placeService.getPlaceById(device.getPlaceId());
+
         ProblemDetail problemDetail = new ProblemDetail();
         problemDetail.setEntTenantId(device.getTenantId());
         problemDetail.setState(ProblemStateEnum.SUBMIT.getStateCode());
         problemDetail.setProblemType("system");
         problemDetail.setPlaceId(device.getPlaceId());
-        problemDetail.setPlaceName(device.getPlaceName());
+        problemDetail.setPlaceName(placeById.getPlaceName());
+        problemDetail.setPlaceAddress(placeById.getPlaceAddress());
         problemDetail.setDeviceId(device.getId());
         problemDetail.setDeviceName(device.getDeviceName());
         problemDetail.setProblemDesc(problemDesc);
