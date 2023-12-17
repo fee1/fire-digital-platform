@@ -132,7 +132,11 @@ public class TenantService {
                 if (requestVO.getRegionId() != null && requestVO.getRegionId().equals(tenant.getRegion())){
                     if (requestVO.getStreetId() != null && requestVO.getStreetId().equals(tenant.getStreet())){
                         tenants.add(tenant);
+                    }else {
+                        tenants.add(tenant);
                     }
+                }else {
+                    tenants.add(tenant);
                 }
             }
             return tenants;
@@ -142,7 +146,11 @@ public class TenantService {
                 if (requestVO.getRegionId() != null && requestVO.getRegionId().equals(tenant.getRegion())){
                     if (requestVO.getStreetId() != null && requestVO.getStreetId().equals(tenant.getStreet())){
                         tenants.add(tenant);
+                    }else {
+                        tenants.add(tenant);
                     }
+                }else {
+                    tenants.add(tenant);
                 }
             }
             return tenants;
