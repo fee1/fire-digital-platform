@@ -17,4 +17,7 @@ public class TenantResponseVO {
     @ApiModelProperty("名称")
     private String tenantName;
 
+    @ApiModelProperty("地址")
+    private String address;
+
 }
