@@ -100,7 +100,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients.inMemory()
                 .withClient(CommonConstants.CLIENT_ID)//配置client_id
                 .secret(passwordEncoder.encode(CommonConstants.SECRET))//配置client_secret
-                .accessTokenValiditySeconds(3600)//配置访问token的有效期
+                .accessTokenValiditySeconds(14400)//配置访问token的有效期
                 .refreshTokenValiditySeconds(864000)//配置刷新token的有效期
                 .redirectUris("http://127.0.0.1:8080/user/login")//配置redirect_uri，用于授权成功后跳转
                 .scopes(CommonConstants.ALL)//配置申请的权限范围
