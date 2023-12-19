@@ -28,7 +28,7 @@ public class CommonConstants {
 
     public final static String QRCODE_FOLDER = "qrcode/";
 
-    public final static String OTHER_FOLDER = "other/";
+    public final static String USERDATA_FOLDER = "userData/";
 
     public final static String CREATE_USER = "createUser";
 

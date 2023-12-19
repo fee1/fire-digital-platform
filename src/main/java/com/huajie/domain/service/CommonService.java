@@ -76,7 +76,7 @@ public class CommonService {
     }
 
     public SignModel getSign() {
-        SignModel sign = aliyunFileClient.getSign();
+        SignModel sign = aliyunFileClient.getSign(CommonConstants.USERDATA_FOLDER);
         return sign;
     }
 

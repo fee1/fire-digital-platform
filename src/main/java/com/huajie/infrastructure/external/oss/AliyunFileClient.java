@@ -54,14 +54,14 @@ public class AliyunFileClient {
         ossClient.shutdown();
     }
 
-    public SignModel getSign() {
+    public SignModel getSign(String folder) {
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         long expireTime = 30;
         long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
         Date expiration = new Date(expireEndTime);
         PolicyConditions policyConds = new PolicyConditions();
         policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
-        policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, CommonConstants.OTHER_FOLDER);//根据参数dir计算的policy，如果和前端uploadfile中参数key的相应字段不一致的话是会报错的
+        policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, folder);//根据参数dir计算的policy，如果和前端uploadfile中参数key的相应字段不一致的话是会报错的
 
         String postPolicy = ossClient.generatePostPolicy(expiration, policyConds);
         byte[] binaryData = postPolicy.getBytes();
