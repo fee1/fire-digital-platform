@@ -46,7 +46,9 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
                         "/notice/**",
                         "/tenant/**",
                         "/monitor/**",
-                            "/index/statistic/**"
+                        "/index/statistic/**",
+                        "/wechat/edit/user/info",
+                        "/wechat/user/management"
                 ).and().addFilterAfter(chargeFilter, FilterSecurityInterceptor.class);
     }
 
