@@ -9,6 +9,7 @@ import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.token.WechatAuthenticationToken;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
+import com.huajie.domain.common.utils.ObjectReflectUtil;
 import com.huajie.domain.common.utils.OkHttpUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Role;
@@ -16,12 +17,15 @@ import com.huajie.domain.entity.User;
 import com.huajie.domain.model.AccessTokenResponseDTO;
 import com.huajie.domain.model.WechatAppLoginResponseDTO;
 import com.huajie.domain.model.WechatPhoneResponseDTO;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
@@ -31,9 +35,11 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhuxiaofeng
@@ -168,12 +174,27 @@ public class WechatService {
         }
     }
 
+    @SneakyThrows
     public void editUserInfo(WechatEditUserInfoRequestVO requestVO) {
         User user = new User();
         user.setId(UserContext.getCurrentUserId());
         user.setUserName(requestVO.getUsername());
         user.setHeadPic(requestVO.getHeadPic());
         this.userService.updateUser(user);
+        org.springframework.security.core.userdetails.User currentUser = UserContext.getCurrentLoginUser();
+        if (StringUtils.isNotBlank(requestVO.getUsername())) {
+            ObjectReflectUtil.setFieldValue(currentUser, "username", requestVO.getUsername());
+            Set<GrantedAuthority> authorities = (Set<GrantedAuthority>) currentUser.getAuthorities();
+            for (GrantedAuthority authority : authorities) {
+                ObjectReflectUtil.setFieldValue(authority, "userName", requestVO.getUsername());
+            }
+        }
+        if (StringUtils.isNotBlank(requestVO.getHeadPic())) {
+            Set<GrantedAuthority> authorities = (Set<GrantedAuthority>) currentUser.getAuthorities();
+            for (GrantedAuthority authority : authorities) {
+                ObjectReflectUtil.setFieldValue(authority, "headPic", requestVO.getHeadPic());
+            }
+        }
     }
 
     public List<WechatUserManagementResponseVO> userManagement() {

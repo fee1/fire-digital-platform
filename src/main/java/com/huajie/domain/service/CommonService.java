@@ -76,8 +76,7 @@ public class CommonService {
     }
 
     public SignModel getSign() {
-        SignModel sign = aliyunFileClient.getSign(CommonConstants.USERDATA_FOLDER);
-        return sign;
+        return aliyunFileClient.getSign(CommonConstants.USERDATA_FOLDER);
     }
 
     public void sendSms(String phone, JSONObject param){

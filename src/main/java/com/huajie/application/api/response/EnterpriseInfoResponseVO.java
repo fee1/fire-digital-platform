@@ -41,11 +41,17 @@ public class EnterpriseInfoResponseVO {
     @ApiModelProperty("门牌号")
     private String address;
 
+    private String enterpriseTypeCode;
+
     @ApiModelProperty("企业性质 字典value code")
     private String enterpriseTypeName;
 
+    private String entIndustryClassificationCode;
+
     @ApiModelProperty("行业类别 字典value code")
     private String entIndustryClassificationName;
+
+    private String entFireTypeCode;
 
     @ApiModelProperty("消防安全管理类别 字典value code")
     private String entFireTypeName;

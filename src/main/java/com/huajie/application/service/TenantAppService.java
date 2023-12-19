@@ -66,14 +66,17 @@ public class TenantAppService {
         responseVO.setAddress(currentTenant.getAddress());
         SysDicValue enterpriseType = sysDicService.getDicValueByValueCode(currentTenant.getEnterpriseType());
         if (enterpriseType != null) {
+            responseVO.setEnterpriseTypeCode(currentTenant.getEnterpriseType());
             responseVO.setEnterpriseTypeName(enterpriseType.getValueName());
         }
         SysDicValue entIndustryClassification = sysDicService.getDicValueByValueCode(currentTenant.getEntIndustryClassification());
         if (entIndustryClassification != null) {
+            responseVO.setEntIndustryClassificationCode(currentTenant.getEntIndustryClassification());
             responseVO.setEntIndustryClassificationName(entIndustryClassification.getValueName());
         }
         SysDicValue entFireType = sysDicService.getDicValueByValueCode(currentTenant.getEntFireType());
         if (entFireType != null ) {
+            responseVO.setEntFireTypeCode(currentTenant.getEntFireType());
             responseVO.setEntFireTypeName(entFireType.getValueName());
         }
 
