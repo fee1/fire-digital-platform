@@ -49,6 +49,9 @@ public class ProblemReformService {
     @Autowired
     private DeviceService deviceService;
 
+    @Autowired
+    private GovermentOrganizationService govermentOrganizationService;
+
     public Page<ProblemDetailResponseVO> pageEnterpriseProblemList(ProblemQueryRequestVO requestVO,Integer pageNum,Integer pageSize){
         Tenant currentTenant = UserContext.getCurrentTenant();
 
@@ -152,6 +155,69 @@ public class ProblemReformService {
                 result.add(problemDetailResponseVO);
             }
         }
+        return result;
+    }
+
+    /**
+     * 查询管辖企业隐患列表
+     * @param requestVO
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public Page<ProblemDetailResponseVO> pageAdminEnterpriseProblemList(ProblemQueryRequestVO requestVO,Integer pageNum,Integer pageSize){
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        if(!TenantTypeConstants.GOVERNMENT.equals(currentTenant.getTenantType())){
+            throw new ApiException("无权限访问该接口！");
+        }
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        if(CollectionUtils.isEmpty(adminEnterpriseList)){
+            return new Page<>();
+        }
+
+        QueryWrapper<ProblemDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(ProblemDetail::getEntTenantId,adminEnterpriseList.stream().map(Tenant::getId).collect(Collectors.toList()));
+
+        if(StringUtils.isNotBlank(requestVO.getState())){
+            queryWrapper.lambda().eq(ProblemDetail::getState,requestVO.getState());
+        }
+        if(StringUtils.isNotBlank(requestVO.getProblemType())){
+            queryWrapper.lambda().eq(ProblemDetail::getProblemType,requestVO.getProblemType());
+        }
+        if(requestVO.getPlaceId() != null){
+            queryWrapper.lambda().eq(ProblemDetail::getPlaceId,requestVO.getPlaceId());
+        }
+        if(StringUtils.isNotBlank(requestVO.getPlaceName())){
+            queryWrapper.lambda().like(ProblemDetail::getPlaceName,requestVO.getPlaceName());
+        }
+        if(requestVO.getDeviceId() != null){
+            queryWrapper.lambda().eq(ProblemDetail::getDeviceId,requestVO.getDeviceId());
+        }
+        if(StringUtils.isNotBlank(requestVO.getDeviceName())){
+            queryWrapper.lambda().like(ProblemDetail::getDeviceName,requestVO.getDeviceName());
+        }
+        if(!CollectionUtils.isEmpty(requestVO.getStateList())){
+            queryWrapper.lambda().in(ProblemDetail::getState,requestVO.getStateList());
+        }
+        queryWrapper.lambda().orderByAsc(ProblemDetail::getReformTimeoutTime).orderByAsc(ProblemDetail::getSubmitTime);
+
+        Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
+        Page<ProblemDetailResponseVO> result = new Page<>();
+        if(!CollectionUtils.isEmpty(problemList)){
+            Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
+
+            BeanUtils.copyProperties(problemList,result);
+            if(!CollectionUtils.isEmpty(problemList)){
+                for (ProblemDetail problemDetail: problemList){
+                    ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
+                    BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
+                    problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
+                    problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
+                    result.add(problemDetailResponseVO);
+                }
+            }
+        }
+
         return result;
     }
 
