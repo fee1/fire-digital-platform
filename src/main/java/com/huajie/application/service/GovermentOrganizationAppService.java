@@ -254,8 +254,20 @@ public class GovermentOrganizationAppService {
         govermentInfoResponseVO.setStreetId(currentTenant.getStreet());
         govermentInfoResponseVO.setAddress(currentTenant.getAddress());
         govermentInfoResponseVO.setGovernmentType(currentTenant.getGovernmentType());
+        if (StringUtils.isNotBlank(currentTenant.getGovernmentType())){
+            SysDicValue dicValueByValueCode = this.sysDicService.getDicValueByValueCode(currentTenant.getGovernmentType());
+            govermentInfoResponseVO.setGovernmentTypeName(dicValueByValueCode.getValueName());
+        }
         govermentInfoResponseVO.setGovIndustrySector(currentTenant.getGovIndustrySector());
+        if (StringUtils.isNotBlank(currentTenant.getGovIndustrySector())){
+            SysDicValue dicValueByValueCode = this.sysDicService.getDicValueByValueCode(currentTenant.getGovIndustrySector());
+            govermentInfoResponseVO.setGovIndustrySectorName(dicValueByValueCode.getValueName());
+        }
         govermentInfoResponseVO.setEntFireType(currentTenant.getEntFireType());
+        if (StringUtils.isNotBlank(currentTenant.getEntFireType())){
+            SysDicValue dicValueByValueCode = this.sysDicService.getDicValueByValueCode(currentTenant.getEntFireType());
+            govermentInfoResponseVO.setEntFireType(dicValueByValueCode.getValueName());
+        }
 
         List<GovIndustryMap> govIndustryMapByTenantId = govIndustryMapService.getGovIndustryMapByTenantId(currentTenant.getId());
         List<String> valueCodes = govIndustryMapByTenantId.stream().map(GovIndustryMap::getIndustryClassification).collect(Collectors.toList());

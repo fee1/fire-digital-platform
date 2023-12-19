@@ -43,11 +43,17 @@ public class GovermentInfoResponseVO {
     @ApiModelProperty("政府管理类别 字典value code")
     private String governmentType;
 
+    private String governmentTypeName;
+
     @ApiModelProperty("政府行业部门 字典value code")
     private String govIndustrySector;
 
+    private String govIndustrySectorName;
+
     @ApiModelProperty("消防安全管理类别 字典value code")
     private String entFireType;
+
+    private String entFireTypeName;
 
     @ApiModelProperty("管理行业类别 字典value code")
     private List<String> entIndustryClassification;
