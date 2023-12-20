@@ -38,9 +38,13 @@ public class NotifyForNoticeService {
     public List<NotifyForNotice> getNotifyForNoticeByUserIdAndBetweenTime(Integer currentUserId, Date startTime, Date endTime) {
         QueryWrapper<NotifyForNotice> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(NotifyForNotice::getUserId, currentUserId)
-                .ge(NotifyForNotice::getSendTime, startTime)
-                .le(NotifyForNotice::getSendTime, endTime);
+                .eq(NotifyForNotice::getUserId, currentUserId);
+        if (startTime != null){
+            queryWrapper.lambda().ge(NotifyForNotice::getSendTime, startTime);
+        }
+        if (endTime != null){
+            queryWrapper.lambda().le(NotifyForNotice::getSendTime, endTime);
+        }
         return this.notifyForNoticeMapper.selectList(queryWrapper);
     }
 }

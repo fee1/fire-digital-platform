@@ -66,9 +66,13 @@ public class SignForNoticeService {
         QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(SignForNotice::getUserId, currentUserId)
-                .eq(SignForNotice::getIsDelete, IsDeleteEnum.UN_DELETE.getCode())
-                .ge(SignForNotice::getSendTime, startTime)
-                .le(SignForNotice::getSendTime, endTime);
+                .eq(SignForNotice::getIsDelete, IsDeleteEnum.UN_DELETE.getCode());
+        if (startTime != null){
+            queryWrapper.lambda().ge(SignForNotice::getSendTime, startTime);
+        }
+        if (endTime != null){
+            queryWrapper.lambda().le(SignForNotice::getSendTime, endTime);
+        }
         return this.signForNoticeMapper.selectList(queryWrapper);
     }
 
