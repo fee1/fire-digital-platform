@@ -143,22 +143,6 @@ public class NoticeAppService {
         return responseVOPage;
     }
 
-    public Page<EntPcNoticeResponseVO> getEntPcNoticeList(Integer noticeType, Date startDate, Date endDate,String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        Page<Notice> entPcNoticeList = this.noticeService.getEntPcNoticeList(noticeType, startDate, endDate, title, sendUserName, pageNum, pageSize);
-        Page<EntPcNoticeResponseVO> responseVOPage = new Page<>();
-        BeanUtils.copyProperties(entPcNoticeList, responseVOPage);
-        List<Integer> tenantIds = entPcNoticeList.stream().map(Notice::getFromTenantId).collect(Collectors.toList());
-        Map<Integer, String> id2TenantNameMap = this.tenantService.getTenantNameMap(tenantIds);
-        for (Notice notice : entPcNoticeList) {
-            EntPcNoticeResponseVO entPcNoticeResponseVO = new EntPcNoticeResponseVO();
-            BeanUtils.copyProperties(notice, entPcNoticeResponseVO);
-            entPcNoticeResponseVO.setFromTenantName(id2TenantNameMap.get(notice.getFromTenantId()));
-            entPcNoticeResponseVO.setExistAppendix(StringUtils.isNotBlank(notice.getAppendix()));
-            responseVOPage.add(entPcNoticeResponseVO);
-        }
-        return responseVOPage;
-    }
-
     public void receive(Integer noticeId) {
         this.noticeService.receive(noticeId);
     }

@@ -16,8 +16,7 @@ import java.util.Set;
 public interface NoticeMapper extends BaseMapper<Notice> {
 
 
-    List<Notice> searchNotices(@Param("noticeType") Integer noticeType, @Param("startDate") Date startDate,
-                               @Param("endDate") Date endDate,@Param("title") String title,
+    List<Notice> searchNotices(@Param("noticeType") Integer noticeType, @Param("title") String title,
                                @Param("sendUserName") String sendUserName,@Param("noticeIds") Set<Integer> noticeIds);
 
 }

@@ -38,7 +38,7 @@ public class NoticeMapperTest extends BaseTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date parse = simpleDateFormat.parse("2023-12-01 10:56:10");
         PageHelper.startPage(1, 10);
-        List<Notice> fasdf = noticeMapper.searchNotices(1, parse, date, "1122", "fasdf", set);
+        List<Notice> fasdf = noticeMapper.searchNotices(1, "1122", "fasdf", set);
 
 //        noticeService.getGovPcNoticeList(1, date, "1122", "fasdf", 1, 10);
     }
