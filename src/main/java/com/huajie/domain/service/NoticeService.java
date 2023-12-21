@@ -288,12 +288,12 @@ public class NoticeService {
 
     public Page<NoticeModel> getNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
         if (noticeType.equals(NoticeTypeConstants.NOTIFY)) {
-            List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
+            List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserIdAndBetweenTime(UserContext.getCurrentUserId(), startDate, endDate);
             Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
             Map<Integer, SignForNotice> noticeId2SignForNotice = signForNoticeList.stream().collect(Collectors.toMap(SignForNotice::getNoticeId, item -> item));
             if (!CollectionUtils.isEmpty(noticeIds)) {
                 PageHelper.startPage(pageNum, pageSize);
-                List<Notice> notices = this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
+                List<Notice> notices = this.noticeMapper.searchNotices(noticeType, title, sendUserName, noticeIds);
 
                 Page<NoticeModel> page = new Page<>();
                 BeanUtils.copyProperties(notices, page);
@@ -318,12 +318,12 @@ public class NoticeService {
                 return new Page<>();
             }
         }else {
-            List<NotifyForNotice> notifyForNotices = this.notifyForNoticeService.getNotifyForNoticeByUserId(UserContext.getCurrentUserId());
+            List<NotifyForNotice> notifyForNotices = this.notifyForNoticeService.getNotifyForNoticeByUserIdAndBetweenTime(UserContext.getCurrentUserId(), startDate, endDate);
             Set<Integer> noticeIds = notifyForNotices.stream().map(NotifyForNotice::getNoticeId).collect(Collectors.toSet());
             Map<Integer, NotifyForNotice> noticeId2NotifyForNotice = notifyForNotices.stream().collect(Collectors.toMap(NotifyForNotice::getNoticeId, item -> item));
             if (!CollectionUtils.isEmpty(noticeIds)) {
                 PageHelper.startPage(pageNum, pageSize);
-                List<Notice> notices = this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
+                List<Notice> notices = this.noticeMapper.searchNotices(noticeType, title, sendUserName, noticeIds);
 
                 Page<NoticeModel> page = new Page<>();
                 BeanUtils.copyProperties(notices, page);
@@ -346,17 +346,6 @@ public class NoticeService {
             } else {
                 return new Page<>();
             }
-        }
-    }
-
-    public Page<Notice> getEntPcNoticeList(Integer noticeType, Date startDate, Date endDate, String title, String sendUserName, Integer pageNum, Integer pageSize) {
-        List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
-        Set<Integer> noticeIds = signForNoticeList.stream().map(SignForNotice::getNoticeId).collect(Collectors.toSet());
-        if (!CollectionUtils.isEmpty(noticeIds)) {
-            PageHelper.startPage(pageNum, pageSize);
-            return (Page<Notice>) this.noticeMapper.searchNotices(noticeType, startDate, endDate, title, sendUserName, noticeIds);
-        }else {
-            return new Page<>();
         }
     }
 

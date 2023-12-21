@@ -62,6 +62,20 @@ public class SignForNoticeService {
         return this.signForNoticeMapper.selectList(queryWrapper);
     }
 
+    public List<SignForNotice> getSignForNoticeByUserIdAndBetweenTime(Integer currentUserId, Date startTime, Date endTime) {
+        QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(SignForNotice::getUserId, currentUserId)
+                .eq(SignForNotice::getIsDelete, IsDeleteEnum.UN_DELETE.getCode());
+        if (startTime != null){
+            queryWrapper.lambda().ge(SignForNotice::getSendTime, startTime);
+        }
+        if (endTime != null){
+            queryWrapper.lambda().le(SignForNotice::getSendTime, endTime);
+        }
+        return this.signForNoticeMapper.selectList(queryWrapper);
+    }
+
     public SignForNotice getSignForNoticeIdAndUserId(Integer noticeId, Integer userId) {
         QueryWrapper<SignForNotice> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(SignForNotice::getNoticeId, noticeId)

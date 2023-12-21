@@ -6,6 +6,7 @@ import com.huajie.infrastructure.mapper.NotifyForNoticeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,19 @@ public class NotifyForNoticeService {
     public List<NotifyForNotice> getNotifyForNoticeByUserId(Integer currentUserId) {
         QueryWrapper<NotifyForNotice> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(NotifyForNotice::getUserId, currentUserId);
+        return this.notifyForNoticeMapper.selectList(queryWrapper);
+    }
+
+    public List<NotifyForNotice> getNotifyForNoticeByUserIdAndBetweenTime(Integer currentUserId, Date startTime, Date endTime) {
+        QueryWrapper<NotifyForNotice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(NotifyForNotice::getUserId, currentUserId);
+        if (startTime != null){
+            queryWrapper.lambda().ge(NotifyForNotice::getSendTime, startTime);
+        }
+        if (endTime != null){
+            queryWrapper.lambda().le(NotifyForNotice::getSendTime, endTime);
+        }
         return this.notifyForNoticeMapper.selectList(queryWrapper);
     }
 }
