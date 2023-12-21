@@ -352,6 +352,11 @@ public class InspectAppService {
         problemDetail.setSubmitUserPhone(authority.getPhone());
         problemDetail.setSubmitTime(new Date());
 
+        if(!CollectionUtils.isEmpty(inspectRequestVO.getProblemPicList())){
+            problemDetail.setProblemPic1(String.join(",", inspectRequestVO.getProblemPicList()));
+        }
+
+
         return problemDetail;
     }
 

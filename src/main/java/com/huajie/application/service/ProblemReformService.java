@@ -14,15 +14,11 @@ import com.huajie.domain.common.enums.ProblemActionTypeEnum;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.UserContext;
-import com.huajie.domain.entity.Device;
-import com.huajie.domain.entity.ProblemDetail;
-import com.huajie.domain.entity.ProblemReformHistory;
-import com.huajie.domain.entity.Tenant;
+import com.huajie.domain.entity.*;
 import com.huajie.domain.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -51,6 +47,9 @@ public class ProblemReformService {
 
     @Autowired
     private GovermentOrganizationService govermentOrganizationService;
+
+    @Autowired
+    private RoleService roleService;
 
     public Page<ProblemDetailResponseVO> pageEnterpriseProblemList(ProblemQueryRequestVO requestVO,Integer pageNum,Integer pageSize){
         Tenant currentTenant = UserContext.getCurrentTenant();
@@ -148,7 +147,7 @@ public class ProblemReformService {
             Map<Integer, String> tenantNameMap = tenantService.getTenantNameMap(problemList.stream().map(ProblemDetail::getEntTenantId).collect(Collectors.toList()));
             for (ProblemDetail problemDetail: problemList){
                 ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
-                BeanUtils.copyProperties(problemDetail,result);
+                BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
                 problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
                 problemDetailResponseVO.setEntTenantName(tenantNameMap.get(problemDetail.getGovTenantId()));
                 problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
@@ -226,7 +225,16 @@ public class ProblemReformService {
         ProblemDetailResponseVO result = new ProblemDetailResponseVO();
         ProblemDetail problemDetail = problemDetailService.getById(problemId);
         BeanUtils.copyProperties(problemDetail,result);
+        if(StringUtils.isNotBlank(problemDetail.getProblemPic1())){
+            result.setProblemPicList(Arrays.asList(problemDetail.getProblemPic1().split(",")));
+        }
         result.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
+
+        User submitUser = userService.getUserById(problemDetail.getSubmitUserId());
+        result.setSubmitUserHeadPic(submitUser.getHeadPic());
+
+        Tenant entTenant = tenantService.getTenantByTenantId(problemDetail.getEntTenantId());
+        result.setEntTenantName(entTenant.getTenantName());
 
         ProblemReformHistory lastGovernmentReply = problemReformHistoryService.getLastGovernmentReform(problemId);
         if(lastGovernmentReply != null){
@@ -234,6 +242,10 @@ public class ProblemReformService {
             BeanUtils.copyProperties(lastGovernmentReply, lastGovernmentReformVO);
             lastGovernmentReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastGovernmentReformVO.getActionType()).getActionName());
             result.setGovernmentReformReply(lastGovernmentReformVO);
+            if(StringUtils.isNotBlank(lastGovernmentReply.getProblemPic1())){
+                lastGovernmentReformVO.setProblemPicList(Arrays.asList(lastGovernmentReply.getProblemPic1().split(",")));
+            }
+
         }
 
         ProblemReformHistory lastEnterpriseReply = problemReformHistoryService.getLastEnterpriseReform(problemId);
@@ -242,6 +254,9 @@ public class ProblemReformService {
             BeanUtils.copyProperties(lastEnterpriseReply, lastEnterpriseReformVO);
             lastEnterpriseReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastEnterpriseReformVO.getActionType()).getActionName());
             result.setEnterpriseReformReply(lastEnterpriseReformVO);
+            if(StringUtils.isNotBlank(lastEnterpriseReply.getProblemPic1())){
+                lastEnterpriseReformVO.setProblemPicList(Arrays.asList(lastGovernmentReply.getProblemPic1().split(",")));
+            }
         }
 
         List<ProblemReformHistory> reformHistories = problemReformHistoryService.getReformHistories(problemId);
@@ -297,6 +312,9 @@ public class ProblemReformService {
             problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"企业消防安全责任人");
         }else if(StringUtils.equals(RoleCodeConstants.ENT_OPERATOR_CODE,authority.getRole().getRoleCode())){
             problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"企业消防安全管理人");
+        }
+        if(!CollectionUtils.isEmpty(actionVO.getProblemPicList())){
+            problemReformHistory.setProblemPic1(String.join(",", actionVO.getProblemPicList()));
         }
 
         problemReformHistory.setSubmitUserId(authority.getUserId());

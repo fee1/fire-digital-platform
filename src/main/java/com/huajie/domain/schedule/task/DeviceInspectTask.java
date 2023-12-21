@@ -55,7 +55,8 @@ public class DeviceInspectTask {
         instance1.add(Calendar.MONTH,-59);
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType03.getCode())
-                .gt(Device::getProductionDate,instance1.getTime());
+                .lt(Device::getProductionDate,instance1.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
 
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
@@ -75,7 +76,8 @@ public class DeviceInspectTask {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().isNotNull(Device::getLastReplaceDate);
-        queryWrapper.lambda().gt(Device::getLastReplaceDate,instance1.getTime());
+        queryWrapper.lambda().lt(Device::getLastReplaceDate,instance1.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         Calendar instance2 = Calendar.getInstance();
@@ -83,7 +85,8 @@ public class DeviceInspectTask {
         queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().isNull(Device::getLastReplaceDate);
-        queryWrapper.lambda().gt(Device::getProductionDate,instance2.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance2.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         if(!CollectionUtils.isEmpty(deviceList)){
@@ -102,7 +105,8 @@ public class DeviceInspectTask {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType05.getCode());
         queryWrapper.lambda().eq(Device::getPowerType, PowerTypeEnum.Battery.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate, instance1.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate, instance1.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
         if(!CollectionUtils.isEmpty(deviceList)){
             for (Device item : deviceList) {
@@ -120,7 +124,8 @@ public class DeviceInspectTask {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().eq(Device::getExtinguisherType, ExtinguisherTypeEnum.WaterBase.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance1.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance1.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         Calendar instance2 = Calendar.getInstance();
@@ -129,7 +134,8 @@ public class DeviceInspectTask {
         queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().in(Device::getExtinguisherType, ExtinguisherTypeEnum.DryPowder.getCode(),ExtinguisherTypeEnum.Foam.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance2.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance2.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         Calendar instance3 = Calendar.getInstance();
@@ -138,7 +144,8 @@ public class DeviceInspectTask {
         queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().in(Device::getExtinguisherType, ExtinguisherTypeEnum.Gas.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance3.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance3.getTime());
+        queryWrapper.lambda().eq(Device::getState,DeviceStateEnum.NORMAL.getCode());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         if(!CollectionUtils.isEmpty(deviceList)){
