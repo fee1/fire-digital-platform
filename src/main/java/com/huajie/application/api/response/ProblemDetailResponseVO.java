@@ -85,30 +85,10 @@ public class ProblemDetailResponseVO {
     /** 提交时间 */
     @ApiModelProperty(name = "提交时间",notes = "")
     private Date submitTime ;
-    /** 隐患图片1 */
-    @ApiModelProperty(name = "隐患图片1",notes = "")
-    private String problemPic1 ;
-    /** 隐患图片2 */
-    @ApiModelProperty(name = "隐患图片2",notes = "")
-    private String problemPic2 ;
-    /** 隐患图片3 */
-    @ApiModelProperty(name = "隐患图片3",notes = "")
-    private String problemPic3 ;
-    /** 隐患图片4 */
-    @ApiModelProperty(name = "隐患图片4",notes = "")
-    private String problemPic4 ;
-    /** 隐患图片5 */
-    @ApiModelProperty(name = "隐患图片5",notes = "")
-    private String problemPic5 ;
-    /** 隐患图片6 */
-    @ApiModelProperty(name = "隐患图片6",notes = "")
-    private String problemPic6 ;
-    /** 隐患图片7 */
-    @ApiModelProperty(name = "隐患图片7",notes = "")
-    private String problemPic7 ;
-    /** 隐患图片8 */
-    @ApiModelProperty(name = "隐患图片8",notes = "")
-    private String problemPic8 ;
+
+    @ApiModelProperty("隐患图片")
+    private List<String> problemPicList;
+
     @Version
     private Integer version;
     /** 创建时间 */

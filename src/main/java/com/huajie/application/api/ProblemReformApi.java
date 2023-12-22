@@ -47,6 +47,15 @@ public class ProblemReformApi {
         return ApiResult.ok(ApiPage.restPage(problemReformService.pageGovInspectProblemList(requestVO,pageNum,pageSize)));
     }
 
+    @ApiOperation("分页查询政府管辖企业隐患列表")
+    @GetMapping("/pageAdminEnterpriseProblemList")
+    public ApiResult<ApiPage<ProblemDetailResponseVO>> pageAdminEnterpriseProblemList(
+            @RequestParam(required = false, defaultValue = "1")Integer pageNum,
+            @RequestParam(required = false, defaultValue = "10")Integer pageSize,
+            ProblemQueryRequestVO requestVO){
+        return ApiResult.ok(ApiPage.restPage(problemReformService.pageAdminEnterpriseProblemList(requestVO,pageNum,pageSize)));
+    }
+
     @ApiOperation("查询隐患明细")
     @GetMapping("/getProblemDetail")
     public ApiResult<ProblemDetailResponseVO> getProblemList(Long problemId){

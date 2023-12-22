@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class AddInspectRequestVO {
@@ -36,21 +37,8 @@ public class AddInspectRequestVO {
     private String preReformDesc ;
 
     /** 隐患图片1 */
-    private String problemPic1 ;
-    /** 隐患图片2 */
-    private String problemPic2 ;
-    /** 隐患图片3 */
-    private String problemPic3 ;
-    /** 隐患图片4 */
-    private String problemPic4 ;
-    /** 隐患图片5 */
-    private String problemPic5 ;
-    /** 隐患图片6 */
-    private String problemPic6 ;
-    /** 隐患图片7 */
-    private String problemPic7 ;
-    /** 隐患图片8 */
-    private String problemPic8 ;
+    @ApiModelProperty("隐患图片")
+    private List<String> problemPicList;
 
     /** 点位名称 */
     private String placeName ;

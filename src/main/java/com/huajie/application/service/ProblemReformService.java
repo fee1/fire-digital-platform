@@ -14,15 +14,11 @@ import com.huajie.domain.common.enums.ProblemActionTypeEnum;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.UserContext;
-import com.huajie.domain.entity.Device;
-import com.huajie.domain.entity.ProblemDetail;
-import com.huajie.domain.entity.ProblemReformHistory;
-import com.huajie.domain.entity.Tenant;
+import com.huajie.domain.entity.*;
 import com.huajie.domain.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +44,12 @@ public class ProblemReformService {
 
     @Autowired
     private DeviceService deviceService;
+
+    @Autowired
+    private GovermentOrganizationService govermentOrganizationService;
+
+    @Autowired
+    private RoleService roleService;
 
     public Page<ProblemDetailResponseVO> pageEnterpriseProblemList(ProblemQueryRequestVO requestVO,Integer pageNum,Integer pageSize){
         Tenant currentTenant = UserContext.getCurrentTenant();
@@ -145,7 +147,7 @@ public class ProblemReformService {
             Map<Integer, String> tenantNameMap = tenantService.getTenantNameMap(problemList.stream().map(ProblemDetail::getEntTenantId).collect(Collectors.toList()));
             for (ProblemDetail problemDetail: problemList){
                 ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
-                BeanUtils.copyProperties(problemDetail,result);
+                BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
                 problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
                 problemDetailResponseVO.setEntTenantName(tenantNameMap.get(problemDetail.getGovTenantId()));
                 problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
@@ -155,12 +157,84 @@ public class ProblemReformService {
         return result;
     }
 
+    /**
+     * 查询管辖企业隐患列表
+     * @param requestVO
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public Page<ProblemDetailResponseVO> pageAdminEnterpriseProblemList(ProblemQueryRequestVO requestVO,Integer pageNum,Integer pageSize){
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        if(!TenantTypeConstants.GOVERNMENT.equals(currentTenant.getTenantType())){
+            throw new ApiException("无权限访问该接口！");
+        }
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        if(CollectionUtils.isEmpty(adminEnterpriseList)){
+            return new Page<>();
+        }
+
+        QueryWrapper<ProblemDetail> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().in(ProblemDetail::getEntTenantId,adminEnterpriseList.stream().map(Tenant::getId).collect(Collectors.toList()));
+
+        if(StringUtils.isNotBlank(requestVO.getState())){
+            queryWrapper.lambda().eq(ProblemDetail::getState,requestVO.getState());
+        }
+        if(StringUtils.isNotBlank(requestVO.getProblemType())){
+            queryWrapper.lambda().eq(ProblemDetail::getProblemType,requestVO.getProblemType());
+        }
+        if(requestVO.getPlaceId() != null){
+            queryWrapper.lambda().eq(ProblemDetail::getPlaceId,requestVO.getPlaceId());
+        }
+        if(StringUtils.isNotBlank(requestVO.getPlaceName())){
+            queryWrapper.lambda().like(ProblemDetail::getPlaceName,requestVO.getPlaceName());
+        }
+        if(requestVO.getDeviceId() != null){
+            queryWrapper.lambda().eq(ProblemDetail::getDeviceId,requestVO.getDeviceId());
+        }
+        if(StringUtils.isNotBlank(requestVO.getDeviceName())){
+            queryWrapper.lambda().like(ProblemDetail::getDeviceName,requestVO.getDeviceName());
+        }
+        if(!CollectionUtils.isEmpty(requestVO.getStateList())){
+            queryWrapper.lambda().in(ProblemDetail::getState,requestVO.getStateList());
+        }
+        queryWrapper.lambda().orderByAsc(ProblemDetail::getReformTimeoutTime).orderByAsc(ProblemDetail::getSubmitTime);
+
+        Page<ProblemDetail> problemList = problemDetailService.getProblemList(queryWrapper, pageNum, pageSize);
+        Page<ProblemDetailResponseVO> result = new Page<>();
+        if(!CollectionUtils.isEmpty(problemList)){
+            Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
+
+            BeanUtils.copyProperties(problemList,result);
+            if(!CollectionUtils.isEmpty(problemList)){
+                for (ProblemDetail problemDetail: problemList){
+                    ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
+                    BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
+                    problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
+                    problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
+                    result.add(problemDetailResponseVO);
+                }
+            }
+        }
+
+        return result;
+    }
+
 
     public ProblemDetailResponseVO getProblemDetailById(Long problemId){
         ProblemDetailResponseVO result = new ProblemDetailResponseVO();
         ProblemDetail problemDetail = problemDetailService.getById(problemId);
         BeanUtils.copyProperties(problemDetail,result);
+        if(StringUtils.isNotBlank(problemDetail.getProblemPic1())){
+            result.setProblemPicList(Arrays.asList(problemDetail.getProblemPic1().split(",")));
+        }
         result.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
+
+        User submitUser = userService.getUserById(problemDetail.getSubmitUserId());
+        result.setSubmitUserHeadPic(submitUser.getHeadPic());
+
+        Tenant entTenant = tenantService.getTenantByTenantId(problemDetail.getEntTenantId());
+        result.setEntTenantName(entTenant.getTenantName());
 
         ProblemReformHistory lastGovernmentReply = problemReformHistoryService.getLastGovernmentReform(problemId);
         if(lastGovernmentReply != null){
@@ -168,6 +242,10 @@ public class ProblemReformService {
             BeanUtils.copyProperties(lastGovernmentReply, lastGovernmentReformVO);
             lastGovernmentReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastGovernmentReformVO.getActionType()).getActionName());
             result.setGovernmentReformReply(lastGovernmentReformVO);
+            if(StringUtils.isNotBlank(lastGovernmentReply.getProblemPic1())){
+                lastGovernmentReformVO.setProblemPicList(Arrays.asList(lastGovernmentReply.getProblemPic1().split(",")));
+            }
+
         }
 
         ProblemReformHistory lastEnterpriseReply = problemReformHistoryService.getLastEnterpriseReform(problemId);
@@ -176,6 +254,9 @@ public class ProblemReformService {
             BeanUtils.copyProperties(lastEnterpriseReply, lastEnterpriseReformVO);
             lastEnterpriseReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastEnterpriseReformVO.getActionType()).getActionName());
             result.setEnterpriseReformReply(lastEnterpriseReformVO);
+            if(StringUtils.isNotBlank(lastEnterpriseReply.getProblemPic1())){
+                lastEnterpriseReformVO.setProblemPicList(Arrays.asList(lastGovernmentReply.getProblemPic1().split(",")));
+            }
         }
 
         List<ProblemReformHistory> reformHistories = problemReformHistoryService.getReformHistories(problemId);
@@ -231,6 +312,9 @@ public class ProblemReformService {
             problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"企业消防安全责任人");
         }else if(StringUtils.equals(RoleCodeConstants.ENT_OPERATOR_CODE,authority.getRole().getRoleCode())){
             problemReformHistory.setSourceTenant(authority.getTenant().getTenantName()+" "+"企业消防安全管理人");
+        }
+        if(!CollectionUtils.isEmpty(actionVO.getProblemPicList())){
+            problemReformHistory.setProblemPic1(String.join(",", actionVO.getProblemPicList()));
         }
 
         problemReformHistory.setSubmitUserId(authority.getUserId());

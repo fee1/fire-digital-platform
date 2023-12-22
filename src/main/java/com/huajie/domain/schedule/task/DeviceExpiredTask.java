@@ -50,7 +50,7 @@ public class DeviceExpiredTask {
         instance1.add(Calendar.MONTH,-60);
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType03.getCode())
-                .gt(Device::getProductionDate,instance1.getTime());
+                .lt(Device::getProductionDate,instance1.getTime());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
     }
 
@@ -61,7 +61,7 @@ public class DeviceExpiredTask {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().isNull(Device::getLastReplaceDate);
-        queryWrapper.lambda().gt(Device::getProductionDate,instance2.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance2.getTime());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
     }
 
@@ -72,7 +72,7 @@ public class DeviceExpiredTask {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType05.getCode());
         queryWrapper.lambda().eq(Device::getPowerType, PowerTypeEnum.Battery.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate, instance1.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate, instance1.getTime());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
     }
 
@@ -83,7 +83,7 @@ public class DeviceExpiredTask {
         QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().eq(Device::getExtinguisherType, ExtinguisherTypeEnum.WaterBase.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance1.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance1.getTime());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         Calendar instance2 = Calendar.getInstance();
@@ -92,7 +92,7 @@ public class DeviceExpiredTask {
         queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().in(Device::getExtinguisherType, ExtinguisherTypeEnum.DryPowder.getCode(),ExtinguisherTypeEnum.Foam.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance2.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance2.getTime());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
 
         Calendar instance3 = Calendar.getInstance();
@@ -101,7 +101,7 @@ public class DeviceExpiredTask {
         queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Device::getDeviceType, DeviceTypeEnum.DeviceType01.getCode());
         queryWrapper.lambda().in(Device::getExtinguisherType, ExtinguisherTypeEnum.Gas.getCode());
-        queryWrapper.lambda().gt(Device::getProductionDate,instance3.getTime());
+        queryWrapper.lambda().lt(Device::getProductionDate,instance3.getTime());
         deviceList.addAll(deviceMapper.selectList(queryWrapper));
     }
 
