@@ -84,6 +84,14 @@ public class DateUtil {
         return period;
     }
 
+    public static long dateSub(Date date1, Date date2){
+        // 计算两个日期相差的天数
+        long diffInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
+        long diffInDays = diffInMilliseconds / (24 * 60 * 60 * 1000);
+        log.debug("相差 "+ diffInDays + " 天");
+        return diffInDays;
+    }
+
     public static long timeSubtracct(Date minuend,Date subtrahend){
         // 创建两个 LocalDateTime 对象
         LocalDateTime minuendDateTime = minuend.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();

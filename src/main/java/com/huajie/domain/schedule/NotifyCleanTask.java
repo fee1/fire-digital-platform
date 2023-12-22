@@ -44,8 +44,7 @@ public class NotifyCleanTask {
             for (Notice notice : noticeList) {
                 Integer saveDays = notice.getSaveDays();
                 List<SignForNotice> signForNotices = noticeId2Sign.get(notice.getId());
-                Period period = DateUtil.dateSubtract(new Date(), signForNotices.get(0).getSendTime());
-                int days = period.getDays();
+                long days = DateUtil.dateSub(new Date(), signForNotices.get(0).getSendTime());
                 if (days > saveDays) {
                     this.signForNoticeService.deleteSignForNoticeByNoticeId(notice.getId());
                 }
