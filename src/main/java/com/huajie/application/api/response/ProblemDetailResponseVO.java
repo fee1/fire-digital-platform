@@ -30,6 +30,9 @@ public class ProblemDetailResponseVO {
 
     @ApiModelProperty(name = "企业名称",notes = "")
     private String entTenantName;
+    @ApiModelProperty(name = "企业地址",notes = "")
+    private String entTenantAddress;
+
 
     @ApiModelProperty(name = "政府租户id",notes = "")
     private Integer govTenantId ;

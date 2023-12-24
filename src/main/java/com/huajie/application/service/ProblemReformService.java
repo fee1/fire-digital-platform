@@ -149,7 +149,7 @@ public class ProblemReformService {
                 ProblemDetailResponseVO problemDetailResponseVO = new ProblemDetailResponseVO();
                 BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
                 problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
-                problemDetailResponseVO.setEntTenantName(tenantNameMap.get(problemDetail.getGovTenantId()));
+                problemDetailResponseVO.setEntTenantName(tenantNameMap.get(problemDetail.getEntTenantId()));
                 problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
                 result.add(problemDetailResponseVO);
             }
@@ -235,6 +235,7 @@ public class ProblemReformService {
 
         Tenant entTenant = tenantService.getTenantByTenantId(problemDetail.getEntTenantId());
         result.setEntTenantName(entTenant.getTenantName());
+        result.setEntTenantAddress(entTenant.getAddress());
 
         ProblemReformHistory lastGovernmentReply = problemReformHistoryService.getLastGovernmentReform(problemId);
         if(lastGovernmentReply != null){
