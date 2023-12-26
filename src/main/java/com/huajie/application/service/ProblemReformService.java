@@ -255,9 +255,7 @@ public class ProblemReformService {
             BeanUtils.copyProperties(lastEnterpriseReply, lastEnterpriseReformVO);
             lastEnterpriseReformVO.setActionName(ProblemActionTypeEnum.valueOf(lastEnterpriseReformVO.getActionType()).getActionName());
             result.setEnterpriseReformReply(lastEnterpriseReformVO);
-            if(StringUtils.isNotBlank(lastEnterpriseReply.getProblemPic1())){
-                lastEnterpriseReformVO.setProblemPicList(Arrays.asList(lastGovernmentReply.getProblemPic1().split(",")));
-            }
+
         }
 
         List<ProblemReformHistory> reformHistories = problemReformHistoryService.getReformHistories(problemId);
@@ -269,6 +267,9 @@ public class ProblemReformService {
                 BeanUtils.copyProperties(history,item);
                 item.setActionName(ProblemActionTypeEnum.valueOf(history.getActionType()).getActionName());
                 item.setSubmitUserHeadPic(userHeadPicMap.get(item.getSubmitUserId()));
+                if(StringUtils.isNotBlank(history.getProblemPic1())){
+                    item.setProblemPicList(Arrays.asList(history.getProblemPic1().split(",")));
+                }
                 reformHistoryVOS.add(item);
             }
             if(result.getGovernmentReformReply() != null){

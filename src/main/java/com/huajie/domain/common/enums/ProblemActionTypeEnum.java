@@ -32,10 +32,10 @@ public enum ProblemActionTypeEnum {
     DELAY_APPROVE_REJECT("DELAY_APPROVE_REJECT","延迟整改审批拒绝",
             Arrays.asList(ProblemStateEnum.DELAY_APPROVE),
             ProblemStateEnum.TODO),
-    REFORM_APPROVE_PASS("DELAY_APPROVE_PASS","整改审批通过",
+    REFORM_APPROVE_PASS("REFORM_APPROVE_PASS","整改审批通过",
             Arrays.asList(ProblemStateEnum.REFORM_APPROVE),
             ProblemStateEnum.FINISH),
-    REFORM_APPROVE_REJECT("DELAY_APPROVE_REJECT","整改审批拒绝",
+    REFORM_APPROVE_REJECT("REFORM_APPROVE_REJECT","整改审批拒绝",
             Arrays.asList(ProblemStateEnum.REFORM_APPROVE),
             ProblemStateEnum.TODO),
     ;
