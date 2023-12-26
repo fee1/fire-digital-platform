@@ -205,6 +205,7 @@ public class ProblemReformService {
         if(!CollectionUtils.isEmpty(problemList)){
             Map<Integer, String> userHeadPicMap = userService.getUserHeadPicMap(problemList.stream().map(ProblemDetail::getSubmitUserId).distinct().collect(Collectors.toList()));
 
+            Map<Integer, String> tenantNameMap = tenantService.getTenantNameMap(problemList.stream().map(ProblemDetail::getEntTenantId).collect(Collectors.toList()));
             BeanUtils.copyProperties(problemList,result);
             if(!CollectionUtils.isEmpty(problemList)){
                 for (ProblemDetail problemDetail: problemList){
@@ -212,6 +213,7 @@ public class ProblemReformService {
                     BeanUtils.copyProperties(problemDetail,problemDetailResponseVO);
                     problemDetailResponseVO.setSubmitUserHeadPic(userHeadPicMap.get(problemDetail.getSubmitUserId()));
                     problemDetailResponseVO.setStateName(ProblemStateEnum.valueOf(problemDetail.getState()).getStateName());
+                    problemDetailResponseVO.setEntTenantName(tenantNameMap.get(problemDetail.getEntTenantId()));
                     result.add(problemDetailResponseVO);
                 }
             }

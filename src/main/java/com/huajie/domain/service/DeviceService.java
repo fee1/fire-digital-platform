@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.huajie.application.api.response.statistic.DeviceStateCountResponseVO;
 import com.huajie.domain.common.enums.DeviceStateEnum;
+import com.huajie.domain.common.enums.DeviceTypeEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Device;
@@ -102,7 +103,13 @@ public class DeviceService {
     }
 
     public List<DeviceStateCountResponseVO> getDeviceStateCount(Integer tenantId){
-        return deviceMapper.getDeviceStateCount(tenantId);
+        List<DeviceStateCountResponseVO> deviceStateCount = deviceMapper.getDeviceStateCount(tenantId);
+        if(!CollectionUtils.isEmpty(deviceStateCount)){
+            deviceStateCount.stream().forEach(item -> {
+                item.setDeviceTypeName(DeviceTypeEnum.valueOf(item.getDeviceType()).getName());
+            });
+        }
+        return deviceStateCount;
     }
 
     public List<Device> getDeviceListByEnterpriseIds(List<Integer> enterpriseIds){
