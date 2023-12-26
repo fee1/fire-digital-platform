@@ -278,6 +278,16 @@ public class RegisterService {
         this.commonService.sendSms(phone, param);
     }
 
+    public void sendVerificationCodeTest(String phone){
+        //生成六位数字验证码
+        String checkCode = "000000";
+        VerifyCodeCacheModel verifyCodeCacheModel = new VerifyCodeCacheModel();
+        verifyCodeCacheModel.setCode(checkCode);
+        verifyCodeCacheModel.setVerifyStatus(false);
+        GuavaUtil.set(CacheKeyPrefixConstants.REGISTER_VERIFICATION + phone, verifyCodeCacheModel, 600);
+
+    }
+
     public void verify(String phone, String code) {
         VerifyCodeCacheModel verifyCodeCacheModel = GuavaUtil.get(CacheKeyPrefixConstants.REGISTER_VERIFICATION + phone);
         if (verifyCodeCacheModel == null){
