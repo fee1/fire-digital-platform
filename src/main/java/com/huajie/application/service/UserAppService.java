@@ -107,10 +107,10 @@ public class UserAppService {
             user = userService.getUserById(85);
         }else if(type == 3){
             // 企业管理员
-            user = userService.getUserById(90);
+            user = userService.getUserById(88);
         }else if(type == 4){
             // 企业安全员
-            user = userService.getUserById(91);
+            user = userService.getUserById(89);
         }
 
         if(!user.getPhone().equals(mengUser.getPhone())){
