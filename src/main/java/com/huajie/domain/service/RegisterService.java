@@ -134,8 +134,8 @@ public class RegisterService {
             throw new ApiException("企业消防安全管理人 必须有一个以上");
         }
         //用户信息保存
-        // 校验验证码是否已经验证过了
-        this.checkUserPhoneIsVerify(userList);
+        // todo 校验验证码是否已经验证过了
+//        this.checkUserPhoneIsVerify(userList);
 
         userService.addUsers(userList);
 
@@ -251,8 +251,8 @@ public class RegisterService {
         }else {
             throw new ApiException("政府消防安全管理人 必须有一个以上");
         }
-        // 校验验证码是否已经验证过了
-        this.checkUserPhoneIsVerify(userList);
+        // todo 校验验证码是否已经验证过了
+//        this.checkUserPhoneIsVerify(userList);
 
         userService.addUsers(userList);
         if (!CollectionUtils.isEmpty(entIndustryClassification)){
