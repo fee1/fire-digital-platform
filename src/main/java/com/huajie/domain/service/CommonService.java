@@ -72,7 +72,7 @@ public class CommonService {
             log.error("阿里云图片上传失败", e);
             throw new ServerException("阿里云图片上传失败");
         }
-        return url + CommonConstants.QRCODE_FOLDER + fileName;
+        return url + fileName;
     }
 
     public SignModel getSign() {
