@@ -57,7 +57,7 @@ public class TradeOrderTask {
 
                 WechatPayCheckRespModel wechatPayCheckRespModel = wechatPayClient.checkOrder(payRecordIsNotSuccess.getOutTradeNo());
                 if (StringUtils.equals(wechatPayCheckRespModel.getTradeState(), PayRecordStatusConstants.WECHAT_PAY_SUCCESS)){
-                    payRecordIsNotSuccess.setStatus(wechatPayCheckRespModel.getTradeState());
+                    payRecordIsNotSuccess.setStatus(PayRecordStatusConstants.ALIPAY_TRADE_SUCCESS);
                     payRecordIsNotSuccess.setTradeNo(wechatPayCheckRespModel.getTransactionId());
                     payRecordIsNotSuccess.setPayAmount(wechatPayCheckRespModel.getPayer().getOpenId());
                     payRecordIsNotSuccess.setPayChannel(PayChannelConstants.WECHAT_CHANNEL);
@@ -87,7 +87,7 @@ public class TradeOrderTask {
                 // 支付宝订单号
                 if (StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_SUCCESS)
                         || StringUtils.equals(alipayTradeQueryResponse.getTradeStatus(), PayRecordStatusConstants.ALIPAY_TRADE_FINISHED)) {
-                    payRecordIsNotSuccess.setStatus(alipayTradeQueryResponse.getTradeStatus());
+                    payRecordIsNotSuccess.setStatus(PayRecordStatusConstants.ALIPAY_TRADE_SUCCESS);
                     payRecordIsNotSuccess.setTradeNo(alipayTradeQueryResponse.getTradeNo());
                     payRecordIsNotSuccess.setPayAmount(alipayTradeQueryResponse.getBuyerLogonId());
                     payRecordIsNotSuccess.setPayChannel(PayChannelConstants.ALIPAY_CHANNEL);
