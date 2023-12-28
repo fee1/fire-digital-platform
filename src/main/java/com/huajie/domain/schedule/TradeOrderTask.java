@@ -43,7 +43,7 @@ public class TradeOrderTask {
     @Autowired
     private TenantService tenantService;
 
-    @Scheduled(cron = "*/20 * * * * *")
+    @Scheduled(cron = "*/5 * * * * *")
     public void tradeRecordSync(){
         List<TenantPayRecord> tenantPayRecordIsNotSuccess = tenantPayRecordService.getAlipayRecordIsNotSuccess();
         if (!CollectionUtils.isEmpty(tenantPayRecordIsNotSuccess)) {
