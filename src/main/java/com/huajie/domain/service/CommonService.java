@@ -6,7 +6,7 @@ import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.infrastructure.external.oss.AliyunFileClient;
 import com.huajie.infrastructure.external.oss.model.SignModel;
-import com.huajie.infrastructure.external.sms.SmsClient;
+import com.huajie.infrastructure.external.sms.AliyunSmsClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,7 @@ public class CommonService {
     private AliyunFileClient aliyunFileClient;
 
     @Autowired
-    private SmsClient smsClient;
+    private AliyunSmsClient aliyunSmsClient;
 
     @Value("${aliyunoos.config.url}")
     private String url;
@@ -81,7 +81,7 @@ public class CommonService {
 
     public void sendSms(String phone, JSONObject param){
         try {
-            smsClient.sendSms(phone, param.toJSONString());
+            aliyunSmsClient.sendSms(phone, param.toJSONString());
         }catch (Exception e){
             e.printStackTrace();
             log.error("短信发送失败: ", e);

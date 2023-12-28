@@ -22,7 +22,7 @@ import java.util.Date;
  *
  */
 @Component
-public class SmsClient {
+public class AliyunSmsClient {
 
     //产品名称:云通信短信API产品,开发者无需替换
     static final String product = "Dysmsapi";

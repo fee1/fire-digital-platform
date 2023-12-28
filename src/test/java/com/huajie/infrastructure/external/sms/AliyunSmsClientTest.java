@@ -6,23 +6,21 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author zhuxiaofeng
  * @date 2023/11/25
  */
-public class SmsClientTest extends BaseTest {
+public class AliyunSmsClientTest extends BaseTest {
 
     @Autowired
-    private SmsClient smsClient;
+    private AliyunSmsClient aliyunSmsClient;
 
     @Test
     @SneakyThrows
     public void sendSms() {
         //SMS_187745070
         //邹公子的桶装水微服务
-        SendSmsResponse sendSmsResponse = smsClient.sendSms("17687374990","{\"code\":\"" + 1234 + "\"}");
+        SendSmsResponse sendSmsResponse = aliyunSmsClient.sendSms("17687374990","{\"code\":\"" + 1234 + "\"}");
         System.out.println(sendSmsResponse);
     }
 }
