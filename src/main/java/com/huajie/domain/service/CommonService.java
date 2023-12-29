@@ -7,8 +7,10 @@ import com.huajie.domain.common.utils.QRCodeUtils;
 import com.huajie.infrastructure.external.oss.AliyunFileClient;
 import com.huajie.infrastructure.external.oss.model.SignModel;
 import com.huajie.infrastructure.external.sms.AliyunSmsClient;
+import com.huajie.infrastructure.external.sms.ISmsClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +33,8 @@ public class CommonService {
     private AliyunFileClient aliyunFileClient;
 
     @Autowired
-    private AliyunSmsClient aliyunSmsClient;
+    @Qualifier(value = "ZTSmsClient")
+    private ISmsClient iSmsClient;
 
     @Value("${aliyunoos.config.url}")
     private String url;
@@ -81,7 +84,7 @@ public class CommonService {
 
     public void sendSms(String phone, JSONObject param){
         try {
-            aliyunSmsClient.sendSms(phone, param.toJSONString());
+            iSmsClient.sendSms(phone, param.toJSONString());
         }catch (Exception e){
             e.printStackTrace();
             log.error("短信发送失败: ", e);

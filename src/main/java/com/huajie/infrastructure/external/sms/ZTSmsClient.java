@@ -15,10 +15,15 @@ import java.security.NoSuchAlgorithmException;
  */
 @Component
 @Slf4j
-public class ZTSmsClient {
+public class ZTSmsClient implements ISmsClient {
 
-    public void sendSmsCode(String mobile, String code){
+    @Override
+    public void sendSms(String mobile, String jsonCode){
+        JSONObject jsonObject = JSONObject.parseObject(jsonCode);
+        String code = (String) jsonObject.get("code");
+
         log.info("sendSmsCode mobile: {} code: {}", mobile, code);
+
         JSONObject requestBody = new JSONObject();
         requestBody.put("mobile", mobile);
         requestBody.put("content", "【蓝朋友智慧消防】您的验证码为：" + code);

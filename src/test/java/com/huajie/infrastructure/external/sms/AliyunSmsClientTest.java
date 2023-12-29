@@ -20,7 +20,6 @@ public class AliyunSmsClientTest extends BaseTest {
     public void sendSms() {
         //SMS_187745070
         //邹公子的桶装水微服务
-        SendSmsResponse sendSmsResponse = aliyunSmsClient.sendSms("17687374990","{\"code\":\"" + 1234 + "\"}");
-        System.out.println(sendSmsResponse);
+        aliyunSmsClient.sendSms("17687374990","{\"code\":\"" + 1234 + "\"}");
     }
 }

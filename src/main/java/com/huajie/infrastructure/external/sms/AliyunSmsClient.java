@@ -8,6 +8,7 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -22,7 +23,8 @@ import java.util.Date;
  *
  */
 @Component
-public class AliyunSmsClient {
+@Slf4j
+public class AliyunSmsClient implements ISmsClient{
 
     //产品名称:云通信短信API产品,开发者无需替换
     static final String product = "Dysmsapi";
@@ -47,7 +49,8 @@ public class AliyunSmsClient {
      * @return
      * @throws ClientException
      */
-    public SendSmsResponse sendSms(String mobile, String param) throws ClientException {
+    @Override
+    public void sendSms(String mobile, String param) {
         String accessKeyId =env.getProperty("aliyun.sms.accessKeyId");
         String accessKeySecret = env.getProperty("aliyun.sms.accessKeySecret");
         //可自助调整超时时间
@@ -55,7 +58,11 @@ public class AliyunSmsClient {
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
         //初始化acsClient,暂不支持region化
         IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        try {
+            DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        } catch (ClientException e) {
+            log.error("DefaultProfile.addEndpoint", e);
+        }
         IAcsClient acsClient = new DefaultAcsClient(profile);
         //组装请求对象-具体描述见控制台-文档部分内容
         SendSmsRequest request = new SendSmsRequest();
@@ -72,8 +79,11 @@ public class AliyunSmsClient {
         //可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
         request.setOutId("yourOutId");
         //hint 此处可能会抛出异常，注意catch
-        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
-        return sendSmsResponse;
+        try {
+            acsClient.getAcsResponse(request);
+        } catch (ClientException e) {
+            log.error("短信发送失败" , e);
+        }
     }
 
     public  QuerySendDetailsResponse querySendDetails(String mobile,String bizId) throws ClientException {

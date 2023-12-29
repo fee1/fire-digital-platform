@@ -11,6 +11,6 @@ public class ZTSmsClientTest extends BaseTest {
 
     @Test
     public void sendSmsCode() {
-        ztSmsClient.sendSmsCode("17687374990", "123456");
+        ztSmsClient.sendSms("17687374990", "123456");
     }
 }
