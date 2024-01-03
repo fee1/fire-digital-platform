@@ -105,96 +105,67 @@ public class NoticeService {
 
         //通知相关的 签收表数据生成
         if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY) {
-            Byte receiveType = notice.getReceiveType();
-            if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
-                if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
-                        List<Tenant> adminEnterpriseList = govermentOrganizationService
-                                .getAdminEnterpriseList(1, Integer.MAX_VALUE, "", "", 1);
-                    List<SignForNotice> signForNotices = new ArrayList<>();
-                        if (StringUtils.equals("all", notice.getRoleName())) {
-                            Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
-                            signForNotices.addAll(generateSignDataForSignNotice(adminEnterpriseList, id, roleByCode.getId()));
-
-                            roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
-                            signForNotices.addAll(generateSignDataForSignNotice(adminEnterpriseList, id, roleByCode.getId()));
-                        }else {
-                            Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                            signForNotices.addAll(generateSignDataForSignNotice(adminEnterpriseList, id, roleByCode.getId()));
-                        }
-                        signForNoticeService.insertBatch(signForNotices);
-                } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
-                        List<Tenant> adminGovernmentList = govermentOrganizationService
-                                .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
-                    List<SignForNotice> signForNotices = new ArrayList<>();
-                    if (StringUtils.equals("all", notice.getRoleName())) {
-                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
-                        signForNotices.addAll(generateSignDataForSignNotice(adminGovernmentList, id, roleByCode.getId()));
-
-                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
-                        signForNotices.addAll(generateSignDataForSignNotice(adminGovernmentList, id, roleByCode.getId()));
-                    }else {
-                        Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                        signForNotices.addAll(generateSignDataForSignNotice(adminGovernmentList, id, roleByCode.getId()));
-                    }
-                        signForNoticeService.insertBatch(signForNotices);
-                } else {
-                    throw new ServerException("数据异常");
-                }
-            } else {
-                List<Integer> tenantIds = JSONObject.parseObject(notice.getTenantIds(), new TypeReference<List<Integer>>() {
-                });
-                List<Tenant> tenants = this.tenantService.getTenantByTenantIds(tenantIds);
-                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                List<SignForNotice> signForNotices = generateSignDataForSignNotice(tenants, id, roleByCode.getId());
-                signForNoticeService.insertBatch(signForNotices);
-            }
+            List<SignForNotice> signForNotices = this.generateSignDataForSignNotice(notice);
+            signForNoticeService.insertBatch(signForNotices);
         }else if (notice.getType().intValue() == NoticeTypeConstants.NOTICE){
             //通告数据表生成
-            Byte receiveType = notice.getReceiveType();
-            if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
-                if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
-                    List<Tenant> adminEnterpriseList = govermentOrganizationService
-                            .getAdminEnterpriseList(1, Integer.MAX_VALUE, "", "", 1);
-                    List<NotifyForNotice> notifyForNotices = new ArrayList<>();
-                    if (StringUtils.equals("all", notice.getRoleName())) {
-                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
-                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminEnterpriseList, id, roleByCode.getId()));
-
-                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
-                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminEnterpriseList, id, roleByCode.getId()));
-                    }else {
-                        Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminEnterpriseList, id, roleByCode.getId()));
-                    }
-                    notifyForNoticeService.insertBatch(notifyForNotices);
-                } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
-                    List<Tenant> adminGovernmentList = govermentOrganizationService
-                            .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
-                    List<NotifyForNotice> notifyForNotices = new ArrayList<>();
-                    if (StringUtils.equals("all", notice.getRoleName())) {
-                        Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
-                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminGovernmentList, id, roleByCode.getId()));
-
-                        roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
-                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminGovernmentList, id, roleByCode.getId()));
-                    }else {
-                        Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                        notifyForNotices.addAll(generateSignDataForNotifyNotice(adminGovernmentList, id, roleByCode.getId()));
-                    }
-                    notifyForNoticeService.insertBatch(notifyForNotices);
-                } else {
-                    throw new ServerException("数据异常");
-                }
-            } else {
-                List<Integer> tenantIds = JSONObject.parseObject(notice.getTenantIds(), new TypeReference<List<Integer>>() {
-                });
-                List<Tenant> tenants = this.tenantService.getTenantByTenantIds(tenantIds);
-                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
-                List<SignForNotice> signForNotices = generateSignDataForSignNotice(tenants, id, roleByCode.getId());
-                signForNoticeService.insertBatch(signForNotices);
-            }
+            List<NotifyForNotice> notifyForNotices = this.generateSignDataForNotifyNotice(notice);
+            notifyForNoticeService.insertBatch(notifyForNotices);
         }
 
+    }
+
+    private List<NotifyForNotice> generateSignDataForNotifyNotice(Notice notice){
+        List<NotifyForNotice> notifyForNotices = new ArrayList<>();
+        Byte receiveType = notice.getReceiveType();
+        if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
+            if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
+                List<Tenant> adminEnterpriseList = govermentOrganizationService
+                        .getAdminEnterpriseList(1, Integer.MAX_VALUE, "", "", 1);
+
+                notifyForNotices = this.generateSignDataForNotifyNotice(notice, adminEnterpriseList);
+            } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
+                List<Tenant> adminGovernmentList = govermentOrganizationService
+                        .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
+
+                notifyForNotices = this.generateSignDataForNotifyNotice(notice, adminGovernmentList);
+            }
+        } else {
+            List<Integer> tenantIds = JSONObject.parseObject(notice.getTenantIds(), new TypeReference<List<Integer>>() {
+            });
+            List<Tenant> tenants = this.tenantService.getTenantByTenantIds(tenantIds);
+            notifyForNotices = generateSignDataForNotifyNotice(notice, tenants);
+        }
+        return notifyForNotices;
+    }
+
+    private List<NotifyForNotice> generateSignDataForNotifyNotice(Notice notice, List<Tenant> tenants){
+        List<NotifyForNotice> notifyForNotices = new ArrayList<>();
+        Byte receiveType = notice.getReceiveType();
+        if (receiveType.intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
+            if (StringUtils.equals("all", notice.getRoleName())) {
+                Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
+                notifyForNotices.addAll(generateSignDataForNotifyNotice(tenants, notice.getId(), roleByCode.getId()));
+
+                roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
+                notifyForNotices.addAll(generateSignDataForNotifyNotice(tenants, notice.getId(), roleByCode.getId()));
+            }else {
+                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                notifyForNotices.addAll(generateSignDataForNotifyNotice(tenants, notice.getId(), roleByCode.getId()));
+            }
+        } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
+            if (StringUtils.equals("all", notice.getRoleName())) {
+                Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
+                notifyForNotices.addAll(generateSignDataForNotifyNotice(tenants, notice.getId(), roleByCode.getId()));
+
+                roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
+                notifyForNotices.addAll(generateSignDataForNotifyNotice(tenants, notice.getId(), roleByCode.getId()));
+            }else {
+                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                notifyForNotices.addAll(generateSignDataForNotifyNotice(tenants, notice.getId(), roleByCode.getId()));
+            }
+        }
+        return notifyForNotices;
     }
 
     private List<NotifyForNotice> generateSignDataForNotifyNotice(List<Tenant> signTenants, Integer noticeId, Integer roleId){
@@ -215,6 +186,58 @@ public class NoticeService {
             }
         }
         return notifyForNotices;
+    }
+
+    private List<SignForNotice> generateSignDataForSignNotice(Notice notice){
+        List<SignForNotice> signForNotices = new ArrayList<>();
+        if (notice.getSpecifyRange().intValue() == SpecifyRangeConstants.ALL) {
+            if (notice.getReceiveType().intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
+                List<Tenant> adminEnterpriseList = govermentOrganizationService
+                        .getAdminEnterpriseList(1, Integer.MAX_VALUE, "", "", 1);
+
+                signForNotices = generateSignDataForSignNotice(notice, adminEnterpriseList);
+            } else if (notice.getReceiveType().intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
+                List<Tenant> adminGovernmentList = govermentOrganizationService
+                        .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
+
+                signForNotices = generateSignDataForSignNotice(notice, adminGovernmentList);
+            }
+        }else {
+            List<Integer> tenantIds = JSONObject.parseObject(notice.getTenantIds(), new TypeReference<List<Integer>>() {
+            });
+            List<Tenant> tenants = this.tenantService.getTenantByTenantIds(tenantIds);
+            signForNotices = generateSignDataForSignNotice(notice, tenants);
+        }
+        return signForNotices;
+    }
+
+    private List<SignForNotice> generateSignDataForSignNotice(Notice notice, List<Tenant> tenants){
+        List<SignForNotice> signForNotices = new ArrayList<>();
+        if (notice.getReceiveType().intValue() == NoticeReceiveTypeConstants.ENTERPRISE) {
+            if (StringUtils.equals("all", notice.getRoleName())) {
+                Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
+                signForNotices.addAll(generateSignDataForSignNotice(tenants, notice.getId(), roleByCode.getId()));
+
+                roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.ENT_OPERATOR_CODE);
+                signForNotices.addAll(generateSignDataForSignNotice(tenants, notice.getId(), roleByCode.getId()));
+            } else {
+                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                signForNotices.addAll(generateSignDataForSignNotice(tenants, notice.getId(), roleByCode.getId()));
+            }
+
+        } else if (notice.getReceiveType().intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
+            if (StringUtils.equals("all", notice.getRoleName())) {
+                Role roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_ADMIN_CODE);
+                signForNotices.addAll(generateSignDataForSignNotice(tenants, notice.getId(), roleByCode.getId()));
+
+                roleByCode = this.roleService.getRoleByCode(RoleCodeConstants.GOV_OPERATOR_CODE);
+                signForNotices.addAll(generateSignDataForSignNotice(tenants, notice.getId(), roleByCode.getId()));
+            } else {
+                Role roleByCode = this.roleService.getRoleByCode(notice.getRoleName());
+                signForNotices.addAll(generateSignDataForSignNotice(tenants, notice.getId(), roleByCode.getId()));
+            }
+        }
+        return signForNotices;
     }
 
     private List<SignForNotice> generateSignDataForSignNotice(List<Tenant> signTenants, Integer noticeId, Integer roleId){
