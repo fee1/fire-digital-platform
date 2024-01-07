@@ -12,6 +12,7 @@ import com.huajie.domain.common.constants.InspectTypeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.enums.DeviceStateEnum;
 import com.huajie.domain.common.enums.DeviceTypeEnum;
+import com.huajie.domain.common.enums.EnterpriseTypeEnum;
 import com.huajie.domain.common.enums.ProblemStateEnum;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.PeriodUtil;
@@ -53,35 +54,10 @@ public class InspectAppService {
 
     public InspectRecordResponseVO getInspectRecord(Integer pageNum, Integer pageSize,InspectQueryRequestVO requestVO){
         InspectRecordResponseVO responseVO = new InspectRecordResponseVO();
-        Tenant enterprise = tenantService.getTenantByTenantId(requestVO.getEnterpriseId());
-        if(enterprise == null || !TenantTypeConstants.ENTERPRISE.equals(enterprise.getTenantType())){
-            throw new ApiException("企业不存在");
-        }
 
-        LocalDate startDate = requestVO.getStartDate();
-        LocalDate endDate = requestVO.getEndDate();
-        if(startDate == null || endDate == null){
-            PeriodDTO periodDTO = PeriodUtil.getPeriodByEnterprise(enterprise.getEnterpriseType(), enterprise.getEntFireType());
-            startDate = periodDTO.getStartDate();
-            endDate = periodDTO.getEndDate();
-        }
+        List<InspectDetail> inspectList = this.getInspectList(requestVO.getEnterpriseId(),requestVO.getStartDate(),requestVO.getEndDate());
 
-        List<InspectDetail> inspectList;
-        Tenant currentTenant = UserContext.getCurrentTenant();
-        if(TenantTypeConstants.GOVERNMENT.equals(currentTenant.getTenantType())){
-            // 政府租户只能查询 当前政府及管辖下一级政府的检查记录
-            Page<Tenant> adminGovernmentList = govermentOrganizationService.getAdminGovernmentList(1, 10000, null);
-            List<Integer> adminGovernmentIds = adminGovernmentList.stream().map(Tenant::getId).distinct().collect(Collectors.toList());
-            adminGovernmentIds.add(currentTenant.getId());
-            inspectList = inspectDetailService.getGovernmentInspectList(enterprise.getId(), adminGovernmentIds, startDate, endDate);
-        }else if(TenantTypeConstants.ENTERPRISE.equals(currentTenant.getTenantType())){
-            // 企业用户只能查询 本企业的检查记录
-            inspectList = inspectDetailService.getEnterpriseInspectList(enterprise.getId(), startDate,endDate);
-        }else{
-            throw new ApiException("当前租户无法访问此功能");
-        }
-
-        Page<Place> placePage = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), null, enterprise.getId());
+        Page<Place> placePage = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), null, requestVO.getEnterpriseId());
         responseVO.setPlaceCount(placePage.size());
         // 已检查点位数
         responseVO.setInspectPlaceCount(CollectionUtils.isEmpty(inspectList) ? 0 : inspectList.stream().map(InspectDetail::getPlaceId).distinct().count());
@@ -150,6 +126,34 @@ public class InspectAppService {
         }
         responseVO.setPlacePage(ApiPage.restPage(placeList));
         return responseVO;
+    }
+
+    public List<InspectDetail> getInspectList( Integer enterpriseId, LocalDate startDate, LocalDate endDate){
+        Tenant enterprise = tenantService.getTenantByTenantId(enterpriseId);
+        if(enterprise == null || !TenantTypeConstants.ENTERPRISE.equals(enterprise.getTenantType())){
+            throw new ApiException("企业不存在");
+        }
+        if(startDate == null || endDate == null){
+            PeriodDTO periodDTO = PeriodUtil.getPeriodByEnterprise(enterprise.getEnterpriseType(), enterprise.getEntFireType());
+            startDate = periodDTO.getStartDate();
+            endDate = periodDTO.getEndDate();
+        }
+
+        List<InspectDetail> inspectList;
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        if(TenantTypeConstants.GOVERNMENT.equals(currentTenant.getTenantType())){
+            // 政府租户只能查询 当前政府及管辖下一级政府的检查记录
+            Page<Tenant> adminGovernmentList = govermentOrganizationService.getAdminGovernmentList(1, 10000, null);
+            List<Integer> adminGovernmentIds = adminGovernmentList.stream().map(Tenant::getId).distinct().collect(Collectors.toList());
+            adminGovernmentIds.add(currentTenant.getId());
+            inspectList = inspectDetailService.getGovernmentInspectList(enterprise.getId(), adminGovernmentIds, startDate, endDate);
+        }else if(TenantTypeConstants.ENTERPRISE.equals(currentTenant.getTenantType())){
+            // 企业用户只能查询 本企业的检查记录
+            inspectList = inspectDetailService.getEnterpriseInspectList(enterprise.getId(), startDate,endDate);
+        }else{
+            throw new ApiException("当前租户无法访问此功能");
+        }
+        return inspectList;
     }
 
     public Page<InspectDetailResponseVO> getPageSelfCheckList(Integer pageNum, Integer pageSize, SelfCheckQueryRequestVO requestVO){

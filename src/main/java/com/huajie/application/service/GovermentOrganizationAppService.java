@@ -16,12 +16,7 @@ import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.enums.EnterpriseFireTypeEnum;
 import com.huajie.domain.common.enums.EnterpriseTypeEnum;
 import com.huajie.domain.common.utils.UserContext;
-import com.huajie.domain.entity.GovIndustryMap;
-import com.huajie.domain.entity.Region;
-import com.huajie.domain.entity.Role;
-import com.huajie.domain.entity.SysDicValue;
-import com.huajie.domain.entity.Tenant;
-import com.huajie.domain.entity.User;
+import com.huajie.domain.entity.*;
 import com.huajie.domain.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -70,6 +65,9 @@ public class GovermentOrganizationAppService {
 
     @Autowired
     private ProblemDetailService problemDetailService;
+
+    @Autowired
+    private InspectAppService inspectAppService;
 
     public void editGovermentInfo(EditGovermentInfoRequestVO requestVO) {
         Tenant tenant = new Tenant();
@@ -160,6 +158,18 @@ public class GovermentOrganizationAppService {
 
             SysDicValue entIndustryClassification = this.sysDicService.getDicValueByValueCode(tenant.getEntIndustryClassification());
             enterpriseResponseVO.setEntIndustryClassificationName(entIndustryClassification.getValueName());
+
+
+            // 获取企业当前期段检查记录
+            List<InspectDetail> inspectList = inspectAppService.getInspectList(tenant.getId(), null, null);
+            if(!CollectionUtils.isEmpty(inspectList)){
+                // 已检查点位数
+                int inspectPlaceCount = (int) inspectList.stream().map(InspectDetail::getPlaceId).distinct().count();
+                // 已检查设备数
+                int inspectDeviceCount = (int) inspectList.stream().map(InspectDetail::getDeviceId).distinct().count();
+                enterpriseResponseVO.setInspectDeviceCount(inspectDeviceCount);
+                enterpriseResponseVO.setInspectPlaceCount(inspectPlaceCount);
+            }
 
             enterpriseResponseVOList.add(enterpriseResponseVO);
         }

@@ -169,7 +169,7 @@ public class ProblemReformService {
         if(!TenantTypeConstants.GOVERNMENT.equals(currentTenant.getTenantType())){
             throw new ApiException("无权限访问该接口！");
         }
-        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList(requestVO.getEnterpriseName());
         if(CollectionUtils.isEmpty(adminEnterpriseList)){
             return new Page<>();
         }
@@ -331,18 +331,12 @@ public class ProblemReformService {
 
         if(!currentState.equals(action.getToStates())){
             // 状态不一致，需要更新隐患状态
-            Calendar calendar = Calendar.getInstance();
             switch (action){
                 case SIGN:;
                 case REPLY:;
                 case REFORM_APPROVE_REJECT:;
                 case DELAY_APPROVE_REJECT:
-                    calendar.add(Calendar.DATE,3);
-                    problemDetail.setReformTimeoutTime(calendar.getTime());
-                    break;
                 case DELAY_APPROVE_PASS:
-                    calendar.add(Calendar.DATE,30);
-                    problemDetail.setReformTimeoutTime(calendar.getTime());
                     break;
                 case URGE:
                     // TODO 发送通知

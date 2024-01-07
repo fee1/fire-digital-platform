@@ -79,6 +79,8 @@ public class InspectDetailService {
         return inspectDetailMapper.selectList(queryWrapper);
     }
 
+
+
     public List<InspectDetail> getCurrentMonthInspectListByGovernment(Integer govTenantId){
         QueryWrapper<InspectDetail> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()

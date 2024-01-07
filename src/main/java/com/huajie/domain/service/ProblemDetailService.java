@@ -95,6 +95,11 @@ public class ProblemDetailService {
     }
 
     public ProblemDetail insert(ProblemDetail problemDetail){
+        // 隐患整改超时时间
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE,3);
+        problemDetail.setReformTimeoutTime(calendar.getTime());
+
         problemDetailMapper.insert(problemDetail);
         return problemDetail;
     }

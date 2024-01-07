@@ -67,4 +67,10 @@ public class EnterpriseResponseVO {
     @ApiModelProperty("隐患数量")
     private Integer problemCount;
 
+    @ApiModelProperty("已检查点位数量")
+    private Integer inspectPlaceCount;
+
+    @ApiModelProperty("已检查设备数量")
+    private Integer inspectDeviceCount;
+
 }
