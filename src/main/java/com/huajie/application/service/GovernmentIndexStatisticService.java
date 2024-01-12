@@ -63,7 +63,7 @@ public class GovernmentIndexStatisticService {
 
         // 管辖企业数量
         Integer adminEnterpriseCount = 0;
-        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList(null);
         if(!CollectionUtils.isEmpty(adminEnterpriseList)){
             adminEnterpriseCount = adminEnterpriseList.size();
             BeanUtils.copyProperties(this.getEnterpriseTypeCountStatistic(adminEnterpriseList),responseVO);
@@ -150,7 +150,7 @@ public class GovernmentIndexStatisticService {
     public List<StatisticResponseVO> getNewDeviceCount(){
         List<StatisticResponseVO> responseVOS = new ArrayList<>();
 
-        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList(null);
         if(CollectionUtils.isEmpty(adminEnterpriseList)){
             return responseVOS;
         }
@@ -202,7 +202,7 @@ public class GovernmentIndexStatisticService {
      */
     public GovIndexEntCountBySecurityLevelResponseVO getEnterpriseCountBySecurityLevel(Integer city, Integer region, Integer street){
         GovIndexEntCountBySecurityLevelResponseVO responseVO = new GovIndexEntCountBySecurityLevelResponseVO();
-        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList();
+        List<Tenant> adminEnterpriseList = govermentOrganizationService.getAdminEnterpriseList(null);
         if(CollectionUtils.isEmpty(adminEnterpriseList)){
             return responseVO;
         }

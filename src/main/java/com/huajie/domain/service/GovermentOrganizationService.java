@@ -125,7 +125,7 @@ public class GovermentOrganizationService {
      * 分页获取管理企业列表
      * @return
      */
-    public List<Tenant> getAdminEnterpriseList() {
+    public List<Tenant> getAdminEnterpriseList(String enterpriseName) {
         return tenantService.getListByQueryWrapper(getAdminEnterpriseQueryWrapper(null,null,1));
     }
 

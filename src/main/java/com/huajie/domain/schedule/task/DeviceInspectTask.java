@@ -8,6 +8,7 @@ import com.huajie.domain.entity.ProblemDetail;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.service.DeviceService;
 import com.huajie.domain.service.PlaceService;
+import com.huajie.domain.service.ProblemDetailService;
 import com.huajie.infrastructure.mapper.DeviceMapper;
 import com.huajie.infrastructure.mapper.ProblemDetailMapper;
 import com.huajie.infrastructure.mapper.UserMapper;
@@ -29,7 +30,7 @@ public class DeviceInspectTask {
     private DeviceMapper deviceMapper;
 
     @Autowired
-    private ProblemDetailMapper problemDetailMapper;
+    private ProblemDetailService problemDetailService;
 
     @Autowired
     private UserMapper userMapper;
@@ -195,7 +196,7 @@ public class DeviceInspectTask {
 
         try {
             deviceService.editDevice(updateDevice);
-            problemDetailMapper.insert(problemDetail);
+            problemDetailService.insert(problemDetail);
             log.info("设备自动检查隐患创建成功，设备id:{},隐患描述:{}",device.getId(),preReformDesc);
         }catch (Exception e){
             log.error("设备自动检查隐患创建失败，失败原因:{}, {}",e.getMessage(), e.getStackTrace());

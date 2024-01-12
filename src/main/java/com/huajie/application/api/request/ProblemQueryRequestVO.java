@@ -12,6 +12,9 @@ public class ProblemQueryRequestVO {
     @ApiModelProperty(value = "entTenantId", name = "企业id",notes = "")
     private Integer entTenantId ;
 
+    @ApiModelProperty(value = "enterpriseName", name = "企业名称（模糊查询）")
+    private String enterpriseName;
+
     /** 隐患状态 submit;wait_reform */
     @ApiModelProperty(value = "state",name = "隐患状态",notes = "SUBMIT, TODO, TIMEOUT, DELAY_APPROVE, REFORM_APPROVE, FINISH")
     private String state ;
