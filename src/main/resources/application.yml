@@ -41,6 +41,9 @@ logging:
     console: "%d %thread %5level %logger{50} : %line %msg%n"
   config: classpath:log4j2.xml
 #  config: classpath:logback.xml
+# sql 日志
+#  level:
+#    com.huajie.infrastructure.mapper: debug
 
 #alipay:
 #  notify:
