@@ -59,18 +59,18 @@ public class EnterpriseResponseVO {
     private String entFireTypeName;
 
     @ApiModelProperty("已采集点位数量")
-    private Integer placeCount;
+    private Integer placeCount = 0;
 
     @ApiModelProperty("已采集设备数量")
-    private Integer deviceCount;
+    private Integer deviceCount = 0;
 
     @ApiModelProperty("隐患数量")
-    private Integer problemCount;
+    private Integer problemCount = 0;
 
     @ApiModelProperty("已检查点位数量")
-    private Integer inspectPlaceCount;
+    private Integer inspectPlaceCount = 0;
 
     @ApiModelProperty("已检查设备数量")
-    private Integer inspectDeviceCount;
+    private Integer inspectDeviceCount = 0;
 
 }
