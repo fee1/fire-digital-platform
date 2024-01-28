@@ -80,7 +80,7 @@ public class IndexStatisticApi {
 
     @ApiOperation("用户工作日历")
     @GetMapping(value = "/user/workCalender")
-    public ApiResult<List<WorkMessageResponseVO>> getWorkCalender(@RequestParam(required = false)@ApiParam("结束时间")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date){
+    public ApiResult<List<WorkMessageResponseVO>> getWorkCalender(@RequestParam(required = false)@ApiParam("开始时间, 例：2024-01-28 00:00:00")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date){
         return ApiResult.ok(noticeAppService.getWorkCalender(date));
     }
 
