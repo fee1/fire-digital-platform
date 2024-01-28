@@ -48,7 +48,8 @@ import org.springframework.security.web.access.intercept.FilterSecurityIntercept
                         "/monitor/**",
                         "/index/statistic/**",
                         "/wechat/edit/user/info",
-                        "/wechat/user/management"
+                        "/wechat/user/management",
+                        "/weather/**"
                 ).and().addFilterAfter(chargeFilter, FilterSecurityInterceptor.class);
     }
 
