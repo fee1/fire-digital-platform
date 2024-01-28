@@ -63,7 +63,7 @@ public class GovermentOrganizationServiceTest extends BaseTest {
                 .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
 
 
-        List<Tenant> adminEnterpriseList2 = govermentOrganizationService.getAdminEnterpriseList();
+//        List<Tenant> adminEnterpriseList2 = govermentOrganizationService.getAdminEnterpriseList();
         System.out.println(adminEnterpriseList);
     }
 

@@ -12,8 +12,8 @@ import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SpecifyRangeConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
-import com.huajie.domain.common.utils.DateUtil;
 import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.convertor.NoticeConvertor;
 import com.huajie.domain.entity.Notice;
 import com.huajie.domain.entity.NotifyForNotice;
 import com.huajie.domain.entity.Role;
@@ -21,6 +21,7 @@ import com.huajie.domain.entity.SignForNotice;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.NoticeModel;
+import com.huajie.domain.model.SysCreateNotice;
 import com.huajie.infrastructure.mapper.NoticeMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +65,9 @@ public class NoticeService {
     @Autowired
     private NotifyForNoticeService notifyForNoticeService;
 
+    @Autowired
+    private NoticeConvertor noticeConvertor;
+
     public void createNotice(Notice notice) {
         notice.setStatus(NoticeStatusConstants.NOT_PUBLIC.byteValue());
         Tenant currentTenant = UserContext.getCurrentTenant();
@@ -71,6 +75,11 @@ public class NoticeService {
         notice.setFromUserId(customizeGrantedAuthority.getUserId());
         notice.setFromTenantId(currentTenant.getId());
         noticeMapper.insert(notice);
+    }
+
+    public void sysCreateNotice(SysCreateNotice createNotice){
+        Notice notice = noticeConvertor.sysCreateNoticeToNotice(createNotice);
+        this.createNotice(notice);
     }
 
     public Page<Notice> searchNotice(String title, Integer pageNum, Integer pageSize) {
