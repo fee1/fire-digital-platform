@@ -5,12 +5,10 @@ import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.GuavaUtil;
 import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.Tenant;
-import com.huajie.domain.service.UserService;
 import com.huajie.infrastructure.external.weather.WeatherClient;
 import com.huajie.infrastructure.external.weather.model.Live;
 import com.huajie.infrastructure.external.weather.model.WeatherResponseBody;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -23,11 +21,6 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class WeatherService {
-
-    @Autowired
-    private UserService userService;
-
-
 
     public Live getWeather() {
         CustomizeGrantedAuthority userInfo = UserContext.getCustomizeGrantedAuthority();
