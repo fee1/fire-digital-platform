@@ -10,9 +10,12 @@ import com.huajie.domain.common.constants.NoticeStatusConstants;
 import com.huajie.domain.common.constants.NoticeTypeConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SpecifyRangeConstants;
+import com.huajie.domain.common.constants.TenantTypeConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
+import com.huajie.domain.common.utils.AssertUtil;
 import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.common.utils.ValidatorUtil;
 import com.huajie.domain.convertor.NoticeConvertor;
 import com.huajie.domain.entity.Notice;
 import com.huajie.domain.entity.NotifyForNotice;
@@ -23,6 +26,7 @@ import com.huajie.domain.entity.User;
 import com.huajie.domain.model.NoticeModel;
 import com.huajie.domain.model.SysCreateNotice;
 import com.huajie.infrastructure.mapper.NoticeMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +47,7 @@ import java.util.stream.Collectors;
  * @date 2023/10/22
  */
 @Service
+@Slf4j
 public class NoticeService {
 
     @Autowired
@@ -77,9 +83,30 @@ public class NoticeService {
         noticeMapper.insert(notice);
     }
 
-    public void sysCreateNotice(SysCreateNotice createNotice){
-        Notice notice = noticeConvertor.sysCreateNoticeToNotice(createNotice);
-        this.createNotice(notice);
+    /**
+     * 创建并且发送《通告》给指定用户
+     *
+     * @param createNotice
+     */
+    public void createAndPublicNotice(SysCreateNotice createNotice){
+        log.info("param: {}", createNotice);
+        String result = ValidatorUtil.simpleValidate(createNotice);
+
+        AssertUtil.isTrue(StringUtils.isBlank(result),"入参错误");
+
+        Tenant systemTenant = tenantService.getTenantByType(TenantTypeConstants.SYSTEM);
+        AssertUtil.nonNull(systemTenant, "没有设置超级租户");
+        List<User> usersByTenantId = userService.getUsersByTenantId(systemTenant.getId());
+        AssertUtil.isTrue(!CollectionUtils.isEmpty(usersByTenantId), "没有系统用户");
+
+        Notice notice = new Notice();
+        notice.setFromUserId(usersByTenantId.get(0).getId());
+        notice.setFromTenantId(1);
+        notice.setType(createNotice.getType().byteValue());
+        notice.setReceiveType(NoticeReceiveTypeConstants.SYSTEM.byteValue());
+        notice.setStatus(NoticeStatusConstants.PUBLIC.byteValue());
+        notice.setRoleName("all");
+        notice.setSpecifyRange(SpecifyRangeConstants.SYSTEM.byteValue());
     }
 
     public Page<Notice> searchNotice(String title, Integer pageNum, Integer pageSize) {

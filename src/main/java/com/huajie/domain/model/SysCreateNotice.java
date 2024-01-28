@@ -22,21 +22,6 @@ public class SysCreateNotice {
     @NotNull(message = "type: 类型不能为空")
     private Integer type;
 
-    @ApiModelProperty("0： 企业 / 1 ： 政府机构")
-    @NotNull(message = "receiveType: 收件人类型不能为空")
-    private Integer receiveType;
-
-    @ApiModelProperty("指定角色，all：表示全部")
-    @NotNull(message = "指定角色不能为空")
-    private String roleName;
-
-    @ApiModelProperty("0: 管理的所有政府与企业 / 1：指定的政府或者企业")
-    @NotNull(message = "specifyRange: 指定范围不能为空")
-    private Integer specifyRange;
-
-    @ApiModelProperty("指定的企业/政府 ids")
-    private List<Integer> tenantIds;
-
     @ApiModelProperty("标题")
     @NotNull(message = "title:标题不能为空")
     @NotBlank(message = "title:标题不能为空")
@@ -47,8 +32,8 @@ public class SysCreateNotice {
     @NotNull(message = "text:正文不能为空")
     private String text;
 
-    @ApiModelProperty("附件")
-    private List<FileModel> appendix;
+//    @ApiModelProperty("附件")
+//    private List<FileModel> appendix;
 
     @ApiModelProperty("通知保留时间 1个月，3个月，6个月，1年, 单位天")
     private Integer saveDays;

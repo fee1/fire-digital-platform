@@ -156,4 +156,10 @@ public class TenantService {
             return tenants;
         }
     }
+
+    public Tenant getTenantByType(String type) {
+        QueryWrapper<Tenant> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Tenant::getTenantType, type);
+        return this.tenantMapper.selectOne(queryWrapper);
+    }
 }

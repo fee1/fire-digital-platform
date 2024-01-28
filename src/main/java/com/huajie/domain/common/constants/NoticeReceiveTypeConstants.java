@@ -16,4 +16,9 @@ public class NoticeReceiveTypeConstants {
      */
     public static final Integer GOVERMENT = 1;
 
+    /**
+     * 系统
+     */
+    public static final Integer SYSTEM = 2;
+
 }
