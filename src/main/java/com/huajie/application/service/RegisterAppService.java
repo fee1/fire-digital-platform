@@ -90,7 +90,8 @@ public class RegisterAppService {
     }
 
     public void sendVerificationCode(SendVerificationCodeRequestVO requestVO) {
-        this.registerService.sendVerificationCodeTest(requestVO.getPhone());
+//        this.registerService.sendVerificationCodeTest(requestVO.getPhone());
+        registerService.sendVerificationCode(requestVO.getPhone());
     }
 
     public void verify(PhoneVerifyRequestVO requestVO) {
