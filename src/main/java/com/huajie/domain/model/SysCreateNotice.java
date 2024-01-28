@@ -15,6 +15,8 @@ import java.util.List;
 @Data
 public class SysCreateNotice {
 
+    @ApiModelProperty("指定用户发送通知")
+    private List<Integer> userIdList;
 
     @ApiModelProperty("类型  0: 通知 / 1:通告")
     @NotNull(message = "type: 类型不能为空")
