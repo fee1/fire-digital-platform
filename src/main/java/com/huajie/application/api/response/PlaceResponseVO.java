@@ -48,4 +48,7 @@ public class PlaceResponseVO {
     @TableField(value = "update_user",fill = FieldFill.UPDATE)
     private String updateUser;
 
+    @TableField(exist = false)
+    private Integer deviceCount;
+
 }

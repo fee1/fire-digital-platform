@@ -23,6 +23,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class PlaceAppService {
@@ -30,13 +32,18 @@ public class PlaceAppService {
     @Autowired
     private PlaceService placeService;
 
+    @Autowired
+    private DeviceService deviceService;
+
     public Page<PlaceResponseVO> pageEntPlaceList(Integer pageNum, Integer pageSize, PlaceQueryRequestVO requestVO){
         Page<Place> page = placeService.getPagePlaceList(pageNum, pageSize, requestVO.getPlaceId(), requestVO.getPlaceName(), requestVO.getPlaceAddress(), UserContext.getCurrentTenant().getId());
         Page<PlaceResponseVO> result = new Page<>();
         BeanUtils.copyProperties(page,result);
         for (Place place: page) {
+            List<Device> deviceList = deviceService.getDeviceListByPlaceId(place.getId());
             PlaceResponseVO placeResponseVO = new PlaceResponseVO();
             BeanUtils.copyProperties(place,placeResponseVO);
+            placeResponseVO.setDeviceCount(deviceList.size());
             result.add(placeResponseVO);
         }
         return result;
