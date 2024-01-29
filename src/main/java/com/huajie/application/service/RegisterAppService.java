@@ -36,7 +36,8 @@ public class RegisterAppService {
         tenant.setTenantName(regiestRequestVO.getEnterpriseName());
         tenant.setTenantType(TenantTypeConstants.ENTERPRISE);
         tenant.setStatus(TenantStatusConstants.DISABLE);
-        tenant.setEffectiveEndDate(DateUtil.addYears(new Date(), 1));
+        //一年费用加上赠送90天
+        tenant.setEffectiveEndDate(DateUtil.addDays(DateUtil.addYears(new Date(), 1), 90));
         tenant.setProvince(regiestRequestVO.getProvinceId());
         tenant.setCity(regiestRequestVO.getCityId());
         tenant.setRegion(regiestRequestVO.getRegionId());

@@ -6,6 +6,7 @@ import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.huajie.application.api.common.exception.ApiException;
 import com.huajie.application.api.request.UserAddRequestVO;
 import com.huajie.domain.common.constants.CacheKeyPrefixConstants;
+import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SystemConstants;
@@ -33,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -80,9 +82,11 @@ public class RegisterService {
     @Value("${wechat.pay.mchId:}")
     private String mchId;
 
-    @Value("${unit.price:5}")
-    private Double unitPrice;
+//    @Value("${unit.price:5}")
+//    private Double unitPrice;
 
+    @Autowired
+    private Environment environment;
 
     @Value("${wechat.pay.notify-url}")
     private String wechatNotifyUrl;
@@ -94,7 +98,7 @@ public class RegisterService {
      * @param entAdminList 企业消防安全责任人
      * @param entOperatorList 企业消防安全管理人
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public EnterpriseRegiestDTO regiestEnterprise(Tenant tenant, List<UserAddRequestVO> entAdminList, List<UserAddRequestVO> entOperatorList) {
         Role entAdminCodeRole = roleService.getRoleByCode(RoleCodeConstants.ENT_ADMIN_CODE);
         if (entAdminCodeRole == null){
@@ -140,7 +144,8 @@ public class RegisterService {
         userService.addUsers(userList);
 
         //支付宝预下单，生成付款二维码
-        BigDecimal amount = new BigDecimal(unitPrice * userList.size());
+        String priceStr = environment.getProperty(CommonConstants.ENTERPRISE_TYPE_PRE + tenant.getEnterpriseType());
+        BigDecimal amount = new BigDecimal(priceStr);
 
         EnterpriseRegiestDTO enterpriseRegiestDTO = new EnterpriseRegiestDTO();
         enterpriseRegiestDTO.setAmount(amount.setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -165,7 +170,7 @@ public class RegisterService {
         wechatPayCreateOrderModel.setDescription("企业用户注册: "+ tenant.getTenantName());
         wechatPayCreateOrderModel.setMchId(mchId);
         AmountModel amountModel = new AmountModel();
-        amountModel.setTotal(amount.multiply(new BigDecimal(100)).intValue());
+        amountModel.setTotal(amount.intValue());
         wechatPayCreateOrderModel.setAmount(amountModel);
         wechatPayCreateOrderModel.setOutTradeNo(outTradeNo);
         wechatPayCreateOrderModel.setNotifyUrl(wechatNotifyUrl);

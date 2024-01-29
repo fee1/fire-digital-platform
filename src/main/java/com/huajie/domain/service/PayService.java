@@ -2,6 +2,7 @@ package com.huajie.domain.service;
 
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
+import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.constants.PayChannelConstants;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.SystemConstants;
@@ -21,6 +22,7 @@ import com.zxf.method.trace.util.TraceFatch;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +54,11 @@ public class PayService {
     @Autowired
     private TenantService tenantService;
 
-    @Value("${unit.price:5}")
-    private Double unitPrice;
+//    @Value("${unit.price:5}")
+//    private Double unitPrice;
+
+    @Autowired
+    private Environment environment;
 
     @Value("${wechat.pay.appId:}")
     private String wechatAppId;
@@ -74,9 +79,10 @@ public class PayService {
     @Transactional
     public EnterpriseRegiestDTO generatePayQrcodeImage(String orderId, String channel) {
         TenantPayRecord payRecordByOrderId = this.getPayRecordByOrderId(orderId);
-        List<User> usersByTenantId = userService.getUsersByTenantId(payRecordByOrderId.getTenantId());
         Tenant currentTenant = tenantService.getTenantByTenantId(payRecordByOrderId.getTenantId());
-        BigDecimal amount = new BigDecimal(unitPrice * usersByTenantId.size());
+
+        String priceStr = environment.getProperty(CommonConstants.ENTERPRISE_TYPE_PRE + currentTenant.getEnterpriseType());
+        BigDecimal amount = new BigDecimal(priceStr);
 
         String outTradeNo = "";
         if (StringUtils.equals(payRecordByOrderId.getStatus(), PayRecordStatusConstants.ALIPAY_TRADE_CLOSED)){
