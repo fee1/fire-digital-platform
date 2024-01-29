@@ -32,8 +32,12 @@ public class SysCreateNotice {
     @NotNull(message = "text:正文不能为空")
     private String text;
 
-//    @ApiModelProperty("附件")
-//    private List<FileModel> appendix;
+    @ApiModelProperty("指定的企业/政府 ids")
+    private List<Integer> tenantIds;
+
+
+    @ApiModelProperty("附件")
+    private List<FileModel> appendix;
 
     @ApiModelProperty("通知保留时间 1个月，3个月，6个月，1年, 单位天")
     private Integer saveDays;

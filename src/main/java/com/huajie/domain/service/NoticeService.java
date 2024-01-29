@@ -11,6 +11,7 @@ import com.huajie.domain.common.constants.NoticeTypeConstants;
 import com.huajie.domain.common.constants.RoleCodeConstants;
 import com.huajie.domain.common.constants.SpecifyRangeConstants;
 import com.huajie.domain.common.constants.TenantTypeConstants;
+import com.huajie.domain.common.enums.SignStatusEnum;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.model.CustomizeGrantedAuthority;
 import com.huajie.domain.common.utils.AssertUtil;
@@ -84,11 +85,12 @@ public class NoticeService {
     }
 
     /**
-     * 创建并且发送《通告》给指定用户
+     * 创建并且发送通知通告给指定用户
      *
      * @param createNotice
      */
-    public void createAndPublicNotice(SysCreateNotice createNotice){
+    @Transactional(rollbackFor = Exception.class)
+    public void sysCreateAndPublicNotice(SysCreateNotice createNotice){
         log.info("param: {}", createNotice);
         String result = ValidatorUtil.simpleValidate(createNotice);
 
@@ -104,9 +106,48 @@ public class NoticeService {
         notice.setFromTenantId(1);
         notice.setType(createNotice.getType().byteValue());
         notice.setReceiveType(NoticeReceiveTypeConstants.SYSTEM.byteValue());
-        notice.setStatus(NoticeStatusConstants.PUBLIC.byteValue());
+        notice.setStatus(NoticeStatusConstants.NOT_PUBLIC.byteValue());
         notice.setRoleName("all");
         notice.setSpecifyRange(SpecifyRangeConstants.SYSTEM.byteValue());
+        notice.setTenantIds("[]");
+        notice.setTitle(createNotice.getTitle());
+        notice.setText(createNotice.getText());
+        notice.setAppendix("[]");
+        notice.setSaveDays(createNotice.getSaveDays());
+        this.noticeMapper.insert(notice);
+
+        Date sendTime = new Date();
+        if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY){
+            List<Integer> userIdList = createNotice.getUserIdList();
+
+            List<SignForNotice> signForNoticeList = new ArrayList<>();
+            for (Integer userId : userIdList) {
+                SignForNotice signForNotice = new SignForNotice();
+                signForNotice.setUserId(userId);
+                signForNotice.setNoticeId(notice.getId());
+                signForNotice.setSignStatus(SignStatusEnum.NotSign.getCode());
+                signForNotice.setSendTime(sendTime);
+                signForNotice.setSendUserId(notice.getFromUserId());
+                signForNoticeList.add(signForNotice);
+            }
+            signForNoticeService.insertBatch(signForNoticeList);
+        }else if(notice.getType().intValue() == NoticeTypeConstants.NOTICE){
+            List<Integer> userIdList = createNotice.getUserIdList();
+
+            List<NotifyForNotice> notifyForNotices = new ArrayList<>();
+            for (Integer userId : userIdList) {
+                NotifyForNotice notifyForNotice = new NotifyForNotice();
+                notifyForNotice.setUserId(userId);
+                notifyForNotice.setNoticeId(notice.getId());
+                notifyForNotice.setSendUserId(notice.getFromUserId());
+                notifyForNotice.setSendTime(sendTime);
+                notifyForNotices.add(notifyForNotice);
+            }
+            notifyForNoticeService.insertBatch(notifyForNotices);
+        }
+
+        notice.setStatus(NoticeStatusConstants.PUBLIC.byteValue());
+        noticeMapper.updateById(notice);
     }
 
     public Page<Notice> searchNotice(String title, Integer pageNum, Integer pageSize) {
