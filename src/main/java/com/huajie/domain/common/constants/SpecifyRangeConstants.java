@@ -16,4 +16,9 @@ public class SpecifyRangeConstants {
      */
     public static final Integer SPECIFY = 1;
 
+    /**
+     * 所有
+     */
+    public static final Integer SYSTEM = 2;
+
 }

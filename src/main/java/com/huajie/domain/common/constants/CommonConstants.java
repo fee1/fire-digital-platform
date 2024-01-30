@@ -48,4 +48,6 @@ public class CommonConstants {
      */
     public static final String FAIL = "1";
 
+    public static final String ENTERPRISE_TYPE_PRE = "enterprise.type.";
+
 }

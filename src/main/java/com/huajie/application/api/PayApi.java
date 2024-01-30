@@ -53,4 +53,8 @@ public class PayApi {
         return ApiResult.ok(payAppService.generatePayQrcodeImage(requestVO));
     }
 
+//    @ApiOperation("根据用户查询租户自动生成的订单号")
+
+
+
 }
