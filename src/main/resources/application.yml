@@ -76,10 +76,10 @@ aliyun:
 # 分类型定价
 enterprise:
   type:
-    Company: 216
-    Enterprise: 216
-    Merchant: 120
-    RentalHouse: 96
+    Company: 2.16
+    Enterprise: 2.16
+    Merchant: 1.20
+    RentalHouse: 9.6
 
 # 阿里支付配置
 alipay:
