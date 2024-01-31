@@ -40,8 +40,6 @@ public class AliyunSmsClient implements ISmsClient{
     @Value("${aliyun.sms.signName}")
     private String signName;
 
-    // TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-
     /**
      * 发送短信
      * @param mobile 手机号
