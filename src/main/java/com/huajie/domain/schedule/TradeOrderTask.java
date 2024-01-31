@@ -100,7 +100,6 @@ public class TradeOrderTask {
                     tenantPayRecordService.updateById(payRecordIsNotSuccess);
 
                     //更新租户状态为可用状态
-                    //TODO 时限
                     Tenant tenantByTenantId = tenantService.getTenantByTenantId(payRecordIsNotSuccess.getTenantId());
                     tenantByTenantId.setStatus(TenantStatusConstants.ENABLE);
                     tenantByTenantId.setEffectiveEndDate(DateUtil.addYears(new Date(), 1));
