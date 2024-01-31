@@ -70,7 +70,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new ChargeInterceptor())
-                .excludePathPatterns(ignoreUrls);
+                .excludePathPatterns(ignoreUrls)
+                .excludePathPatterns("/pay/generate/pay/record");
     }
 
     @Override

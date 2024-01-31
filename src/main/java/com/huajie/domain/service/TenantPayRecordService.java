@@ -2,6 +2,8 @@ package com.huajie.domain.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
+import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.infrastructure.mapper.TenantPayRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,15 @@ public class TenantPayRecordService {
     public TenantPayRecord getPayRecordByOutTradeNo(String outTradeNo) {
         QueryWrapper<TenantPayRecord> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(TenantPayRecord::getOutTradeNo, outTradeNo);
+        return tenantPayRecordMapper.selectOne(queryWrapper);
+    }
+
+    public TenantPayRecord getAlipayRecordIsNotSuccessByTenantId() {
+        Tenant currentTenant = UserContext.getCurrentTenant();
+        QueryWrapper<TenantPayRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(TenantPayRecord::getStatus, PayRecordStatusConstants.ALIPAY_WAIT_BUYER_PAY)
+                .eq(TenantPayRecord::getTenantId, currentTenant.getId());
         return tenantPayRecordMapper.selectOne(queryWrapper);
     }
 }

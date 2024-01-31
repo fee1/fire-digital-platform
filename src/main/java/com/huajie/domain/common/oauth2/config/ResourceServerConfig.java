@@ -45,7 +45,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         "/index/statistic/**",
                         "/wechat/edit/user/info",
                         "/wechat/user/management",
-                        "/weather/**"
+                        "/weather/**",
+                        "/pay/generate/pay/record"
                 );
     }
 

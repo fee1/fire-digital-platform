@@ -1,7 +1,6 @@
 package com.huajie.domain.common.utils;
 
 import com.huajie.domain.common.exception.ServerException;
-import com.huajie.domain.entity.Tenant;
 
 import java.util.Objects;
 

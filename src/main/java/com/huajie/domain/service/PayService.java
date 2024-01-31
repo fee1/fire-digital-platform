@@ -7,6 +7,7 @@ import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.constants.PayRecordStatusConstants;
 import com.huajie.domain.common.constants.SystemConstants;
 import com.huajie.domain.common.enums.PayRecordReasonEnum;
+import com.huajie.domain.common.utils.AssertUtil;
 import com.huajie.domain.entity.Tenant;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author zhuxiaofeng
@@ -163,6 +165,12 @@ public class PayService {
 
     @Transactional(rollbackFor = Exception.class)
     public GeneratePayRecordResponseVO generatePayRecord(PayRecordReasonEnum payRecordReasonEnum , Tenant tenant) {
+
+        TenantPayRecord tenantPayRecord = this.tenantPayRecordService.getAlipayRecordIsNotSuccessByTenantId();
+        if (tenantPayRecord != null){
+            return GeneratePayRecordResponseVO.builder().orderId(tenantPayRecord.getOutTradeNo()).build();
+        }
+
         //支付宝预下单，生成付款二维码
         String priceStr = environment.getProperty(CommonConstants.ENTERPRISE_TYPE_PRE + tenant.getEnterpriseType());
         BigDecimal amount = new BigDecimal(priceStr);
@@ -202,7 +210,7 @@ public class PayService {
         enterpriseRegiestDTO.setWechatPayQrcodeUrl(wechatpayQrcodeUrl);
 
         //生成预缴费记录
-        TenantPayRecord tenantPayRecord = new TenantPayRecord();
+        tenantPayRecord = new TenantPayRecord();
 //        tenantPayRecord.setPayChannel(PayChannelConstants.ALIPAY_CHANNEL);
         tenantPayRecord.setStatus(PayRecordStatusConstants.ALIPAY_WAIT_BUYER_PAY);
         tenantPayRecord.setTenantId(tenant.getId());
