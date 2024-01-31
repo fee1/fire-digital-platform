@@ -1,7 +1,10 @@
 package com.huajie.domain.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -10,6 +13,9 @@ import java.math.BigDecimal;
  * @date 2023/9/6
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EnterpriseRegiestDTO {
 
     @ApiModelProperty("alipay二维码图片地址")

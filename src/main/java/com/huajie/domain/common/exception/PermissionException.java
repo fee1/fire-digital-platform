@@ -1,5 +1,8 @@
 package com.huajie.domain.common.exception;
 
+import com.huajie.application.api.common.IErrorCode;
+import lombok.Getter;
+
 /**
  * 认证异常
  *
@@ -8,8 +11,12 @@ package com.huajie.domain.common.exception;
  */
 public class PermissionException extends RuntimeException {
 
-    public PermissionException(String message){
+    @Getter
+    private IErrorCode errorCode;
+
+    public PermissionException(String message, IErrorCode errorCode){
         super(message);
+        this.errorCode = errorCode;
     }
 
 }

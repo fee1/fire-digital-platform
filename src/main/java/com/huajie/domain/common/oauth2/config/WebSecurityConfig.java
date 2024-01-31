@@ -1,5 +1,6 @@
 package com.huajie.domain.common.oauth2.config;
 
+import com.huajie.application.api.interceptor.ChargeInterceptor;
 import com.huajie.domain.common.oauth2.provider.WechatAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * SpringSecurity配置
@@ -24,13 +27,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 //    @Autowired
 //    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
 //    @Autowired
 //    private DaoAuthenticationProvider daoAuthenticationProvider;
+
+    private final String[] ignoreUrls = new String[]{
+            "/oauth/**",
+            "/login/**",
+            "/logout/**",
+            "/register/**", "/alipay/notify/**", "/region/**",
+            "/sys/dic/list", "/sys/dic/value/list",
+            "/pay/callback",
+            "/pay/record/select",
+            "/pay/generate/qrcode/image",
+            "/wechat/app/login",
+            "/wechat/user/phone/binding",
+            //放行 swagger
+            "/v2/api-docs",
+            "/swagger-resources/**",
+            "/swagger-ui.html","/css/**", "/js/**", "/webjars/**"
+    };
 
     @Autowired
     @Qualifier("userOauth2ServiceImpl")
@@ -45,6 +65,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new ChargeInterceptor())
+                .excludePathPatterns(ignoreUrls);
     }
 
     @Override
@@ -82,18 +108,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //放行的url
-        web.ignoring().antMatchers(
-                "/register/**", "/alipay/notify/**", "/region/**",
-                "/sys/dic/list", "/sys/dic/value/list",
-                "/pay/callback",
-                "/pay/record/select",
-                "/pay/generate/qrcode/image",
-                "/wechat/app/login",
-                "/wechat/user/phone/binding",
-                //放行 swagger
-                "/v2/api-docs",
-                "/swagger-resources/**",
-                "/swagger-ui.html","/css/**", "/js/**", "/webjars/**"
-        );
+        web.ignoring().antMatchers(ignoreUrls);
     }
 }

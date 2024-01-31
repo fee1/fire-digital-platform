@@ -1,9 +1,12 @@
 package com.huajie.application.service;
 
 import com.huajie.application.api.request.GeneratePayQrcodeImageRequestVO;
+import com.huajie.application.api.response.GeneratePayRecordResponseVO;
 import com.huajie.application.api.response.QrcodeImageResponseVO;
 import com.huajie.application.api.response.TenantPayRecordResponseVO;
 import com.huajie.domain.common.constants.PayChannelConstants;
+import com.huajie.domain.common.enums.PayRecordReasonEnum;
+import com.huajie.domain.common.utils.UserContext;
 import com.huajie.domain.entity.TenantPayRecord;
 import com.huajie.domain.model.EnterpriseRegiestDTO;
 import com.huajie.domain.service.PayService;
@@ -30,7 +33,7 @@ public class PayAppService {
     }
 
     public QrcodeImageResponseVO generatePayQrcodeImage(GeneratePayQrcodeImageRequestVO requestVO) {
-        EnterpriseRegiestDTO enterpriseRegiestDTO = payService.generatePayQrcodeImage(requestVO.getOutTradeNo(), requestVO.getChannel());
+        EnterpriseRegiestDTO enterpriseRegiestDTO = payService.generatePayQrcodeImage(requestVO.getOutTradeNo());
         QrcodeImageResponseVO qrcodeImageResponseVO = new QrcodeImageResponseVO();
         qrcodeImageResponseVO.setAmount(enterpriseRegiestDTO.getAmount().toPlainString());
         if (StringUtils.equals(requestVO.getChannel(), PayChannelConstants.ALIPAY_CHANNEL)){
@@ -43,4 +46,7 @@ public class PayAppService {
         return qrcodeImageResponseVO;
     }
 
+    public GeneratePayRecordResponseVO generatePayRecord() {
+        return this.payService.generatePayRecord(PayRecordReasonEnum.ENTERPRISE_USER_RENEWAL, UserContext.getCurrentTenant());
+    }
 }

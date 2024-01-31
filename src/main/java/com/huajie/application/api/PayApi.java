@@ -3,6 +3,7 @@ package com.huajie.application.api;
 import com.alibaba.fastjson.JSONObject;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.request.GeneratePayQrcodeImageRequestVO;
+import com.huajie.application.api.response.GeneratePayRecordResponseVO;
 import com.huajie.application.api.response.QrcodeImageResponseVO;
 import com.huajie.application.api.response.TenantPayRecordResponseVO;
 import com.huajie.application.service.PayAppService;
@@ -53,7 +54,11 @@ public class PayApi {
         return ApiResult.ok(payAppService.generatePayQrcodeImage(requestVO));
     }
 
-//    @ApiOperation("根据用户查询租户自动生成的订单号")
+    @ApiOperation("生成待支付订单")
+    @PostMapping("generate/pay/record")
+    public ApiResult<GeneratePayRecordResponseVO> generatePayRecord(){
+        return ApiResult.ok(payAppService.generatePayRecord());
+    }
 
 
 

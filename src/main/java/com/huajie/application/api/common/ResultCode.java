@@ -16,6 +16,10 @@ public enum ResultCode implements IErrorCode {
     //登录失败
     WECHAT_FAIL_LOGIN("401", "微信登录失败"),
 
+    TENANT_MEMBER_EXPIRE("402", "租户会员到期"),
+
+    REQUEST_NOT_PERMISSION("403", "请求不被允许"),
+
     //通用失败响应
     FAIL("500", "失败"),
 
