@@ -164,7 +164,7 @@ public class PayService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public GeneratePayRecordResponseVO generatePayRecord(PayRecordReasonEnum payRecordReasonEnum , Tenant tenant) {
+    public synchronized GeneratePayRecordResponseVO generatePayRecord(PayRecordReasonEnum payRecordReasonEnum , Tenant tenant) {
 
         TenantPayRecord tenantPayRecord = this.tenantPayRecordService.getAlipayRecordIsNotSuccessByTenantId();
         if (tenantPayRecord != null){
