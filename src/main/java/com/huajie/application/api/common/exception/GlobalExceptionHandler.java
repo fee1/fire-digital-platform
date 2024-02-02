@@ -4,6 +4,7 @@ package com.huajie.application.api.common.exception;
 import com.huajie.application.api.common.ApiResult;
 import com.huajie.domain.common.exception.PermissionException;
 import com.huajie.domain.common.exception.ServerException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.validation.BindException;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2021/9/4
  */
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     /**
@@ -34,6 +36,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = ApiException.class)
     public ApiResult<Void> handleException(Exception ex, HttpServletResponse response){
+        log.info("GlobalExceptionHandler.ApiException");
         response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         return ApiResult.failed(ex.getMessage());
     }
@@ -41,6 +44,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ApiResult<Void> handleValidException(MethodArgumentNotValidException validException, HttpServletResponse response){
+        log.info("GlobalExceptionHandler.MethodArgumentNotValidException");
         BindingResult bindingResult = validException.getBindingResult();
         String message = null;
         if (bindingResult.hasErrors()){
@@ -54,6 +58,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = BindException.class)
     public ApiResult<Void> handleValidException(BindException bindException, HttpServletResponse response){
+        log.info("GlobalExceptionHandler.BindException");
         BindingResult bindingResult = bindException.getBindingResult();
         String message = null;
         if (bindingResult.hasErrors()){
@@ -72,6 +77,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = OAuth2Exception.class)
     public ApiResult<Void> handleOAuth2Exception(OAuth2Exception oAuth2Exception, HttpServletResponse response){
+        log.info("GlobalExceptionHandler.handleOAuth2Exception");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         return ApiResult.failed(oAuth2Exception.getMessage());
     }
@@ -84,6 +90,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = ServerException.class)
     public ApiResult<Void> handleServerException(ServerException serverException, HttpServletResponse response){
+        log.info("GlobalExceptionHandler.ServerException");
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         return ApiResult.failed("服务异常：" + serverException.getMessage());
     }
@@ -96,6 +103,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = PermissionException.class)
     public ApiResult<Void> handleServerException(PermissionException permissionException, HttpServletResponse response){
+        log.info("GlobalExceptionHandler.PermissionException");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         return ApiResult.failed(permissionException.getMessage(), permissionException.getErrorCode(), null);
     }
