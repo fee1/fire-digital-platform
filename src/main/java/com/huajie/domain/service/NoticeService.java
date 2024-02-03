@@ -204,7 +204,7 @@ public class NoticeService {
             } else if (receiveType.intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
                 List<Tenant> adminGovernmentList = govermentOrganizationService
                         .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
-
+                adminGovernmentList.add(UserContext.getCurrentTenant());
                 notifyForNotices = this.generateSignDataForNotifyNotice(notice, adminGovernmentList);
             }
         } else {
@@ -276,7 +276,7 @@ public class NoticeService {
             } else if (notice.getReceiveType().intValue() == NoticeReceiveTypeConstants.GOVERMENT) {
                 List<Tenant> adminGovernmentList = govermentOrganizationService
                         .getAdminGovernmentList(1, Integer.MAX_VALUE, "");
-
+                adminGovernmentList.add(UserContext.getCurrentTenant());
                 signForNotices = generateSignDataForSignNotice(notice, adminGovernmentList);
             }
         }else {
