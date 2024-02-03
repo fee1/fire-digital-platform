@@ -20,20 +20,24 @@ public class EnterpriseInfoResponseVO {
     @ApiModelProperty("企业名称")
     private String enterpriseName;
 
+    @ApiModelProperty("省id")
+    private Integer provinceId;
+
     @ApiModelProperty("省地址")
     private String provinceName;
 
-    private Integer cityCode;
+    @ApiModelProperty("市id")
+    private Integer cityId;
 
     @ApiModelProperty("市地址")
     private String cityName;
 
-    private Integer regionCode;
+    private Integer regionId;
 
     @ApiModelProperty("区/县地址")
     private String regionName;
 
-    private Integer streetCode;
+    private Integer streetId;
 
     @ApiModelProperty("街道地址")
     private String streetName;

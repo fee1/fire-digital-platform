@@ -47,20 +47,21 @@ public class TenantAppService {
         EnterpriseInfoResponseVO responseVO = new EnterpriseInfoResponseVO();
         responseVO.setEnterpriseName(currentTenant.getTenantName());
         Region province = regionService.getRegionById(currentTenant.getProvince());
+        responseVO.setProvinceId(province.getId());
         responseVO.setProvinceName(province.getRegionName());
         Region city = regionService.getRegionById(currentTenant.getCity());
         if (city != null) {
-            responseVO.setCityCode(currentTenant.getCity());
+            responseVO.setCityId(currentTenant.getCity());
             responseVO.setCityName(city.getRegionName());
         }
         Region region = regionService.getRegionById(currentTenant.getRegion());
         if (region != null ) {
-            responseVO.setRegionCode(currentTenant.getRegion());
+            responseVO.setRegionId(currentTenant.getRegion());
             responseVO.setRegionName(region.getRegionName());
         }
         Region street = regionService.getRegionById(currentTenant.getStreet());
         if (street != null) {
-            responseVO.setStreetCode(currentTenant.getStreet());
+            responseVO.setStreetId(currentTenant.getStreet());
             responseVO.setStreetName(street.getRegionName());
         }
         responseVO.setAddress(currentTenant.getAddress());

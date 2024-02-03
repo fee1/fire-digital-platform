@@ -44,6 +44,9 @@ public class GovernmentIndexStatisticService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private SignForNoticeService signForNoticeService;
+
     /**
      * 政府用户基本信息统计
      * @return
@@ -87,6 +90,13 @@ public class GovernmentIndexStatisticService {
         responseVO.setAdminEnterpriseCount(adminEnterpriseCount);
         responseVO.setUnApproveEnterpriseCount(adminUnApproveEnterpriseCount);
         this.setGovUserInspectCountList(responseVO);
+
+        // 待签收通知数量
+        List<SignForNotice> signForNoticeList = this.signForNoticeService.getSignForNoticeByUserId(UserContext.getCurrentUserId());
+        if(!CollectionUtils.isEmpty(signForNoticeList)){
+            int unsignedNoticeCount = (int)signForNoticeList.stream().filter(item -> 0 == item.getSignStatus()).count();
+            responseVO.setUnsignedNoticeCount(unsignedNoticeCount);
+        }
 
         return responseVO;
     }

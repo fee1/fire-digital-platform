@@ -55,5 +55,8 @@ public class GovIndexResponseVO {
     @ApiModelProperty("出租屋")
     private int rentalHouseCount;
 
+    @ApiModelProperty("未签收通知数")
+    private int unsignedNoticeCount;
+
 
 }
