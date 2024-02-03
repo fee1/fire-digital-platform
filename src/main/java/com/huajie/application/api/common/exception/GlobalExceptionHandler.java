@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
      */
     @ResponseBody
     @ExceptionHandler(value = ApiException.class)
-    public ApiResult<Void> handleException(Exception ex, HttpServletResponse response){
+    public ApiResult<Void> handleApiException(Exception ex, HttpServletResponse response){
         log.info("GlobalExceptionHandler.ApiException");
         response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         return ApiResult.failed(ex.getMessage());
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ApiResult<Void> handleValidException(MethodArgumentNotValidException validException, HttpServletResponse response){
+    public ApiResult<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException validException, HttpServletResponse response){
         log.info("GlobalExceptionHandler.MethodArgumentNotValidException");
         BindingResult bindingResult = validException.getBindingResult();
         String message = null;
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = BindException.class)
-    public ApiResult<Void> handleValidException(BindException bindException, HttpServletResponse response){
+    public ApiResult<Void> handleBindException(BindException bindException, HttpServletResponse response){
         log.info("GlobalExceptionHandler.BindException");
         BindingResult bindingResult = bindException.getBindingResult();
         String message = null;
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = OAuth2Exception.class)
     public ApiResult<Void> handleOAuth2Exception(OAuth2Exception oAuth2Exception, HttpServletResponse response){
         log.info("GlobalExceptionHandler.handleOAuth2Exception");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
         return ApiResult.failed(oAuth2Exception.getMessage());
     }
 
@@ -102,10 +102,11 @@ public class GlobalExceptionHandler {
      */
     @ResponseBody
     @ExceptionHandler(value = PermissionException.class)
-    public ApiResult<Void> handleServerException(PermissionException permissionException, HttpServletResponse response){
+    public ApiResult<Void> handlePermissionException(PermissionException permissionException, HttpServletResponse response){
         log.info("GlobalExceptionHandler.PermissionException");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         return ApiResult.failed(permissionException.getMessage(), permissionException.getErrorCode(), null);
     }
+
 
 }

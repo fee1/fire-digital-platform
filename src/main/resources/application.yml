@@ -80,6 +80,7 @@ enterprise:
     Enterprise: 2.16
     Merchant: 1.20
     RentalHouse: 9.6
+    system: 1
 
 # 阿里支付配置
 alipay:

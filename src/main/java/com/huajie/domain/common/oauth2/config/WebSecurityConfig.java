@@ -47,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             "/wechat/app/login",
             "/wechat/user/phone/binding",
             //放行 swagger
+            "/error",
             "/v2/api-docs",
             "/swagger-resources/**",
             "/swagger-ui.html","/css/**", "/js/**", "/webjars/**"
