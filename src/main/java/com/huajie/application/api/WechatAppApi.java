@@ -4,6 +4,7 @@ import com.huajie.application.api.common.ApiResult;
 import com.huajie.application.api.common.ResultCode;
 import com.huajie.application.api.request.AppRequestVO;
 import com.huajie.application.api.request.PhoneBindingRequestVO;
+import com.huajie.application.api.request.UsrLoginRequestVO;
 import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatGetPhoneResponseVO;
@@ -62,6 +63,13 @@ public class WechatAppApi {
     public ApiResult<List<WechatUserManagementResponseVO>> userManagement(){
         List<WechatUserManagementResponseVO> responseVOList = this.wechatAppService.userManagement();
         return ApiResult.ok(responseVOList);
+    }
+
+    @ApiOperation("微信用户名密码登陆")
+    @PostMapping("app/usr/login")
+    public ApiResult<WechatAppLoginResponseVO> login(@Valid @RequestBody UsrLoginRequestVO requestVO){
+        WechatAppLoginResponseVO responseVO = this.wechatAppService.login(requestVO);
+        return ApiResult.ok(responseVO);
     }
 
 }

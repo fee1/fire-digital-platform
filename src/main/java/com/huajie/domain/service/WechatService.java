@@ -3,7 +3,9 @@ package com.huajie.domain.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+import com.huajie.application.api.request.UsrLoginRequestVO;
 import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
+import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatUserManagementResponseVO;
 import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
@@ -209,5 +211,10 @@ public class WechatService {
             wechatUserManagementResponseVOList.add(wechatUserManagementResponseVO);
         }
         return wechatUserManagementResponseVOList;
+    }
+
+    public WechatAppLoginResponseVO login(UsrLoginRequestVO requestVO) {
+        User userByPhone = this.userService.getUserByPhone(requestVO.getPhone());
+        return null;
     }
 }

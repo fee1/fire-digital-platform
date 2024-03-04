@@ -1,5 +1,6 @@
 package com.huajie.application.service;
 
+import com.huajie.application.api.request.UsrLoginRequestVO;
 import com.huajie.application.api.request.WechatEditUserInfoRequestVO;
 import com.huajie.application.api.response.WechatAppLoginResponseVO;
 import com.huajie.application.api.response.WechatGetPhoneResponseVO;
@@ -52,5 +53,10 @@ public class WechatAppService {
     public List<WechatUserManagementResponseVO> userManagement() {
         List<WechatUserManagementResponseVO> responseVOList = this.wechatService.userManagement();
         return responseVOList;
+    }
+
+    public WechatAppLoginResponseVO login(UsrLoginRequestVO requestVO) {
+        WechatAppLoginResponseVO responseVO = this.wechatService.login(requestVO);
+        return responseVO;
     }
 }
