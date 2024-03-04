@@ -61,6 +61,15 @@ infrastructure:主要是业务平台，编程框架，第三方库的封装，�
 ```text
 https://opendocs.alipay.com/open/194/106078?pathHash=193f2039#%E6%8E%A5%E5%85%A5%E6%96%B9%E5%BC%8F
 ```
+# https ssl 配置说明
+```text
+(nginx代理的服务springboot可以不用配置ssl)
+1. springboot配置：https://help.aliyun.com/zh/ssl-certificate/user-guide/enable-https-on-spring-boot?spm=a2c4g.11186623.0.0.69c93799nkXEGg
+
+2. nginx配置：
+https://help.aliyun.com/zh/ssl-certificate/user-guide/install-ssl-certificates-on-nginx-servers-or-tengine-servers?spm=a2c4g.11186623.0.0.2eaf3799TEihMZ
+https://blog.csdn.net/guo_qiangqiang/article/details/95622649
+```
 # TODO
 ```text
 1.防止短信验证码接口被恶意调用攻击
