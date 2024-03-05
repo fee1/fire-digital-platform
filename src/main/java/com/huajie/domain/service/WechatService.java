@@ -11,9 +11,11 @@ import com.huajie.domain.common.constants.CommonConstants;
 import com.huajie.domain.common.exception.ServerException;
 import com.huajie.domain.common.oauth2.token.WechatAuthenticationToken;
 import com.huajie.domain.common.oauth2.token.WechatOAuth2AccessToken;
+import com.huajie.domain.common.utils.AssertUtil;
 import com.huajie.domain.common.utils.ObjectReflectUtil;
 import com.huajie.domain.common.utils.OkHttpUtil;
 import com.huajie.domain.common.utils.UserContext;
+import com.huajie.domain.convertor.WechatConvertor;
 import com.huajie.domain.entity.Role;
 import com.huajie.domain.entity.User;
 import com.huajie.domain.model.AccessTokenResponseDTO;
@@ -24,23 +26,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -66,6 +75,12 @@ public class WechatService {
     @Autowired
     private TokenEndpoint tokenEndpoint;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private WechatConvertor wechatConvertor;
+
     private final String WECHAT_GRANT_TYPE = "grant_type";
 
     private final String APP_ID = "appid";
@@ -76,7 +91,7 @@ public class WechatService {
 
     private String accessToken;
 
-    public WechatOAuth2AccessToken appLogin(String jsCode) {
+    private WechatAppLoginResponseDTO getJsCode2session(String jsCode){
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put(APP_ID, appId);
         requestParams.put(SECRET, appSecret);
@@ -87,22 +102,28 @@ public class WechatService {
             log.debug("jscode2session http response: {}", response.toJSONString());
             WechatAppLoginResponseDTO wechatAppLoginResponseDTO = response.toJavaObject(WechatAppLoginResponseDTO.class);
             log.debug("wechatAppLoginResponseDTO: {}", wechatAppLoginResponseDTO);
-            String openid = wechatAppLoginResponseDTO.getOpenid();
-            String sessionKey = wechatAppLoginResponseDTO.getSessionKey();
-            User userByOpenId = userService.getUserByOpenId(openid);
-//            System.out.println(this.login(userService.getUserByOpenId("oB7PV5fWmFxl9a7qVAljav9ZL4ys"), "oB7PV5fWmFxl9a7qVAljav9ZL4ys", ""));
-            if (userByOpenId == null){
-                WechatOAuth2AccessToken wechatOAuth2AccessToken = new WechatOAuth2AccessToken();
-                wechatOAuth2AccessToken.setSessionKey(sessionKey);
-                wechatOAuth2AccessToken.setOpenId(openid);
-                return wechatOAuth2AccessToken;
-            }else {
-                return (WechatOAuth2AccessToken)this.login(userByOpenId, openid, sessionKey);
-            }
+            return wechatAppLoginResponseDTO;
         } catch (IOException e) {
             e.printStackTrace();
             log.error("jscode2session ex:", e);
             throw new ServerException(e.getMessage());
+        }
+    }
+
+    public WechatOAuth2AccessToken appLogin(String jsCode) {
+        WechatAppLoginResponseDTO wechatAppLoginResponseDTO = this.getJsCode2session(jsCode);
+        String openid = wechatAppLoginResponseDTO.getOpenid();
+        String sessionKey = wechatAppLoginResponseDTO.getSessionKey();
+        User userByOpenId = userService.getUserByOpenId(openid);
+//      System.out.println(this.login(userService.getUserByOpenId("oB7PV5fWmFxl9a7qVAljav9ZL4ys"), "oB7PV5fWmFxl9a7qVAljav9ZL4ys", ""));
+        if (userByOpenId == null){
+            //TODO 查看日志
+            WechatOAuth2AccessToken wechatOAuth2AccessToken = new WechatOAuth2AccessToken();
+            wechatOAuth2AccessToken.setSessionKey(sessionKey);
+            wechatOAuth2AccessToken.setOpenId(openid);
+            return wechatOAuth2AccessToken;
+        }else {
+            return (WechatOAuth2AccessToken)this.login(userByOpenId, openid, sessionKey);
         }
     }
 
@@ -213,8 +234,51 @@ public class WechatService {
         return wechatUserManagementResponseVOList;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public WechatAppLoginResponseVO login(UsrLoginRequestVO requestVO) {
-        User userByPhone = this.userService.getUserByPhone(requestVO.getPhone());
-        return null;
+        User userByOpenId = this.userService.getUserByOpenId(requestVO.getOpenId());
+        if (Objects.isNull(userByOpenId)){
+            return this.login(requestVO.getPhone(), requestVO.getPassword(), requestVO.getOpenId(), requestVO.getJscode());
+        }else {
+            if (StringUtils.equals(requestVO.getPhone(), userByOpenId.getPhone())){
+                //获取sessionkey
+                WechatAppLoginResponseDTO wechatAppLoginResponseDTO = this.getJsCode2session(requestVO.getJscode());
+
+                //登陆
+                WechatOAuth2AccessToken wechatOAuth2AccessToken = (WechatOAuth2AccessToken) this.login(userByOpenId, requestVO.getOpenId(), wechatAppLoginResponseDTO.getSessionKey());
+                return wechatConvertor.wechatOAuth2AccessToken2ResponseDTO(wechatOAuth2AccessToken);
+            }else {
+                //解绑openId
+                User user = new User();
+                user.setOpenId("");
+                user.setId(userByOpenId.getId());
+                this.userService.updateUser(user);
+
+                return this.login(requestVO.getPhone(), requestVO.getPassword(), requestVO.getOpenId(), requestVO.getJscode());
+            }
+        }
+    }
+
+    private WechatAppLoginResponseVO login(String phone, String password, String openId, String jscode){
+        User userByPhone = this.userService.getUserByPhone(phone);
+
+        AssertUtil.nonNull(userByPhone, new UsernameNotFoundException("用户名或密码错误"));
+
+        boolean matches = this.passwordEncoder.matches(password, userByPhone.getPassword());
+
+        AssertUtil.isTrue(matches, new UsernameNotFoundException("用户名或密码错误"));
+
+        //绑定openId
+        User user = new User();
+        user.setOpenId(openId);
+        user.setId(userByPhone.getId());
+        this.userService.updateUser(user);
+
+        //获取sessionkey
+        WechatAppLoginResponseDTO wechatAppLoginResponseDTO = this.getJsCode2session(jscode);
+
+        //登陆
+        WechatOAuth2AccessToken wechatOAuth2AccessToken = (WechatOAuth2AccessToken) this.login(userByPhone, openId, wechatAppLoginResponseDTO.getSessionKey());
+        return this.wechatConvertor.wechatOAuth2AccessToken2ResponseDTO(wechatOAuth2AccessToken);
     }
 }

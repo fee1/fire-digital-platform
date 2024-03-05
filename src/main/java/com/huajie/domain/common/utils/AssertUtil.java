@@ -16,9 +16,21 @@ public class AssertUtil {
         }
     }
 
+    public static void isTrue(boolean expression, RuntimeException e){
+        if (!expression){
+            throw e;
+        }
+    }
+
     public static void nonNull(Object o, String message) {
         if (Objects.isNull(o)){
             throw new ServerException(message);
+        }
+    }
+
+    public static void nonNull(Object o, RuntimeException e) {
+        if (Objects.isNull(o)){
+            throw e;
         }
     }
 }
