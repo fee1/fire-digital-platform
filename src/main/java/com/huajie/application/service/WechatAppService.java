@@ -59,4 +59,8 @@ public class WechatAppService {
         WechatAppLoginResponseVO responseVO = this.wechatService.login(requestVO);
         return responseVO;
     }
+
+    public void logout() {
+        this.wechatService.logout();
+    }
 }

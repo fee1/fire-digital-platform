@@ -72,4 +72,11 @@ public class WechatAppApi {
         return ApiResult.ok(responseVO);
     }
 
+    @ApiOperation("微信用户名密码登出")
+    @PostMapping("app/usr/logout")
+    public ApiResult<WechatAppLoginResponseVO> logout(){
+        this.wechatAppService.logout();
+        return ApiResult.ok();
+    }
+
 }

@@ -81,6 +81,9 @@ public class WechatService {
     @Autowired
     private WechatConvertor wechatConvertor;
 
+    @Autowired
+    private LoginService loginService;
+
     private final String WECHAT_GRANT_TYPE = "grant_type";
 
     private final String APP_ID = "appid";
@@ -280,5 +283,9 @@ public class WechatService {
         //登陆
         WechatOAuth2AccessToken wechatOAuth2AccessToken = (WechatOAuth2AccessToken) this.login(userByPhone, openId, wechatAppLoginResponseDTO.getSessionKey());
         return this.wechatConvertor.wechatOAuth2AccessToken2ResponseDTO(wechatOAuth2AccessToken);
+    }
+
+    public void logout() {
+        loginService.logout();
     }
 }
