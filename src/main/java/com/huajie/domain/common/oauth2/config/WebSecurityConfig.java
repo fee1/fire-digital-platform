@@ -45,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             "/pay/record/select",
             "/pay/generate/qrcode/image",
             "/wechat/app/login",
+            "/wechat/app/usr/login",
             "/wechat/user/phone/binding",
             //放行 swagger
             "/error",
