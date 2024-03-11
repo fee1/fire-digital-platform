@@ -22,7 +22,7 @@ public class WechatAccessTokenTask {
     /**
      * 每小时运行一次
      */
-    @Scheduled(cron = "0 */59 * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void refresh(){
         wechatService.refreshAccessToken();
     }
