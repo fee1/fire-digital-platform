@@ -154,8 +154,10 @@ public class NoticeAppService {
         Tenant tenant = this.tenantService.getTenantByTenantId(notice.getFromTenantId());
         noticeAppDetailResponseVO.setFromTenantName(tenant.getTenantName());
         noticeAppDetailResponseVO.setAddress(tenant.getAddress());
-        SignForNotice signForNotice = this.signForNoticeService.getSignForNoticeIdAndUserId(notice.getId(), UserContext.getCurrentUserId());
-        noticeAppDetailResponseVO.setStatus(signForNotice.getSignStatus().intValue());
+        if (notice.getType().intValue() == NoticeTypeConstants.NOTIFY) {
+            SignForNotice signForNotice = this.signForNoticeService.getSignForNoticeIdAndUserId(notice.getId(), UserContext.getCurrentUserId());
+            noticeAppDetailResponseVO.setStatus(signForNotice.getSignStatus().intValue());
+        }
         return noticeAppDetailResponseVO;
     }
 
